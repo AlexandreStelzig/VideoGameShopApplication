@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Game Categories" >
+        <menu>
+            <group
+                android:id="@+id/menu_group_nav"
+                android:checkableBehavior="none">
+                <item
+                    android:id="@+id/nav_game_action"
+                    android:title="Action" />
+                <item
+                    android:id="@+id/nav_game_adventure"
+                    android:title="Adventure" />
+                <item
+                    android:id="@+id/nav_game_rpg"
+                    android:title="Role Playing Game" />
+                <item
+                    android:id="@+id/nav_strategy"
+                    android:title="Strategy" />
+            </group>
+        </menu>
+    </item>
+</menu>
+
