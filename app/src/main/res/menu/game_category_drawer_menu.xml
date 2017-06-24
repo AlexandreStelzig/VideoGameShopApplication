@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Game Categories" >
+    <item android:title="Games by Category" >
         <menu>
             <group
                 android:id="@+id/menu_group_nav"
@@ -16,8 +16,8 @@
                     android:id="@+id/nav_game_rpg"
                     android:title="Role Playing Game" />
                 <item
-                    android:id="@+id/nav_strategy"
-                    android:title="Strategy" />
+                    android:id="@+id/nav_game_sport"
+                    android:title="Sports" />
             </group>
         </menu>
     </item>

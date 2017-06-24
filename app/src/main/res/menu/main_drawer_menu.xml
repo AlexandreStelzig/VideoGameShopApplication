@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group
         android:id="@+id/menu_group_nav"
@@ -9,13 +10,16 @@
             android:title="Home" />
         <item
             android:id="@+id/nav_shop_console"
-            android:title="Shop Console and Accessories" />
+            android:title="Shop Console and Accessories"
+            app:actionLayout="@layout/arrow_layout"/>
         <item
             android:id="@+id/nav_shop_game_by_category"
-            android:title="Shop Game by Category" />
+            android:title="Shop Game by Category"
+            app:actionLayout="@layout/arrow_layout"/>
         <item
             android:id="@+id/nav_shop_game_by_console"
-            android:title="Shop Games by Console" />
+            android:title="Shop Games by Console"
+            app:actionLayout="@layout/arrow_layout"/>
     </group>
 
 

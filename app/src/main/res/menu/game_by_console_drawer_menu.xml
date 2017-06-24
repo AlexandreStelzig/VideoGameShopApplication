@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Games by Console" >
+        <menu>
+            <group
+                android:id="@+id/menu_group_nav"
+                android:checkableBehavior="none">
+                <item
+                    android:id="@+id/nav_game_switch"
+                    android:title="Nintendo Switch games" />
+                <item
+                    android:id="@+id/nav_game_3ds"
+                    android:title="Nintendo 3DS games" />
+                <item
+                    android:id="@+id/nav_game_ps4"
+                    android:title="PS4 games" />
+                <item
+                    android:id="@+id/nav_game_xbox"
+                    android:title="Xbox One games" />
+            </group>
+        </menu>
+    </item>
+</menu>
+

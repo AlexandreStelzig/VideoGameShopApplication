@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = homeFragment;
                 title = "Home";
                 break;
+
             // consoles
             case R.id.nav_switch:
                 currentFragment = resultsFragment;
@@ -221,7 +222,43 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = resultsFragment;
                 title = "Results";
                 break;
-            // games
+            // games by category
+            case R.id.nav_game_action:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.id.nav_game_adventure:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.id.nav_game_rpg:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.id.nav_game_sport:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+
+            // games by console
+            case R.id.nav_game_switch:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.id.nav_game_3ds:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.id.nav_game_ps4:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.id.nav_game_xbox:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+
+            // other nav
             case R.id.nav_shop_game_by_category:
                 currentFragment = resultsFragment;
                 title = "Results";
@@ -257,6 +294,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_cart:
                 currentFragment = cartFragment;
                 title = "Cart";
+                break;
+            default:
+                currentFragment = homeFragment;
+                title = "Home";
                 break;
         }
 
@@ -316,13 +357,12 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.getMenu().clear();
 
-
         if (itemId == R.id.nav_shop_console)
             navigationView.inflateMenu(R.menu.console_drawer_menu);
         if (itemId == R.id.nav_shop_game_by_category)
             navigationView.inflateMenu(R.menu.game_category_drawer_menu);
         if (itemId == R.id.nav_shop_game_by_console)
-            navigationView.inflateMenu(R.menu.console_drawer_menu);
+            navigationView.inflateMenu(R.menu.game_by_console_drawer_menu);
         showingMainDrawerMenu = false;
         setDrawerHeaderBackButtonVisibility(true);
     }
