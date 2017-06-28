@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Consoles and Accessories" >
+    <item android:title="Consoles" >
         <menu>
             <group
                 android:id="@+id/menu_group_nav"

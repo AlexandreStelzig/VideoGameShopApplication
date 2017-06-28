@@ -10,7 +10,7 @@
             android:title="Home" />
         <item
             android:id="@+id/nav_shop_console"
-            android:title="Shop Console and Accessories"
+            android:title="Shop Console"
             app:actionLayout="@layout/arrow_layout"/>
         <item
             android:id="@+id/nav_shop_game_by_category"
