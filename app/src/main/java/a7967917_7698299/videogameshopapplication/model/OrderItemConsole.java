@@ -8,24 +8,14 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 public class OrderItemConsole {
 
-    private ItemVariables.TYPE itemType;
     private long consoleId;
     private long orderId;
     private int amount;
 
-    public OrderItemConsole(ItemVariables.TYPE itemType, long consoleId, long orderId, int amount) {
-        this.itemType = itemType;
+    public OrderItemConsole(long consoleId, long orderId, int amount) {
         this.consoleId = consoleId;
         this.orderId = orderId;
         this.amount = amount;
-    }
-
-    public ItemVariables.TYPE getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(ItemVariables.TYPE itemType) {
-        this.itemType = itemType;
     }
 
     public long getConsoleId() {

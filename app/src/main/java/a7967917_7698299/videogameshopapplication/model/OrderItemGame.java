@@ -8,24 +8,14 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 public class OrderItemGame {
 
-    private ItemVariables.TYPE itemType;
     private long gameId;
     private long orderId;
     private int amount;
 
-    public OrderItemGame(ItemVariables.TYPE itemType, long gameId, long orderId, int amount) {
-        this.itemType = itemType;
+    public OrderItemGame(long gameId, long orderId, int amount) {
         this.gameId = gameId;
         this.orderId = orderId;
         this.amount = amount;
-    }
-
-    public ItemVariables.TYPE getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(ItemVariables.TYPE itemType) {
-        this.itemType = itemType;
     }
 
     public long getGameId() {

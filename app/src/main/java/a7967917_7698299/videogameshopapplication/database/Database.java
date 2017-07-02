@@ -36,8 +36,6 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WISHLIST_ITEM_CONSOLE);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WISHLIST_ITEM_GAME);
 
-        // init hard coded variables here
-
     }
 
     @Override

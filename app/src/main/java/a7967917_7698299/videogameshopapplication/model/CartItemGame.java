@@ -8,24 +8,15 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 public class CartItemGame {
 
-    private ItemVariables.TYPE itemType;
     private long gameId;
     private long cartId;
     private int amount;
 
-    public CartItemGame(ItemVariables.TYPE itemType, long gameId, long cartId, int amount) {
-        this.itemType = itemType;
+    public CartItemGame(long gameId, long cartId, int amount) {
+
         this.gameId = gameId;
         this.cartId = cartId;
         this.amount = amount;
-    }
-
-    public ItemVariables.TYPE getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(ItemVariables.TYPE itemType) {
-        this.itemType = itemType;
     }
 
     public long getGameId() {

@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CartFragment;
@@ -59,6 +60,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         DatabaseManager.initDatabase(this);
+
+        // if database if empty, populate data
+        if(DatabaseManager.getInstance().isDatabaseEmpty()){
+            DatabaseHardCodedValues.initDatabse();
+        }
 
         // init toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

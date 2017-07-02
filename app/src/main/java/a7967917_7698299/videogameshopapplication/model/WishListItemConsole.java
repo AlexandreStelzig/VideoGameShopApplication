@@ -8,23 +8,14 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 public class WishListItemConsole {
 
-    private ItemVariables.TYPE itemType;
     private long consoleId;
     private long wishListId;
 
 
-    public WishListItemConsole(ItemVariables.TYPE itemType, long consoleId, long wishListId) {
-        this.itemType = itemType;
+    public WishListItemConsole( long consoleId, long wishListId) {
+
         this.consoleId = consoleId;
         this.wishListId = wishListId;
-    }
-
-    public ItemVariables.TYPE getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(ItemVariables.TYPE itemType) {
-        this.itemType = itemType;
     }
 
     public long getConsoleId() {

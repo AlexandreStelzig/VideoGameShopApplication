@@ -4,7 +4,7 @@ package a7967917_7698299.videogameshopapplication.model;
  * Created by alex on 2017-06-26.
  */
 
-public class Address {
+public class UserAddress {
 
     private long addressId;
     private long userId;
@@ -14,7 +14,7 @@ public class Address {
     private String city;
     private String postalCode;
 
-    public Address(long addressId, long userId, String street, String country, String state, String city, String postalCode) {
+    public UserAddress(long addressId, long userId, String street, String country, String state, String city, String postalCode) {
         this.addressId = addressId;
         this.userId = userId;
         this.street = street;
