@@ -1,7 +1,5 @@
 package a7967917_7698299.videogameshopapplication.model;
 
-import java.util.Date;
-
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 /**
@@ -15,11 +13,11 @@ public class Item {
     private double price;
     private String description;
     private ItemVariables.STAR_REVIEW review;
-    private ItemVariables.PUBLISHER publisher;
-    private Date datePublished;
+    private String publisher;
+    private String datePublished;
 
 
-    public Item(ItemVariables.TYPE itemType, String name, double price, String description, ItemVariables.STAR_REVIEW review, ItemVariables.PUBLISHER publisher, Date datePublished) {
+    public Item(ItemVariables.TYPE itemType, String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished) {
         this.itemType = itemType;
         this.name = name;
         this.price = price;
@@ -69,19 +67,19 @@ public class Item {
         this.review = review;
     }
 
-    public ItemVariables.PUBLISHER getPublisher() {
+    public String getPublisher() {
         return publisher;
     }
 
-    public void setPublisher(ItemVariables.PUBLISHER publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
-    public Date getDatePublished() {
+    public String getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(Date datePublished) {
+    public void setDatePublished(String datePublished) {
         this.datePublished = datePublished;
     }
 }

@@ -1,7 +1,5 @@
 package a7967917_7698299.videogameshopapplication.model;
 
-import java.util.Date;
-
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 /**
@@ -12,7 +10,7 @@ public class Console extends Item {
 
     private long consoleId;
 
-    public Console(String name, double price, String description, ItemVariables.STAR_REVIEW review, ItemVariables.PUBLISHER publisher, Date datePublished, long consoleId) {
+    public Console(long consoleId, String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished) {
         super(ItemVariables.TYPE.CONSOLE, name, price, description, review, publisher, datePublished);
         this.consoleId = consoleId;
     }

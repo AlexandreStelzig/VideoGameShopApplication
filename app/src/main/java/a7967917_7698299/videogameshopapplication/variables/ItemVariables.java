@@ -15,15 +15,10 @@ public final class ItemVariables {
         FIVE_STAR
     }
 
-    public enum PUBLISHER{
-        EA,
-        UBISOFT
-    }
 
     public enum TYPE{
         CONSOLE,
         GAME
-
     }
 
 

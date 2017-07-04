@@ -6,14 +6,14 @@ package a7967917_7698299.videogameshopapplication.model;
 
 public class PaymentInformation {
 
-    private int paymentId;
-    private int userId;
+    private long paymentId;
+    private long userId;
     private int cardNumber;
-    private int nameOnCard;
+    private String nameOnCard;
     private int expirationMonth;
     private int expirationYear;
 
-    public PaymentInformation(int paymentId, int userId, int cardNumber, int nameOnCard, int expirationMonth, int expirationYear) {
+    public PaymentInformation(long paymentId, long userId, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear) {
         this.paymentId = paymentId;
         this.userId = userId;
         this.cardNumber = cardNumber;
@@ -22,19 +22,19 @@ public class PaymentInformation {
         this.expirationYear = expirationYear;
     }
 
-    public int getPaymentId() {
+    public long getPaymentId() {
         return paymentId;
     }
 
-    public void setPaymentId(int paymentId) {
+    public void setPaymentId(long paymentId) {
         this.paymentId = paymentId;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -46,11 +46,11 @@ public class PaymentInformation {
         this.cardNumber = cardNumber;
     }
 
-    public int getNameOnCard() {
+    public String getNameOnCard() {
         return nameOnCard;
     }
 
-    public void setNameOnCard(int nameOnCard) {
+    public void setNameOnCard(String nameOnCard) {
         this.nameOnCard = nameOnCard;
     }
 

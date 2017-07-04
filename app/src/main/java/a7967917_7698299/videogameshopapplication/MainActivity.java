@@ -14,7 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
@@ -23,6 +25,7 @@ import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CartFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HelpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HomeFragment;
+import a7967917_7698299.videogameshopapplication.fragments.ItemInfoFragment;
 import a7967917_7698299.videogameshopapplication.fragments.OrdersFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ResultsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SettingsFragment;
@@ -32,9 +35,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    // IMPORTANT!!! TURN OFF FOR RELEASE
+    private boolean DELETE_DATABASE_EVERY_REBUILD = true;
+
     // components
     private DrawerLayout drawer;
     private NavigationView navigationView;
+
+
 
     // logic variables
     private boolean viewIsAtHome;
@@ -49,21 +57,24 @@ public class MainActivity extends AppCompatActivity
     private SettingsFragment settingsFragment;
     private WishlistFragment wishlistFragment;
     private CartFragment cartFragment;
+    private ItemInfoFragment itemInfoFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
-    private Fragment previousFragment;
+    private int previousFragmentTag = -1;
+    private int currentFragmentTag = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DatabaseManager.initDatabase(this);
+
+        DatabaseManager.initDatabase(this, DELETE_DATABASE_EVERY_REBUILD);
 
         // if database if empty, populate data
-        if(DatabaseManager.getInstance().isDatabaseEmpty()){
-            DatabaseHardCodedValues.initDatabse();
+        if (DatabaseManager.getInstance().isDatabaseEmpty()) {
+            DatabaseHardCodedValues.getInstance().initDatabase();
         }
 
         // init toolbar
@@ -102,15 +113,20 @@ public class MainActivity extends AppCompatActivity
         settingsFragment = new SettingsFragment();
         wishlistFragment = new WishlistFragment();
         cartFragment = new CartFragment();
+        itemInfoFragment = new ItemInfoFragment();
 
         // init other
         viewIsAtHome = false;
         showingMainDrawerMenu = true;
 
+
+
         // set first fragment to home
         displayFragment(R.id.nav_home);
 
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -123,14 +139,22 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
 
+            // todo issue with back button when navigating to results screen (need to click twice)
+
+            if (previousFragmentTag != -1) {
+                displayFragment(previousFragmentTag);
+                previousFragmentTag = -1;
+            }
             // return the view to home
-            if (!viewIsAtHome) {
+            else if (!viewIsAtHome) {
                 displayFragment(R.id.nav_home);
             } else {
                 super.onBackPressed();
             }
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -195,17 +219,25 @@ public class MainActivity extends AppCompatActivity
             headerTextView.setVisibility(View.VISIBLE);
             headerBackButton.setVisibility(View.GONE);
         }
-
-
     }
+
+
 
 
     public void displayFragment(int itemId) {
 
-        previousFragment = currentFragment;
+
+
+
+        if (itemId == currentFragmentTag)
+            return;
+
+        previousFragmentTag = currentFragmentTag;
+        currentFragmentTag = itemId;
         currentFragment = null;
         String title = getString(R.string.app_name);
         String subtitle = "";
+
 
         // set the current fragment depending of the item's id
         switch (itemId) {
@@ -213,7 +245,6 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = homeFragment;
                 title = "Home";
                 break;
-
             // consoles
             case R.id.nav_switch:
                 currentFragment = resultsFragment;
@@ -248,7 +279,6 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = resultsFragment;
                 title = "Results";
                 break;
-
             // games by console
             case R.id.nav_game_switch:
                 currentFragment = resultsFragment;
@@ -304,6 +334,14 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = cartFragment;
                 title = "Cart";
                 break;
+            case R.id.search_view_results:
+                currentFragment = resultsFragment;
+                title = "Results";
+                break;
+            case R.layout.fragment_item_info:
+                currentFragment = itemInfoFragment;
+                title = "item info";
+                break;
             default:
                 currentFragment = homeFragment;
                 title = "Home";
@@ -319,7 +357,7 @@ public class MainActivity extends AppCompatActivity
         // animate the fragment navigation
         if (currentFragment != null) {
             if (!currentFragment.isVisible()) {
-                replaceFragmentWithAnimation(currentFragment, "" + currentFragment);
+                replaceFragmentWithAnimation(currentFragment, ""+ currentFragmentTag);
             }
         }
 
@@ -340,7 +378,7 @@ public class MainActivity extends AppCompatActivity
 
         if (fragment.equals(cartFragment)) {
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        } else if (previousFragment != null && previousFragment.equals(cartFragment)) {
+        } else if (previousFragmentTag == R.id.action_cart) {
             transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         } else {
             transaction.setCustomAnimations(android.R.anim.fade_in,
@@ -350,7 +388,6 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.content_frame, fragment, tag);
         transaction.commit();
     }
-
 
     //
     private void resetMainDrawerMenu() {
@@ -392,4 +429,12 @@ public class MainActivity extends AppCompatActivity
     public void drawerHeaderButtonClicked(View view) {
         resetMainDrawerMenu();
     }
+
+    public void setSearchQuery(String query) {
+        resultsFragment.setSearchViewQuery(query);
+    }
+
+
+
+
 }

@@ -73,7 +73,7 @@ public final class DatabaseVariables {
             + TABLE_VIDEO_GAME.COLUMN_PRICE + " DOUBLE,"
             + TABLE_VIDEO_GAME.COLUMN_PUBLISHER + " TEXT,"
             + TABLE_VIDEO_GAME.COLUMN_REGION + " TEXT,"
-            + TABLE_VIDEO_GAME.COLUMN_REVIEW + " INTEGER," + " );";
+            + TABLE_VIDEO_GAME.COLUMN_REVIEW + " INTEGER" + " );";
 
     public static final String SQL_CREATE_TABLE_PAYMENT_INFORMATION = "CREATE TABLE "
             + TABLE_PAYMENT_INFORMATION.TABLE_NAME + " ("
@@ -104,34 +104,6 @@ public final class DatabaseVariables {
             + " FOREIGN KEY " + "(" + TABLE_CONSOLE_VIDEO_GAME.COLUMN_GAME_ID + ")"
             + " REFERENCES " + TABLE_VIDEO_GAME.TABLE_NAME + "(" + TABLE_VIDEO_GAME.COLUMN_GAME_ID + ")"
             + " PRIMARY KEY (" + TABLE_CONSOLE_VIDEO_GAME.COLUMN_CONSOLE_ID + ", " + TABLE_CONSOLE_VIDEO_GAME.COLUMN_GAME_ID + ") " + ");";
-
-    public static final String SQL_CREATE_TABLE_WISHLIST = "CREATE TABLE "
-            + TABLE_WISHLIST.TABLE_NAME + " ("
-            + TABLE_WISHLIST.COLUMN_WISHLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + TABLE_WISHLIST.COLUMN_USER_ID + " INTEGER,"
-            + " FOREIGN KEY " + "(" + TABLE_WISHLIST.COLUMN_WISHLIST_ID + ")"
-            + " REFERENCES " + TABLE_USER.TABLE_NAME + "(" + TABLE_USER.COLUMN_USER_ID + ")" + " );";
-
-    public static final String SQL_CREATE_TABLE_WISHLIST_ITEM_CONSOLE = "CREATE TABLE "
-            + TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME + " ("
-            + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + " INTEGER,"
-            + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + " INTEGER,"
-            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + ")"
-            + " REFERENCES " + TABLE_WISHLIST.TABLE_NAME + "(" + TABLE_WISHLIST.COLUMN_WISHLIST_ID + "),"
-            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + ")"
-            + " REFERENCES " + TABLE_CONSOLE.TABLE_NAME + "(" + TABLE_CONSOLE.COLUMN_CONSOLE_ID + ")"
-            + " PRIMARY KEY (" + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + ", " + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + ") " + ");";
-
-    public static final String SQL_CREATE_TABLE_WISHLIST_ITEM_GAME = "CREATE TABLE "
-            + TABLE_WISHLIST_ITEM_GAME.TABLE_NAME + " ("
-            + TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + " INTEGER,"
-            + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + " INTEGER,"
-            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + ")"
-            + " REFERENCES " + TABLE_WISHLIST.TABLE_NAME + "(" + TABLE_WISHLIST.COLUMN_WISHLIST_ID + "),"
-            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + ")"
-            + " REFERENCES " + TABLE_VIDEO_GAME.TABLE_NAME + "(" + TABLE_VIDEO_GAME.COLUMN_GAME_ID + ")"
-            + " PRIMARY KEY (" + TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + ", " + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + ") " + ");";
-
 
     public static final String SQL_CREATE_TABLE_ORDER = "CREATE TABLE "
             + TABLE_ORDER.TABLE_NAME + " ("
@@ -174,7 +146,50 @@ public final class DatabaseVariables {
             + " REFERENCES " + TABLE_ORDER.TABLE_NAME + "(" + TABLE_ORDER.COLUMN_ORDER_ID + "),"
             + " FOREIGN KEY " + "(" + TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID + ")"
             + " REFERENCES " + TABLE_VIDEO_GAME.TABLE_NAME + "(" + TABLE_VIDEO_GAME.COLUMN_GAME_ID + ")"
-            + " PRIMARY KEY (" + TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID + ", " + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + ") " + ");";
+            + " PRIMARY KEY (" + TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID + ", " + TABLE_ORDER_ITEM_GAME.COLUMN_ORDER_ID + ") " + ");";
+
+    public static final String SQL_CREATE_TABLE_WISHLIST = "CREATE TABLE "
+            + TABLE_WISHLIST.TABLE_NAME + " ("
+            + TABLE_WISHLIST.COLUMN_WISHLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TABLE_WISHLIST.COLUMN_USER_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TABLE_WISHLIST.COLUMN_USER_ID + ")"
+            + " REFERENCES " + TABLE_USER.TABLE_NAME + "(" + TABLE_USER.COLUMN_USER_ID + ")" + " );";
+
+    public static final String SQL_CREATE_TABLE_WISHLIST_ITEM_CONSOLE = "CREATE TABLE "
+            + TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME + " ("
+            + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + " INTEGER,"
+            + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + ")"
+            + " REFERENCES " + TABLE_WISHLIST.TABLE_NAME + "(" + TABLE_WISHLIST.COLUMN_WISHLIST_ID + "),"
+            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + ")"
+            + " REFERENCES " + TABLE_CONSOLE.TABLE_NAME + "(" + TABLE_CONSOLE.COLUMN_CONSOLE_ID + ")"
+            + " PRIMARY KEY (" + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + ", " + TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + ") " + ");";
+
+    public static final String SQL_CREATE_TABLE_WISHLIST_ITEM_GAME = "CREATE TABLE "
+            + TABLE_WISHLIST_ITEM_GAME.TABLE_NAME + " ("
+            + TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + " INTEGER,"
+            + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + ")"
+            + " REFERENCES " + TABLE_WISHLIST.TABLE_NAME + "(" + TABLE_WISHLIST.COLUMN_WISHLIST_ID + "),"
+            + " FOREIGN KEY " + "(" + TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + ")"
+            + " REFERENCES " + TABLE_VIDEO_GAME.TABLE_NAME + "(" + TABLE_VIDEO_GAME.COLUMN_GAME_ID + ")"
+            + " PRIMARY KEY (" + TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + ", " + TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + ") " + ");";
+
+    public static final String SQL_CREATE_TABLE_IMAGE_CONSOLE = "CREATE TABLE "
+            + TABLE_IMAGE_CONSOLE.TABLE_NAME + " ("
+            + TABLE_IMAGE_CONSOLE.COLUMN_IMAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TABLE_IMAGE_CONSOLE.COLUMN_IMAGE_URL + " TEXT,"
+            + TABLE_IMAGE_CONSOLE.COLUMN_CONSOLE_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TABLE_IMAGE_CONSOLE.COLUMN_CONSOLE_ID + ")"
+            + " REFERENCES " + TABLE_CONSOLE.TABLE_NAME + "(" + TABLE_CONSOLE.COLUMN_CONSOLE_ID + ")" + " );";
+
+    public static final String SQL_CREATE_TABLE_IMAGE_GAME = "CREATE TABLE "
+            + TABLE_IMAGE_GAME.TABLE_NAME + " ("
+            + TABLE_IMAGE_GAME.COLUMN_IMAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TABLE_IMAGE_GAME.COLUMN_IMAGE_URL + " TEXT,"
+            + TABLE_IMAGE_GAME.COLUMN_GAME_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TABLE_IMAGE_GAME.COLUMN_GAME_ID + ")"
+            + " REFERENCES " + TABLE_VIDEO_GAME.TABLE_NAME + "(" + TABLE_VIDEO_GAME.COLUMN_GAME_ID + ")" + " );";
 
 
     public static final String SQL_DELETE_TABLE_ADDRESS = "DROP TABLE IF EXISTS " + TABLE_ADDRESS.TABLE_NAME;
@@ -192,6 +207,8 @@ public final class DatabaseVariables {
     public static final String SQL_DELETE_TABLE_WISHLIST = "DROP TABLE IF EXISTS " + TABLE_WISHLIST.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_WISHLIST_ITEM_GAME = "DROP TABLE IF EXISTS " + TABLE_WISHLIST_ITEM_GAME.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_WISHLIST_ITEM_CONSOLE = "DROP TABLE IF EXISTS " + TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_IMAGE_CONSOLE = "DROP TABLE IF EXISTS " + TABLE_IMAGE_CONSOLE.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_IMAGE_GAME = "DROP TABLE IF EXISTS " + TABLE_IMAGE_GAME.TABLE_NAME;
 
 
     public static abstract class TABLE_ADDRESS implements BaseColumns {
@@ -245,7 +262,7 @@ public final class DatabaseVariables {
     // because we don't want the information to change if we edit address or payment
     // we duplicate the fields inside of doing foreign keys
     public static abstract class TABLE_ORDER implements BaseColumns {
-        public static final String TABLE_NAME = "order";
+        public static final String TABLE_NAME = "user_order";
         public static final String COLUMN_ORDER_ID = "order_id";
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_DATE_ORDERED = "date_ordered";
@@ -266,14 +283,14 @@ public final class DatabaseVariables {
     }
 
     public static abstract class TABLE_ORDER_ITEM_GAME implements BaseColumns {
-        public static final String TABLE_NAME = "order_item";
+        public static final String TABLE_NAME = "order_item_game";
         public static final String COLUMN_ORDER_ID = "order_id";
         public static final String COLUMN_GAME_ID = "game_id";
         public static final String COLUMN_AMOUNT = "amount";
     }
 
     public static abstract class TABLE_ORDER_ITEM_CONSOLE implements BaseColumns {
-        public static final String TABLE_NAME = "order_item";
+        public static final String TABLE_NAME = "order_item_console";
         public static final String COLUMN_ORDER_ID = "order_id";
         public static final String COLUMN_CONSOLE_ID = "console_id";
         public static final String COLUMN_AMOUNT = "amount";
@@ -323,16 +340,29 @@ public final class DatabaseVariables {
     }
 
     public static abstract class TABLE_WISHLIST_ITEM_GAME implements BaseColumns {
-        public static final String TABLE_NAME = "wishlist_item";
+        public static final String TABLE_NAME = "wishlist_item_game";
         public static final String COLUMN_WISHLIST_ID = "cart_id";
         public static final String COLUMN_GAME_ID = "game_id";
     }
 
     public static abstract class TABLE_WISHLIST_ITEM_CONSOLE implements BaseColumns {
-        public static final String TABLE_NAME = "wishlist_item";
+        public static final String TABLE_NAME = "wishlist_item_wishlist";
         public static final String COLUMN_WISHLIST_ID = "cart_id";
         public static final String COLUMN_CONSOLE_ID = "console_id";
     }
 
+    public static abstract class TABLE_IMAGE_CONSOLE implements BaseColumns{
+        public static final String TABLE_NAME = "item_image_console";
+        public static final String COLUMN_IMAGE_ID = "image_id";
+        public static final String COLUMN_IMAGE_URL = "image_url";
+        public static final String COLUMN_CONSOLE_ID = "console_id";
+    }
+
+    public static abstract class TABLE_IMAGE_GAME implements BaseColumns{
+        public static final String TABLE_NAME = "item_image_game";
+        public static final String COLUMN_IMAGE_ID = "image_id";
+        public static final String COLUMN_IMAGE_URL = "image_url";
+        public static final String COLUMN_GAME_ID = "game_id";
+    }
 
 }

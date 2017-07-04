@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_layout_item_listview"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:layout_margin="5dp"
+    android:padding="5dp"
+    android:clickable="true">
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1.35"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_marginEnd="2dp">
+
+        <ImageView
+            android:id="@+id/custom_layout_item_listview_image"
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/custom_layout_item_listview_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="TITLE PLACEHOLDER MORE TEXT"
+            android:textSize="@dimen/text_title"
+            android:textColor="@color/primaryText"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/custom_layout_item_listview_console_publisher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="CONSOLE BY COMPANY"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/primaryText"/>
+
+        <TextView
+            android:id="@+id/custom_layout_item_listview_ERSB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="ESRB PLACE HOLDER"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/primaryText"/>
+        <TextView
+            android:id="@+id/custom_layout_item_listview_release"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="RELEASE PLACE HOLDER"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/primaryText"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/custom_layout_item_listview_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="$9999.99"
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_normal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:clickable="true">
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:foreground="@drawable/ripple_overlay"
+                android:background="@drawable/ic_add_shopping_cart_black_24dp"/>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

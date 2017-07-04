@@ -10,13 +10,11 @@ import java.util.List;
 public class WishList {
     private long wishListId;
     private long userId;
-    private List<Item> wishListItems;
 
 
-    public WishList(long wishListId, long userId, List<Item> wishListItems) {
+    public WishList(long wishListId, long userId) {
         this.wishListId = wishListId;
         this.userId = userId;
-        this.wishListItems = wishListItems;
     }
 
     public long getWishListId() {
@@ -33,14 +31,6 @@ public class WishList {
 
     public void setUserId(long userId) {
         this.userId = userId;
-    }
-
-    public List<Item> getWishListItems() {
-        return wishListItems;
-    }
-
-    public void setWishListItems(List<Item> wishListItems) {
-        this.wishListItems = wishListItems;
     }
 }
 

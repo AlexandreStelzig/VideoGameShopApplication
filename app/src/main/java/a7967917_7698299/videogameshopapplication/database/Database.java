@@ -35,6 +35,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WISHLIST);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WISHLIST_ITEM_CONSOLE);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_WISHLIST_ITEM_GAME);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_IMAGE_CONSOLE);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_IMAGE_GAME);
 
     }
 
@@ -55,6 +57,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_WISHLIST);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_WISHLIST_ITEM_CONSOLE);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_WISHLIST_ITEM_GAME);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_IMAGE_CONSOLE);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_IMAGE_GAME);
 
         onCreate(db);
     }

@@ -1,7 +1,5 @@
 package a7967917_7698299.videogameshopapplication.model;
 
-import java.util.Date;
-
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
 
@@ -19,7 +17,7 @@ public class VideoGame extends Item {
     private int numberOfPlayers;
     private long gameId;
 
-    public VideoGame(String name, double price, String description, ItemVariables.STAR_REVIEW review, ItemVariables.PUBLISHER publisher, Date datePublished, VideoGameVariables.ERSB ersbRating, double gameLength, VideoGameVariables.CATEGORY gameCategory, VideoGameVariables.REGION gameRegion, int numberOfPlayers, long gameId) {
+    public VideoGame(String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished, VideoGameVariables.ERSB ersbRating, double gameLength, VideoGameVariables.CATEGORY gameCategory, VideoGameVariables.REGION gameRegion, int numberOfPlayers, long gameId) {
         super(ItemVariables.TYPE.GAME, name, price, description, review, publisher, datePublished);
         this.ersbRating = ersbRating;
         this.gameLength = gameLength;

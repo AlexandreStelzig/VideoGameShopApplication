@@ -1,6 +1,5 @@
 package a7967917_7698299.videogameshopapplication.model;
 
-import java.util.Date;
 import java.util.List;
 
 import a7967917_7698299.videogameshopapplication.variables.OrderVariables;
@@ -14,10 +13,9 @@ public class Order {
 
     private long orderId;
     private long userId;
-    private Date dateOrdered;
-    private Date dateArriving;
+    private String dateOrdered;
+    private String dateArriving;
     private OrderVariables.STATUS status;
-    private List<Item> items;
 
     // payment
     private int cardNumber;
@@ -32,13 +30,12 @@ public class Order {
     private String city;
     private String postalCode;
 
-    public Order(long orderId, long userId, Date dateOrdered, Date dateArriving, OrderVariables.STATUS status, List<Item> items, int cardNumber, int nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+    public Order(long orderId, long userId, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, int nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
         this.orderId = orderId;
         this.userId = userId;
         this.dateOrdered = dateOrdered;
         this.dateArriving = dateArriving;
         this.status = status;
-        this.items = items;
         this.cardNumber = cardNumber;
         this.nameOnCard = nameOnCard;
         this.expirationMonth = expirationMonth;
@@ -67,19 +64,19 @@ public class Order {
         this.userId = userId;
     }
 
-    public Date getDateOrdered() {
+    public String getDateOrdered() {
         return dateOrdered;
     }
 
-    public void setDateOrdered(Date dateOrdered) {
+    public void setDateOrdered(String dateOrdered) {
         this.dateOrdered = dateOrdered;
     }
 
-    public Date getDateArriving() {
+    public String getDateArriving() {
         return dateArriving;
     }
 
-    public void setDateArriving(Date dateArriving) {
+    public void setDateArriving(String dateArriving) {
         this.dateArriving = dateArriving;
     }
 
@@ -89,14 +86,6 @@ public class Order {
 
     public void setStatus(OrderVariables.STATUS status) {
         this.status = status;
-    }
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
     }
 
     public int getCardNumber() {
