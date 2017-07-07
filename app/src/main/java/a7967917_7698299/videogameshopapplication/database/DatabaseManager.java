@@ -297,6 +297,7 @@ public class DatabaseManager {
     }
 
     public List<Item> getItemsByQuery(String query) {
+        query = query.toLowerCase();
         List<Item> items = new ArrayList<>();
         // ugly stuff but it works
         List<VideoGame> videoGames = getAllGames();

@@ -1,6 +1,7 @@
 package a7967917_7698299.videogameshopapplication.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,12 +18,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.model.VideoGame;
@@ -49,6 +52,7 @@ public class WishlistFragment extends Fragment {
     private List<Item> itemList;
     private CustomListAdapter customListAdapter;
     private List<String> imagesURLList;
+    private Bitmap[] cachedImages;
 
     boolean loading = false;
 
@@ -72,6 +76,7 @@ public class WishlistFragment extends Fragment {
 
         imagesURLList = new ArrayList<>();
         itemList = new ArrayList<>();
+        cachedImages = new Bitmap[itemList.size()];
 
         initListView();
         setNumberOfResults();
@@ -166,6 +171,23 @@ public class WishlistFragment extends Fragment {
             final Item rowItem = itemList.get(position);
 
 
+            ((Button) rowView.findViewById(R.id.custom_layout_item_close_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) getActivity()).toggleWishlistAdd(rowItem.getItemId(), rowItem.getItemType());
+
+                    List<Bitmap> list = new ArrayList<Bitmap>(Arrays.asList(cachedImages));
+                    list.remove(position);
+                    cachedImages = list.toArray(cachedImages);
+
+                    imagesURLList.remove(position);
+                    itemList.remove(position);
+
+                    customListAdapter.notifyDataSetChanged();
+                }
+            });
+
+
             holder.cartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -199,8 +221,16 @@ public class WishlistFragment extends Fragment {
 
             }
 //
-            if (position < imagesURLList.size())
-                new Helper.ReplaceImageViewWithURL(holder.imageView).execute(imagesURLList.get(position));
+            if (position < imagesURLList.size() && cachedImages[position] == null)
+                new ImageLoader(holder.imageView, new ImageLoader.AsyncResponse() {
+                    @Override
+                    public void processFinish(Bitmap output) {
+                        // using this method for caching
+                        cachedImages[position] = output;
+                    }
+                }).execute(imagesURLList.get(position));
+            else
+                holder.imageView.setImageBitmap(cachedImages[position]);
 
             rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
@@ -226,8 +256,6 @@ public class WishlistFragment extends Fragment {
         protected String doInBackground(String... params) {
             loading = true;
             imagesURLList.clear();
-
-            // TODO change way of fetching data to more generic one
 
             itemList = databaseManager.getAllWishListItems();
 
@@ -275,6 +303,8 @@ public class WishlistFragment extends Fragment {
                 listView.setVisibility(View.VISIBLE);
                 noResultsLayout.setVisibility(View.GONE);
             }
+
+            cachedImages = new Bitmap[itemList.size()];
 
             setNumberOfResults();
 

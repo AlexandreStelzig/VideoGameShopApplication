@@ -29,6 +29,7 @@ import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
 import a7967917_7698299.videogameshopapplication.model.Console;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
@@ -58,7 +59,7 @@ public class ResultsFragment extends Fragment {
     private List<Item> itemList;
     private CustomListAdapter customListAdapter;
     private List<String> imagesURLList;
-    // TODO IMAGE HOLDER - CACHE IMAGES
+    private Bitmap[] cachedImages;
 
     // loading stuff
     private boolean loading = false;
@@ -87,6 +88,7 @@ public class ResultsFragment extends Fragment {
         // init stuff
         itemList = new ArrayList<>();
         imagesURLList = new ArrayList<>();
+        cachedImages = new Bitmap[itemList.size()];
         databaseManager = DatabaseManager.getInstance();
 
 
@@ -118,8 +120,8 @@ public class ResultsFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 searchView.setQuery(query, false);
                 searchView.clearFocus();
-                searchViewQuery = query;
-                populateListView();
+                setSearchViewQuery(query);
+                ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
 
                 return false;
             }
@@ -175,7 +177,10 @@ public class ResultsFragment extends Fragment {
         } else if (filterGamesByCategory != null) {
             text += ": " + filterGamesByCategory;
         } else {
-            text += ": " + searchViewQuery;
+            if (searchViewQuery.equals(""))
+                text += ": ALL";
+            else
+                text += ": " + searchViewQuery;
 
         }
 
@@ -269,6 +274,7 @@ public class ResultsFragment extends Fragment {
             holder.imageView = (ImageView) rowView.findViewById(R.id.custom_layout_item_listview_image);
             holder.cartButton = (Button) rowView.findViewById(R.id.custom_layout_item_add_cart);
 
+            ((Button) rowView.findViewById(R.id.custom_layout_item_close_button)).setVisibility(View.GONE);
 
             final Item rowItem = itemList.get(position);
 
@@ -307,8 +313,16 @@ public class ResultsFragment extends Fragment {
 
             }
 
-            if (position < imagesURLList.size())
-                new Helper.ReplaceImageViewWithURL(holder.imageView).execute(imagesURLList.get(position));
+            if (position < imagesURLList.size() && cachedImages[position] == null)
+                new ImageLoader(holder.imageView, new ImageLoader.AsyncResponse() {
+                    @Override
+                    public void processFinish(Bitmap output) {
+                        // using this method for caching
+                        cachedImages[position] = output;
+                    }
+                }).execute(imagesURLList.get(position));
+            else
+                holder.imageView.setImageBitmap(cachedImages[position]);
 
             rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
@@ -333,8 +347,6 @@ public class ResultsFragment extends Fragment {
         protected String doInBackground(String... params) {
             loading = true;
             imagesURLList.clear();
-
-            // TODO change way of fetching data to more generic one
 
             if (filterByConsole != null) {
                 itemList = databaseManager.getConsolesByType(filterByConsole);
@@ -395,13 +407,10 @@ public class ResultsFragment extends Fragment {
                 noResultsTextView.setVisibility(View.GONE);
             }
 
+            cachedImages = new Bitmap[itemList.size()];
+
             setNumberOfResults();
 
-
-            filterByConsole = null;
-            filterGamesByConsole = null;
-            filterGamesByCategory = null;
-            searchViewQuery = "";
 
 
             loading = false;

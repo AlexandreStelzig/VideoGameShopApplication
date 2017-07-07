@@ -6,7 +6,7 @@
         android:id="@+id/action_cart"
         android:orderInCategory="100"
         android:title="Cart"
-        android:icon="@drawable/ic_shopping_cart_white_24dp"
+        android:icon="@mipmap/ic_cart_0"
         app:showAsAction="always"/>
 
 </menu>

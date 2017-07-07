@@ -43,7 +43,8 @@ public class DatabaseHardCodedValues {
 
     private void initConsoles() {
 
-        long switchId = databaseManager.createConsole(ItemVariables.CONSOLES.SWITCH, "Nintendo Switch", 399.99, "The latest Nintendo console, available now!", 5, "Nintendo", "March 3, 2017");
+        long switchId = databaseManager.createConsole(ItemVariables.CONSOLES.SWITCH, "Nintendo Switch", 399.99, "Introducing Nintendo Switch! In addition to providing single and multiplayer thrills at home, the Nintendo Switch system also enables gamers to play the same title wherever, whenever and with whomever they choose. The mobility of a handheld is now added to the power of a home gaming system to enable unprecedented new video game play styles.",
+                5, "Nintendo", "March 3, 2017");
         databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "http://media.nintendo.com/nintendo/cocoon/switch-static-pages/switch/etRgxnAu0zRX4bmWnt9K628wG7YQUI6t/images/switch/home/bundle1.jpg", switchId);
 
         long xboxId = databaseManager.createConsole(ItemVariables.CONSOLES.XBOXONE, "Xbox One S", 279.99, "Own the Xbox One S Battlefield™ 1 Bundle (500GB), featuring 4K Blu-ray™, 4K video streaming, High Dynamic Range, a full game download of Battlefield™ 1, and one month of EA Access. Discover a world at war through an adventure-filled campaign, or join in epic multiplayer battles with up to 64 players on Xbox Live. Fight as infantry or take control of amazing vehicles on land, air and sea, and adapt your gameplay to the most dynamic battles in Battlefield history. And with EA Access, play EA games for a limited time before they're released and get unlimited access to The Vault, exclusively on Xbox One. With over 100 console exclusives, and a growing library of Xbox 360 games, there's never been a better time to game with Xbox One.\n",

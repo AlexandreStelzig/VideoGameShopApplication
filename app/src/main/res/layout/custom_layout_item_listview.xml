@@ -84,6 +84,16 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/custom_layout_item_close_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:foreground="@drawable/ripple_overlay"
+            android:padding="10dp"
+            android:background="@drawable/ic_close_gray_24dp"/>
+
+
         <TextView
             android:id="@+id/custom_layout_item_listview_price"
             android:layout_width="match_parent"
@@ -91,7 +101,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
-            android:text="$9999.99"
+            android:text="$999.99"
             android:textColor="@color/red"
             android:textSize="@dimen/text_normal" />
 

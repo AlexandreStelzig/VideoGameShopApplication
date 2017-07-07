@@ -1,5 +1,6 @@
 package a7967917_7698299.videogameshopapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
 
-            if (previousFragmentTag != -1) {
+            if (previousFragmentTag != -1 && previousFragmentTag != currentFragmentTag) {
                 displayFragment(previousFragmentTag);
                 previousFragmentTag = -1;
             }
@@ -384,6 +386,13 @@ public class MainActivity extends AppCompatActivity
             viewIsAtHome = false;
         }
 
+//        // hide keyboard (fix an issue with the keyboard staying up when changing fragments)
+//        View view = this.getCurrentFocus();
+//        if (view != null) {
+////            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+////            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//        }
+
     }
 
 
@@ -443,6 +452,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addItemToCart(long itemId, ItemVariables.TYPE itemType) {
+
         Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
     }
 

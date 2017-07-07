@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 import a7967917_7698299.videogameshopapplication.variables.OrderVariables;
@@ -216,39 +217,6 @@ public final class Helper {
         return consoleString;
     }
 
-    public static class ReplaceImageViewWithURL extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-
-        public ReplaceImageViewWithURL(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-
-                try {
-                    InputStream in = new java.net.URL("http://used.agwest.com/images/default-image-agwest-thumb.jpg").openStream();
-                    mIcon11 = BitmapFactory.decodeStream(in);
-                } catch (Exception e2) {
-                    Log.e("Error", e2.getMessage());
-                    e2.printStackTrace();
-                }
-
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
-    }
 
 
 }
