@@ -1,6 +1,5 @@
 package a7967917_7698299.videogameshopapplication;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,12 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import a7967917_7698299.videogameshopapplication.database.Database;
 import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
@@ -31,6 +28,7 @@ import a7967917_7698299.videogameshopapplication.fragments.ItemInfoFragment;
 import a7967917_7698299.videogameshopapplication.fragments.OrdersFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ResultsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SettingsFragment;
+import a7967917_7698299.videogameshopapplication.fragments.SignInFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
@@ -64,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private WishlistFragment wishlistFragment;
     private CartFragment cartFragment;
     private ItemInfoFragment itemInfoFragment;
+    private SignInFragment signInFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
@@ -121,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         wishlistFragment = new WishlistFragment();
         cartFragment = new CartFragment();
         itemInfoFragment = new ItemInfoFragment();
+        signInFragment = new SignInFragment();
 
         // init other
         viewIsAtHome = false;
@@ -129,8 +129,6 @@ public class MainActivity extends AppCompatActivity
 
         // set first fragment to home
         displayFragment(R.id.nav_home);
-
-
     }
 
 
@@ -163,6 +161,26 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
+
+        if (databaseManager.getCurrentActiveUser() != null) {
+            int nbItemsInCart = databaseManager.getNbItemsInCart();
+
+            if (nbItemsInCart == 0)
+                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_0);
+            else if (nbItemsInCart == 1)
+                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_1);
+            else if (nbItemsInCart == 2)
+                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_2);
+            else if (nbItemsInCart == 3)
+                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_3);
+            else if (nbItemsInCart == 4)
+                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_4);
+            else
+                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_5plus);
+        } else {
+            menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_0);
+        }
+
         return true;
     }
 
@@ -317,16 +335,31 @@ public class MainActivity extends AppCompatActivity
                 title = "Results";
                 break;
             case R.id.nav_account:
-                currentFragment = accountFragment;
-                title = "Account";
+                if (isUserConnectedWithMessage()) {
+                    currentFragment = accountFragment;
+                    title = "Account";
+                } else {
+                    currentFragment = signInFragment;
+                    title = "Sign in";
+                }
                 break;
             case R.id.nav_wishlist:
-                currentFragment = wishlistFragment;
-                title = "Wishlist";
+                if (isUserConnectedWithMessage()) {
+                    currentFragment = wishlistFragment;
+                    title = "Wishlist";
+                } else {
+                    currentFragment = signInFragment;
+                    title = "Sign in";
+                }
                 break;
             case R.id.nav_orders:
-                currentFragment = ordersFragment;
-                title = "Orders";
+                if (isUserConnectedWithMessage()) {
+                    currentFragment = ordersFragment;
+                    title = "Orders";
+                } else {
+                    currentFragment = signInFragment;
+                    title = "Sign in";
+                }
                 break;
             case R.id.nav_settings:
                 currentFragment = settingsFragment;
@@ -341,8 +374,13 @@ public class MainActivity extends AppCompatActivity
                 title = "Help";
                 break;
             case R.id.action_cart:
-                currentFragment = cartFragment;
-                title = "Cart";
+                if (isUserConnectedWithMessage()) {
+                    currentFragment = cartFragment;
+                    title = "Cart";
+                } else {
+                    currentFragment = signInFragment;
+                    title = "Sign in";
+                }
                 break;
             case R.id.search_view_results:
                 currentFragment = resultsFragment;
@@ -350,7 +388,21 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.layout.fragment_item_info:
                 currentFragment = itemInfoFragment;
-                title = "item info";
+                title = "Item info";
+                break;
+            case R.id.nav_sign_in_out:
+                if (databaseManager.getCurrentActiveUser() == null) {
+                    // sign in
+                    currentFragment = signInFragment;
+                    title = "Sign in";
+                } else {
+                    // sign out
+                    currentFragment = homeFragment;
+                    databaseManager.setCurrentActiveUser(-1);
+                    title = "Home";
+                }
+
+
                 break;
             default:
                 currentFragment = homeFragment;
@@ -420,6 +472,26 @@ public class MainActivity extends AppCompatActivity
         navigationView.inflateMenu(R.menu.main_drawer_menu);
         showingMainDrawerMenu = true;
         setDrawerHeaderBackButtonVisibility(false);
+
+        Menu menuNav = navigationView.getMenu();
+        MenuItem navAccount = menuNav.findItem(R.id.nav_account);
+        MenuItem navWishList = menuNav.findItem(R.id.nav_wishlist);
+        MenuItem navOrders = menuNav.findItem(R.id.nav_orders);
+        MenuItem signInOut = menuNav.findItem(R.id.nav_sign_in_out);
+
+        boolean userActive = databaseManager.getCurrentActiveUser() != null;
+
+
+        navAccount.setEnabled(userActive);
+        navWishList.setEnabled(userActive);
+        navOrders.setEnabled(userActive);
+
+        if (userActive)
+            signInOut.setTitle("Sign out");
+        else
+            signInOut.setTitle("Sign in");
+
+
     }
 
 
@@ -452,14 +524,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addItemToCart(long itemId, ItemVariables.TYPE itemType) {
-
-        Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+        if (isUserConnectedWithMessage()) {
+            databaseManager.addItemToCart(itemType, itemId);
+            Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+            invalidateOptionsMenu();
+        }
     }
 
     public void toggleWishlistAdd(long itemId, ItemVariables.TYPE itemType) {
         boolean itemAlreadyInWishlist = databaseManager.isItemAlreadyInWishlist(itemId, itemType);
 
-        if (isUserConnected()) {
+        if (isUserConnectedWithMessage()) {
             if (itemAlreadyInWishlist) {
                 databaseManager.deleteWishlist(itemId, itemType);
                 Toast.makeText(this, "Item removed from wishlist", Toast.LENGTH_SHORT).show();
@@ -470,9 +545,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public boolean isUserConnected() {
+    public boolean isUserConnectedWithMessage() {
         if (databaseManager.getCurrentActiveUser() == null) {
-            Toast.makeText(this, "Please Log In", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Sign In", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
