@@ -419,7 +419,8 @@ public class MainActivity extends AppCompatActivity
         // animate the fragment navigation
         if (currentFragment != null) {
             if (!currentFragment.isVisible()) {
-                previousFragmentTag = currentFragmentTag;
+                if (currentFragmentTag != R.id.nav_sign_in_out)
+                    previousFragmentTag = currentFragmentTag;
                 currentFragmentTag = itemId;
                 replaceFragmentWithAnimation(currentFragment, "" + currentFragmentTag);
             } else {
@@ -432,7 +433,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // set hardware back button logic
-        if (itemId == R.id.nav_home) {
+        if (currentFragment.equals(homeFragment)) {
             viewIsAtHome = true;
         } else {
             viewIsAtHome = false;
@@ -528,13 +529,15 @@ public class MainActivity extends AppCompatActivity
             databaseManager.addItemToCart(itemType, itemId);
             Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
+        } else {
+            displayFragment(R.id.nav_sign_in_out);
         }
     }
 
     public void toggleWishlistAdd(long itemId, ItemVariables.TYPE itemType) {
-        boolean itemAlreadyInWishlist = databaseManager.isItemAlreadyInWishlist(itemId, itemType);
 
         if (isUserConnectedWithMessage()) {
+            boolean itemAlreadyInWishlist = databaseManager.isItemAlreadyInWishlist(itemId, itemType);
             if (itemAlreadyInWishlist) {
                 databaseManager.deleteWishlist(itemId, itemType);
                 Toast.makeText(this, "Item removed from wishlist", Toast.LENGTH_SHORT).show();
@@ -542,6 +545,8 @@ public class MainActivity extends AppCompatActivity
                 databaseManager.createWishList(itemType, itemId);
                 Toast.makeText(this, "Item added to wishlist", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            displayFragment(R.id.nav_sign_in_out);
         }
     }
 
