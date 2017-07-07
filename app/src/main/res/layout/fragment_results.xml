@@ -36,9 +36,10 @@
             android:id="@+id/fragment_results_nb_results"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.8"
+            android:layout_weight="2"
             android:gravity="center_vertical"
             android:maxLines="2"
+            android:ellipsize="end"
             android:text="0 RESULTS"
             android:textColor="@color/primaryText"
             android:textSize="@dimen/text_small" />
@@ -52,12 +53,12 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.8"
+            android:layout_weight="1"
             android:background="@android:color/transparent"
             android:drawableRight="@drawable/ic_expand_more_black_24dp"
             android:gravity="center"
             android:maxLines="2"
-            android:text="Xbox One"
+            android:text="Filter"
             android:textColor="@color/primaryText"
             android:textSize="@dimen/text_small" />
 
@@ -76,27 +77,10 @@
             android:drawableRight="@drawable/ic_expand_more_black_24dp"
             android:gravity="center"
             android:maxLines="2"
-            android:text="Category"
-            android:textColor="@color/primaryText"
-            android:textSize="@dimen/text_small" />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_margin="2dp"
-            android:background="@color/colorDivider" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:background="@android:color/transparent"
-            android:drawableRight="@drawable/ic_expand_more_black_24dp"
-            android:gravity="center"
-            android:maxLines="2"
             android:text="Sort"
             android:textColor="@color/primaryText"
             android:textSize="@dimen/text_small" />
+
 
     </LinearLayout>
 
@@ -115,10 +99,14 @@
     <ListView
         android:id="@+id/fragment_results_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-
-    </ListView>
+    <TextView
+        android:padding="5dp"
+        android:id="@+id/fragment_results_no_results_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No results"/>
 
 
 </LinearLayout>

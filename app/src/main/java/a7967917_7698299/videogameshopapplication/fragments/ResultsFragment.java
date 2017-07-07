@@ -8,17 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -27,7 +22,6 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +34,7 @@ import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.model.VideoGame;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
+import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
 
 /**
  * Created by alex on 2017-06-24.
@@ -54,19 +49,25 @@ public class ResultsFragment extends Fragment {
     private SearchView searchView;
     private ProgressBar progressBar;
     private TextView nbResultsTextView;
+    private TextView noResultsTextView;
 
     // Database
     private DatabaseManager databaseManager;
 
-    // query
-    private String searchViewQuery;
-
     // items
     private List<Item> itemList;
     private CustomListAdapter customListAdapter;
-    private List<Bitmap> imagesList;
+    private List<String> imagesURLList;
+    // TODO IMAGE HOLDER - CACHE IMAGES
 
+    // loading stuff
     private boolean loading = false;
+
+    // search filters / queries
+    private ItemVariables.CONSOLES filterByConsole = null;
+    private ItemVariables.CONSOLES filterGamesByConsole = null;
+    private VideoGameVariables.CATEGORY filterGamesByCategory = null;
+    private String searchViewQuery = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,10 +81,12 @@ public class ResultsFragment extends Fragment {
         nbResultsTextView = (TextView) view.findViewById(R.id.fragment_results_nb_results);
         progressBar = (ProgressBar) view.findViewById(R.id.fragment_results_progress_bar);
         progressBar.setVisibility(View.GONE);
+        noResultsTextView = (TextView) view.findViewById(R.id.fragment_results_no_results_textview);
+        noResultsTextView.setVisibility(View.GONE);
 
         // init stuff
         itemList = new ArrayList<>();
-        imagesList = new ArrayList<>();
+        imagesURLList = new ArrayList<>();
         databaseManager = DatabaseManager.getInstance();
 
 
@@ -115,7 +118,7 @@ public class ResultsFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 searchView.setQuery(query, false);
                 searchView.clearFocus();
-
+                searchViewQuery = query;
                 populateListView();
 
                 return false;
@@ -128,7 +131,7 @@ public class ResultsFragment extends Fragment {
         });
 
         // set the query form home menu
-        if (searchViewQuery != null){
+        if (searchViewQuery != null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -147,28 +150,67 @@ public class ResultsFragment extends Fragment {
         populateListView();
     }
 
-    private void populateListView() {
+    public void populateListView() {
         progressBar.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
+        noResultsTextView.setVisibility(View.GONE);
 
         new LoadData().execute("");
     }
 
 
-    public void setSearchViewQuery(String query) {
-        searchViewQuery = query;
-    }
-
-    private void setNumberOfResults(){
+    private void setNumberOfResults() {
         int nbResults = itemList.size();
         String text = nbResults + " ";
-        if(nbResults == 1)
+        if (nbResults == 1)
             text += "RESULT";
         else
             text += "RESULTS";
 
+
+        if (filterByConsole != null) {
+            text += ": " + Helper.convertConsoleToString(filterByConsole) + " consoles";
+        } else if (filterGamesByConsole != null) {
+            text += ": " + Helper.convertConsoleToString(filterGamesByConsole) + " games";
+        } else if (filterGamesByCategory != null) {
+            text += ": " + filterGamesByCategory;
+        } else {
+            text += ": " + searchViewQuery;
+
+        }
+
         nbResultsTextView.setText(text);
     }
+
+
+    public void setFilterGamesByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+        filterByConsole = null;
+        filterGamesByConsole = consoleToFilterBy;
+        filterGamesByCategory = null;
+        searchViewQuery = "";
+    }
+
+    public void setFilterByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+        filterByConsole = consoleToFilterBy;
+        filterGamesByConsole = null;
+        filterGamesByCategory = null;
+        searchViewQuery = "";
+    }
+
+    public void setFilterGamesByCategory(VideoGameVariables.CATEGORY categoryToFilterBy) {
+        filterByConsole = null;
+        filterGamesByConsole = null;
+        filterGamesByCategory = categoryToFilterBy;
+        searchViewQuery = "";
+    }
+
+    public void setSearchViewQuery(String query) {
+        filterByConsole = null;
+        filterGamesByConsole = null;
+        filterGamesByCategory = null;
+        searchViewQuery = query;
+    }
+
 
     // holder pattern for listview items
     private class CustomListAdapter extends BaseAdapter {
@@ -205,10 +247,11 @@ public class ResultsFragment extends Fragment {
         public class Holder {
             TextView title;
             TextView consolePublisher;
-            TextView ERSB;
+            TextView esrb;
             TextView release;
             TextView price;
             ImageView imageView;
+            Button cartButton;
         }
 
         @Override
@@ -220,36 +263,59 @@ public class ResultsFragment extends Fragment {
 
             holder.title = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_title);
             holder.consolePublisher = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_console_publisher);
-            holder.ERSB = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_ERSB);
+            holder.esrb = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_esrb);
             holder.release = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_release);
             holder.price = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_price);
             holder.imageView = (ImageView) rowView.findViewById(R.id.custom_layout_item_listview_image);
+            holder.cartButton = (Button) rowView.findViewById(R.id.custom_layout_item_add_cart);
 
 
-            Item viewItem = itemList.get(position);
-
-            holder.title.setText(viewItem.getName());
-            holder.release.setText("Published " + viewItem.getDatePublished());
-            holder.price.setText(Double.toString(viewItem.getPrice()) + "$");
+            final Item rowItem = itemList.get(position);
 
 
-            if (viewItem.getItemType() == ItemVariables.TYPE.CONSOLE) {
-                  holder.ERSB.setVisibility(View.GONE);
-                holder.consolePublisher.setText("Console by " + viewItem.getPublisher());
+            holder.cartButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) getActivity()).addItemToCart(rowItem.getItemId(), rowItem.getItemType());
+                }
+            });
+
+
+            holder.title.setText(rowItem.getName());
+            holder.release.setText("Published " + rowItem.getDatePublished());
+            holder.price.setText(Double.toString(rowItem.getPrice()) + "$");
+
+
+            if (rowItem.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                holder.esrb.setVisibility(View.GONE);
+                holder.consolePublisher.setText("Console by " + rowItem.getPublisher());
 
             } else {
-                holder.consolePublisher.setText("Console by " + viewItem.getPublisher());
-                holder.ERSB.setText("ESRB: " + ((VideoGame) viewItem).getErsbRating());
+                List<ItemVariables.CONSOLES> consolesList = databaseManager.getConsolesFromGameId(rowItem.getItemId());
+
+                String console = "";
+                if (consolesList.size() == 1) {
+                    console = Helper.convertConsoleToString(consolesList.get(0));
+                } else if (consolesList.size() == 0) {
+                    console = "No consoles";
+                } else {
+                    console = "2+ Consoles";
+                }
+
+                holder.consolePublisher.setText(console + " by " + rowItem.getPublisher());
+                holder.esrb.setText("ESRB: " + Helper.convertESRBToString(((VideoGame) rowItem).getesrbRating()));
+
             }
 
-            if (position < imagesList.size())
-                holder.imageView.setImageBitmap(imagesList.get(position));
+            if (position < imagesURLList.size())
+                new Helper.ReplaceImageViewWithURL(holder.imageView).execute(imagesURLList.get(position));
 
             rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
 
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(rowItem.getItemId(), rowItem.getItemType());
                     ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
                 }
             });
@@ -258,7 +324,6 @@ public class ResultsFragment extends Fragment {
             return rowView;
 
         }
-
     }
 
     private class LoadData extends AsyncTask<String, Void, String> {
@@ -267,52 +332,46 @@ public class ResultsFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             loading = true;
-            imagesList.clear();
-
-
+            imagesURLList.clear();
 
             // TODO change way of fetching data to more generic one
-            itemList = databaseManager.getAllItems();
 
-
-
-            try {
-
-                String url = ("http://used.agwest.com/images/default-image-agwest-thumb.jpg");
-                InputStream in = new java.net.URL(url).openStream();
-                Bitmap unavailableImage = BitmapFactory.decodeStream(in);
-
-                List<ItemImage> itemImages = new ArrayList<>();
-                for(int counter = 0; counter < itemList.size(); counter++){
-                    itemImages.clear();
-                        Item currentItem = itemList.get(counter);
-
-                    if(currentItem.getItemType() == ItemVariables.TYPE.CONSOLE){
-                        itemImages = databaseManager.getImagesFromConsoleId(((Console)currentItem).getConsoleId(), true);
-                    }else{
-                        itemImages = databaseManager.getImagesFromGameId(((VideoGame)currentItem).getGameId(), true);
-                    }
-
-                    if(itemImages.isEmpty()){
-                        imagesList.add(unavailableImage);
-                    }else{
-                        url = (itemImages.get(0).getImageURL());
-                        in = new java.net.URL(url).openStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(in);
-                        imagesList.add(bitmap);
-                    }
-
-
-                }
-
-//                url = ();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (filterByConsole != null) {
+                itemList = databaseManager.getConsolesByType(filterByConsole);
+            } else if (filterGamesByConsole != null) {
+                itemList = databaseManager.getGamesFromConsoleType(filterGamesByConsole);
+            } else if (filterGamesByCategory != null) {
+                itemList = databaseManager.getGamesByCategory(filterGamesByCategory);
+            } else {
+                if (searchViewQuery == "")
+                    itemList = databaseManager.getAllItems();
+                else
+                    itemList = databaseManager.getItemsByQuery(searchViewQuery);
             }
 
+
+            if (!itemList.isEmpty()) {
+
+                List<ItemImage> itemImages = new ArrayList<>();
+                for (int counter = 0; counter < itemList.size(); counter++) {
+                    itemImages.clear();
+                    Item currentItem = itemList.get(counter);
+
+                    if (currentItem.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                        itemImages = databaseManager.getImagesFromConsoleId(currentItem.getItemId(), true);
+                    } else {
+                        itemImages = databaseManager.getImagesFromGameId(currentItem.getItemId(), true);
+                    }
+
+                    if (itemImages.isEmpty()) {
+                        imagesURLList.add("");
+                    } else {
+                        String url = (itemImages.get(0).getImageURL());
+                        imagesURLList.add(url);
+                    }
+                }
+
+            }
 
 
             return null;
@@ -324,10 +383,26 @@ public class ResultsFragment extends Fragment {
             super.onPostExecute(s);
 
             customListAdapter.notifyDataSetChanged();
-
             progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
+
+
+            if (itemList.isEmpty()) {
+                listView.setVisibility(View.GONE);
+                noResultsTextView.setVisibility(View.VISIBLE);
+                noResultsTextView.setText("No results for query " + searchViewQuery + "");
+            } else {
+                listView.setVisibility(View.VISIBLE);
+                noResultsTextView.setVisibility(View.GONE);
+            }
+
             setNumberOfResults();
+
+
+            filterByConsole = null;
+            filterGamesByConsole = null;
+            filterGamesByCategory = null;
+            searchViewQuery = "";
+
 
             loading = false;
 

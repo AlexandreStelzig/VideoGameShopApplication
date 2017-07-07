@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.model.ApplicationTable;
 import a7967917_7698299.videogameshopapplication.model.Cart;
 import a7967917_7698299.videogameshopapplication.model.CartItem;
 import a7967917_7698299.videogameshopapplication.model.Console;
@@ -106,6 +107,34 @@ public class DatabaseManager {
         return games;
     }
 
+    public VideoGame getGameById(long gameId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_VIDEO_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_GAME_ID + "=" + gameId, null);
+        VideoGame game = null;
+
+        if (cursor.moveToFirst()) {
+            game = fetchVideoGameFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return game;
+    }
+
+    public Console getConsoleById(long consoleId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_CONSOLE.COLUMN_CONSOLE_ID + "=" + consoleId, null);
+        Console console = null;
+
+        if (cursor.moveToFirst()) {
+            console = fetchConsoleFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return console;
+    }
+
     public List<Item> getAllItems() {
 
         List<Console> consoleList = getAllConsoles();
@@ -137,7 +166,7 @@ public class DatabaseManager {
             while (cursor.isAfterLast() == false) {
                 imageList.add(fetchImageConsoleFromCursor(cursor));
                 cursor.moveToNext();
-                if(firstImageOnly)
+                if (firstImageOnly)
                     break;
             }
 
@@ -161,7 +190,7 @@ public class DatabaseManager {
             while (cursor.isAfterLast() == false) {
                 imageList.add(fetchImageGameFromCursor(cursor));
                 cursor.moveToNext();
-                if(firstImageOnly)
+                if (firstImageOnly)
                     break;
             }
 
@@ -171,13 +200,292 @@ public class DatabaseManager {
         return imageList;
     }
 
+    public List<ConsoleVideoGame> getConsoleVideoGameFromGameId(long gameId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_GAME_ID + "=" + gameId, null);
+
+
+        List<ConsoleVideoGame> consoleList = new ArrayList<ConsoleVideoGame>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                consoleList.add(fetchConsoleVideoGameFromCursor(cursor));
+                cursor.moveToNext();
+            }
+
+        }
+
+        cursor.close();
+        return consoleList;
+    }
+
+    public List<ConsoleVideoGame> getConsoleVideoGameFromConsoleType(ItemVariables.CONSOLES consoleType) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_CONSOLE_NAME + "='" + consoleType.toString() + "'", null);
+
+
+        List<ConsoleVideoGame> consoleList = new ArrayList<ConsoleVideoGame>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                consoleList.add(fetchConsoleVideoGameFromCursor(cursor));
+                cursor.moveToNext();
+            }
+
+        }
+
+        cursor.close();
+        return consoleList;
+    }
+
+
+    public List<Item> getGamesFromConsoleType(ItemVariables.CONSOLES consoleType) {
+
+        List<ConsoleVideoGame> consoleVideoGames = getConsoleVideoGameFromConsoleType(consoleType);
+
+
+        List<Item> videoGames = new ArrayList<>();
+        for (int i = 0; i < consoleVideoGames.size(); i++) {
+
+            VideoGame game = getGameById(consoleVideoGames.get(i).getGameId());
+
+            if (game != null)
+                videoGames.add((Item) game);
+        }
+
+        return videoGames;
+    }
+
+    public List<ItemVariables.CONSOLES> getConsolesFromGameId(long gameId) {
+        List<ConsoleVideoGame> consoleVideoGames = getConsoleVideoGameFromGameId(gameId);
+
+        List<ItemVariables.CONSOLES> consoles = new ArrayList<>();
+        for (int i = 0; i < consoleVideoGames.size(); i++) {
+
+            ItemVariables.CONSOLES console = Helper.convertStringToConsole(consoleVideoGames.get(i).getConsoleName());
+
+            if (console != null)
+                consoles.add(console);
+        }
+
+        return consoles;
+    }
+
+    public List<Item> getGamesByCategory(VideoGameVariables.CATEGORY category) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_VIDEO_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_CATEGORY + "='" + category.toString() + "'", null);
+
+
+        List<Item> gameList = new ArrayList<Item>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                gameList.add(fetchVideoGameFromCursor(cursor));
+                cursor.moveToNext();
+            }
+
+        }
+
+        cursor.close();
+        return gameList;
+    }
+
+    public List<Item> getItemsByQuery(String query) {
+        List<Item> items = new ArrayList<>();
+        // ugly stuff but it works
+        List<VideoGame> videoGames = getAllGames();
+        List<Console> consoles = getAllConsoles();
+
+        for (int i = 0; i < videoGames.size(); i++) {
+            VideoGame videoGameTemp = videoGames.get(i);
+            if (videoGameTemp.getName().toLowerCase().contains(query))
+                items.add(videoGameTemp);
+        }
+
+        for (int i = 0; i < consoles.size(); i++) {
+            Console consoleTemp = consoles.get(i);
+            if (consoleTemp.getName().toLowerCase().contains(query))
+                items.add(consoleTemp);
+        }
+
+
+        return items;
+
+    }
+
+
+    public List<Item> getConsolesByType(ItemVariables.CONSOLES consoleType) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_CONSOLE.COLUMN_CONSOLE_TYPE + "='" + consoleType.toString() + "'", null);
+
+        List<Item> consoleList = new ArrayList<Item>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                consoleList.add(fetchConsoleFromCursor(cursor));
+                cursor.moveToNext();
+            }
+
+        }
+
+        cursor.close();
+        return consoleList;
+    }
+
+    public ApplicationTable getApplicationTable() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_APPLICATION.TABLE_NAME, null);
+
+        ApplicationTable app = null;
+
+        if (cursor.moveToFirst()) {
+            app = fetchApplicationFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return app;
+    }
+
+    public User getCurrentActiveUser() {
+        long activeUserId = getApplicationTable().getActiveUserId();
+        User user = getUserById(activeUserId);
+
+        // returns null if no active user
+        return user;
+    }
+
+    public User getUserById(long userId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_USER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_USER.COLUMN_USER_ID + "=" + userId, null);
+
+        User user = null;
+
+        if (cursor.moveToFirst()) {
+            user = fetchUserFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return user;
+    }
+
+    public WishList getWishlistByUserId(long userId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_WISHLIST.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_WISHLIST.COLUMN_USER_ID + "=" + userId, null);
+
+        WishList wishList = null;
+
+        if (cursor.moveToFirst()) {
+            wishList = fetchWishListFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return wishList;
+    }
+
+    public WishList getCurrentActiveUserWishlist() {
+        User currentUser = getCurrentActiveUser();
+
+        if (currentUser != null)
+            return getWishlistByUserId(currentUser.getUserId());
+        return null;
+    }
+
+    public List<Item> getAllWishListItems() {
+        List<Item> itemList = new ArrayList<>();
+        itemList.addAll(getAllWishlistConsoles());
+        itemList.addAll(getAllWishlistGames());
+
+        return itemList;
+    }
+
+    private List<Item> getAllWishlistConsoles() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID + "=" + getWishlistByUserId(getCurrentActiveUser().getUserId()).getWishListId(), null);
+
+
+        List<WishListItem> wishListItems = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                wishListItems.add(fetchWishListItemConsoleFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+
+        List<Item> consoleList = new ArrayList<>();
+        for (int i = 0; i < wishListItems.size(); i++) {
+            consoleList.add(getConsoleById(wishListItems.get(i).getItemId()));
+        }
+
+        cursor.close();
+        return consoleList;
+    }
+
+    private List<Item> getAllWishlistGames() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID + "=" + getWishlistByUserId(getCurrentActiveUser().getUserId()).getWishListId(), null);
+
+
+        List<WishListItem> wishListItems = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                wishListItems.add(fetchWishListItemGameFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+
+        List<Item> gameList = new ArrayList<>();
+        for (int i = 0; i < wishListItems.size(); i++) {
+            gameList.add(getGameById(wishListItems.get(i).getItemId()));
+        }
+
+        cursor.close();
+        return gameList;
+    }
+
 
     ////////////// CREATE METHODS //////////////
-
-    public long createConsole(String name, double price, String description, int reviewInt, String publisher, String datePublished) {
+    public long createApplicationTable() {
         SQLiteDatabase db = database.getWritableDatabase();
         ContentValues values = new ContentValues();
 
+        values.put(DatabaseVariables.TABLE_APPLICATION.COLUMN_CURRENT_USER, -1);
+
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_APPLICATION.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while creating app");
+        else {
+            Log.d("DatabaseManager", "added app");
+        }
+        return newRowId;
+    }
+
+    public long createConsole(ItemVariables.CONSOLES consoleType, String name, double price, String description, int reviewInt, String publisher, String datePublished) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_CONSOLE.COLUMN_CONSOLE_TYPE, consoleType.toString());
         values.put(DatabaseVariables.TABLE_CONSOLE.COLUMN_NAME, name);
         values.put(DatabaseVariables.TABLE_CONSOLE.COLUMN_PRICE, price);
         values.put(DatabaseVariables.TABLE_CONSOLE.COLUMN_DESCRIPTION, description);
@@ -201,7 +509,7 @@ public class DatabaseManager {
     }
 
     public long createVideoGame(String name, double price, String description, int reviewInt,
-                                String publisher, String datePublished, String ersbRating, double gameLength,
+                                String publisher, String datePublished, String esrbRating, double gameLength,
                                 String gameCategory, String gameRegion, int numberOfPlayers) {
 
         SQLiteDatabase db = database.getWritableDatabase();
@@ -214,7 +522,7 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_PUBLISHER, publisher);
         values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_DATE_PUBLISHED, datePublished);
 
-        values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_ERSB, ersbRating);
+        values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_ESRB, esrbRating);
         values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_LENGTH, gameLength);
         values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_CATEGORY, gameCategory);
         values.put(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_REGION, gameRegion);
@@ -234,6 +542,73 @@ public class DatabaseManager {
         return newRowId;
 
     }
+
+    public long createUser(String email, String password, String firstName, String lastName) {
+
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_EMAIL, email);
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_PASSWORD, password);
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_FIRST_NAME, firstName);
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_LAST_NAME, lastName);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_USER.TABLE_NAME,
+                null,
+                values);
+
+        // create user 1 to 1 associations
+        createWishlist(newRowId);
+        createCart(newRowId);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding user " + email);
+        else {
+            Log.d("DatabaseManager", "added " + email);
+        }
+        return newRowId;
+    }
+
+    private long createWishlist(long userId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_WISHLIST.COLUMN_USER_ID, userId);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_WISHLIST.TABLE_NAME,
+                null,
+                values);
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding wishlist " + userId);
+        else {
+            Log.d("DatabaseManager", "added " + userId);
+        }
+        return newRowId;
+    }
+
+    private long createCart(long userId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_CART.COLUMN_USER_ID, userId);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_CART.TABLE_NAME,
+                null,
+                values);
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding cart " + userId);
+        else {
+            Log.d("DatabaseManager", "added " + userId);
+        }
+        return newRowId;
+    }
+
 
     public long createItemImage(ItemVariables.TYPE itemType, String imageURL, long itemId) {
 
@@ -289,7 +664,132 @@ public class DatabaseManager {
     }
 
 
+    public long createConsoleVideoGame(ItemVariables.CONSOLES consoleType, long gameId) {
+
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_CONSOLE_NAME, consoleType.toString());
+        values.put(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_GAME_ID, gameId);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding consoleVideoGame " + gameId);
+        else {
+            Log.d("DatabaseManager", "added " + gameId);
+        }
+        return newRowId;
+
+    }
+
+    public long createCartItemConsole(ItemVariables.CONSOLES consoleType, long gameId) {
+
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_CONSOLE_NAME, consoleType.toString());
+        values.put(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_GAME_ID, gameId);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding consoleVideoGame " + gameId);
+        else {
+            Log.d("DatabaseManager", "added " + gameId);
+        }
+        return newRowId;
+
+    }
+
+
+    public long createWishList(ItemVariables.TYPE itemType, long itemId) {
+
+        if (itemType == ItemVariables.TYPE.CONSOLE)
+            return createWishlistConsole(itemId);
+        else
+            return createWishlistGame(itemId);
+
+    }
+
+    private long createWishlistGame(long itemId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID, itemId);
+        values.put(DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.COLUMN_WISHLIST_ID, getCurrentActiveUserWishlist().getWishListId());
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding console " + itemId);
+        else {
+            Log.d("DatabaseManager", "added " + itemId);
+        }
+        return newRowId;
+
+    }
+
+    private long createWishlistConsole(long itemId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID, itemId);
+        values.put(DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_WISHLIST_ID, getCurrentActiveUserWishlist().getWishListId());
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding console " + itemId);
+        else {
+            Log.d("DatabaseManager", "added " + itemId);
+        }
+        return newRowId;
+    }
+
+
     ////////////// UPDATE METHODS //////////////
+
+    public void setCurrentActiveUser(long userId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_APPLICATION.COLUMN_CURRENT_USER, userId);
+        db.update(DatabaseVariables.TABLE_APPLICATION.TABLE_NAME, values,
+                DatabaseVariables.TABLE_APPLICATION.COLUMN_APPLICATION_ID + "=" + getApplicationTable().getAppId(), null);
+
+    }
+    ////////////// DELETE METHODS //////////////
+
+    public boolean deleteWishlist(long itemId, ItemVariables.TYPE itemType) {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        if (itemType == ItemVariables.TYPE.CONSOLE)
+            return db.delete(DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME, DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID
+                    + "=" + itemId, null) > 0;
+        else
+            return db.delete(DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.TABLE_NAME, DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID
+                    + "=" + itemId, null) > 0;
+
+
+    }
+
 
     ////////////// HELPERS METHODS //////////////
 
@@ -351,6 +851,8 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_CONSOLE.COLUMN_CONSOLE_ID));
         String name = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_CONSOLE.COLUMN_NAME));
+        String console = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_CONSOLE.COLUMN_CONSOLE_TYPE));
         double price = cursor.getDouble(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_CONSOLE.COLUMN_PRICE));
         String description = cursor.getString(cursor
@@ -363,19 +865,20 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_CONSOLE.COLUMN_DATE_PUBLISHED));
 
         ItemVariables.STAR_REVIEW review = Helper.convertIntegerToReview(reviewInt);
+        ItemVariables.CONSOLES consoleType = Helper.convertStringToConsole(console);
 
-        return new Console(consoleId, name, price, description, review, publisher, datePublished);
+        return new Console(ItemVariables.TYPE.CONSOLE, name, price, description, review, publisher, datePublished, consoleId, consoleType);
     }
 
     private ConsoleVideoGame fetchConsoleVideoGameFromCursor(Cursor cursor) {
 
-        long consoleId = cursor.getInt(cursor
-                .getColumnIndex(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_CONSOLE_ID));
+        String consoleName = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_CONSOLE_NAME));
         long gameId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_CONSOLE_VIDEO_GAME.COLUMN_GAME_ID));
 
 
-        return new ConsoleVideoGame(consoleId, gameId);
+        return new ConsoleVideoGame(consoleName, gameId);
     }
 
     private ItemImage fetchImageConsoleFromCursor(Cursor cursor) {
@@ -504,6 +1007,17 @@ public class DatabaseManager {
         return new User(userId, email, password, firstName, lastName);
     }
 
+    private ApplicationTable fetchApplicationFromCursor(Cursor cursor) {
+
+        long appId = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_APPLICATION.COLUMN_APPLICATION_ID));
+        long userId = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_APPLICATION.COLUMN_CURRENT_USER));
+
+
+        return new ApplicationTable(appId, userId);
+    }
+
     private WishList fetchWishListFromCursor(Cursor cursor) {
         int wishListId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_WISHLIST.COLUMN_WISHLIST_ID));
@@ -547,8 +1061,8 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_PUBLISHER));
         String datePublished = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_DATE_PUBLISHED));
-        String ERSBString = cursor.getString(cursor
-                .getColumnIndex(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_ERSB));
+        String esrbString = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_ESRB));
         double gameLength = cursor.getDouble(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_LENGTH));
         String gameCategoryString = cursor.getString(cursor
@@ -561,12 +1075,12 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_VIDEO_GAME.COLUMN_GAME_ID));
 
         ItemVariables.STAR_REVIEW review = Helper.convertIntegerToReview(reviewInteger);
-        VideoGameVariables.ERSB ersb = Helper.convertStringToERSB(ERSBString);
+        VideoGameVariables.ESRB esrb = Helper.convertStringToesrb(esrbString);
         VideoGameVariables.CATEGORY gameCategory = Helper.convertStringToCategory(gameCategoryString);
         VideoGameVariables.REGION gameRegion = Helper.convertStringToRegion(gameRegionString);
 
         return new VideoGame(name, price, description, review,
-                publisher, datePublished, ersb,
+                publisher, datePublished, esrb,
                 gameLength, gameCategory, gameRegion, numberOfPlayers, gameId);
     }
 
@@ -582,6 +1096,48 @@ public class DatabaseManager {
             Log.d("isDatabaseEmpty", "database already initiated");
             return false;
         }
+    }
+
+    public boolean isItemAlreadyInWishlist(long itemId, ItemVariables.TYPE itemType) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor mCursor = null;
+        if (itemType == ItemVariables.TYPE.CONSOLE) {
+            mCursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.TABLE_NAME + " WHERE "
+                    + DatabaseVariables.TABLE_WISHLIST_ITEM_CONSOLE.COLUMN_CONSOLE_ID + "=" + itemId, null);
+        } else {
+            mCursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.TABLE_NAME + " WHERE "
+                    + DatabaseVariables.TABLE_WISHLIST_ITEM_GAME.COLUMN_GAME_ID + "=" + itemId, null);
+        }
+
+        if (mCursor.getCount() == 0) {
+            Log.d("isDatabaseEmpty", "item doesn't exist");
+            return false;
+        } else {
+            Log.d("isDatabaseEmpty", "item already exist");
+            return true;
+        }
+
+    }
+
+    public boolean isItemAlreadyInCart(long itemId, ItemVariables.TYPE itemType) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor mCursor = null;
+        if (itemType == ItemVariables.TYPE.CONSOLE) {
+            mCursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CART_ITEM_CONSOLE.TABLE_NAME + " WHERE "
+                    + DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_CONSOLE_ID + "=" + itemId, null);
+        } else {
+            mCursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CART_ITEM_GAME.TABLE_NAME + " WHERE "
+                    + DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_GAME_ID + "=" + itemId, null);
+        }
+
+        if (mCursor.getCount() == 0) {
+            Log.d("isDatabaseEmpty", "item doesn't exist");
+            return false;
+        } else {
+            Log.d("isDatabaseEmpty", "item already exist");
+            return true;
+        }
+
     }
 
 }

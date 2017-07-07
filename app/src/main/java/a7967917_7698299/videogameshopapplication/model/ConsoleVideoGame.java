@@ -6,20 +6,20 @@ package a7967917_7698299.videogameshopapplication.model;
 
 public class ConsoleVideoGame {
 
-    private long consoleId;
+    private String consoleName;
     private long gameId;
 
-    public ConsoleVideoGame(long consoleId, long gameId) {
-        this.consoleId = consoleId;
+    public ConsoleVideoGame(String consoleName, long gameId) {
+        this.consoleName = consoleName;
         this.gameId = gameId;
     }
 
-    public long getConsoleId() {
-        return consoleId;
+    public String getConsoleName() {
+        return consoleName;
     }
 
-    public void setConsoleId(long consoleId) {
-        this.consoleId = consoleId;
+    public void setConsoleName(String consoleName) {
+        this.consoleName = consoleName;
     }
 
     public long getGameId() {

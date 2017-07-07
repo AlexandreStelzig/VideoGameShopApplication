@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
@@ -48,34 +49,62 @@ public final class Helper {
     }
 
 
-    public static VideoGameVariables.ERSB convertStringToERSB(String ersb) {
+    public static VideoGameVariables.ESRB convertStringToesrb(String esrb) {
 
-        VideoGameVariables.ERSB convertedERSB = VideoGameVariables.ERSB.CHILDHOOD;
+        VideoGameVariables.ESRB convertedesrb = VideoGameVariables.ESRB.CHILDHOOD;
 
-        switch (ersb) {
+        switch (esrb) {
             case "CHILDHOOD":
-                convertedERSB = VideoGameVariables.ERSB.CHILDHOOD;
+                convertedesrb = VideoGameVariables.ESRB.CHILDHOOD;
                 break;
             case "EVERYONE":
-                convertedERSB = VideoGameVariables.ERSB.EVERYONE;
+                convertedesrb = VideoGameVariables.ESRB.EVERYONE;
                 break;
             case "EVERYONE_10PLUS":
-                convertedERSB = VideoGameVariables.ERSB.EVERYONE_10PLUS;
+                convertedesrb = VideoGameVariables.ESRB.EVERYONE_10PLUS;
                 break;
             case "TEEN":
-                convertedERSB = VideoGameVariables.ERSB.TEEN;
+                convertedesrb = VideoGameVariables.ESRB.TEEN;
                 break;
             case "MATURE_17PLUS":
-                convertedERSB = VideoGameVariables.ERSB.MATURE_17PLUS;
+                convertedesrb = VideoGameVariables.ESRB.MATURE_17PLUS;
                 break;
             case "ADULT_18PLUS":
-                convertedERSB = VideoGameVariables.ERSB.ADULT_18PLUS;
+                convertedesrb = VideoGameVariables.ESRB.ADULT_18PLUS;
                 break;
 
         }
-        return convertedERSB;
+        return convertedesrb;
 
     }
+
+    public static String convertESRBToString(VideoGameVariables.ESRB esrb){
+        String convertedERSB = "";
+
+        switch (esrb){
+
+            case CHILDHOOD:
+                convertedERSB = "Childhood";
+                break;
+            case EVERYONE:
+                convertedERSB = "Everyone";
+                break;
+            case EVERYONE_10PLUS:
+                convertedERSB = "Everyone 10+";
+                break;
+            case TEEN:
+                convertedERSB = "Teen";
+                break;
+            case MATURE_17PLUS:
+                convertedERSB = "Mature 17+";
+                break;
+            case ADULT_18PLUS:
+                convertedERSB = "Adult 18+";
+                break;
+        }
+        return convertedERSB;
+    }
+
 
     public static VideoGameVariables.CATEGORY convertStringToCategory(String category) {
 
@@ -143,5 +172,83 @@ public final class Helper {
         }
         return convertedStatus;
     }
+
+    public static ItemVariables.CONSOLES convertStringToConsole(String console) {
+
+        ItemVariables.CONSOLES convertedConsole = ItemVariables.CONSOLES.SWITCH;
+
+        switch (console) {
+
+            case "SWITCH":
+                convertedConsole = ItemVariables.CONSOLES.SWITCH;
+                break;
+            case "PS4":
+                convertedConsole = ItemVariables.CONSOLES.PS4;
+                break;
+            case "XBOXONE":
+                convertedConsole = ItemVariables.CONSOLES.XBOXONE;
+                break;
+            case "THREE_DS":
+                convertedConsole = ItemVariables.CONSOLES.THREE_DS;
+                break;
+        }
+        return convertedConsole;
+    }
+
+    public static String convertConsoleToString(ItemVariables.CONSOLES console) {
+
+        String consoleString = "";
+
+        switch (console) {
+            case SWITCH:
+                consoleString = "Switch";
+                break;
+            case THREE_DS:
+                consoleString = "3DS";
+                break;
+            case PS4:
+                consoleString = "PS4";
+                break;
+            case XBOXONE:
+                consoleString = "Xbox One";
+                break;
+        }
+        return consoleString;
+    }
+
+    public static class ReplaceImageViewWithURL extends AsyncTask<String, Void, Bitmap> {
+        ImageView imageView;
+
+        public ReplaceImageViewWithURL(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+
+                try {
+                    InputStream in = new java.net.URL("http://used.agwest.com/images/default-image-agwest-thumb.jpg").openStream();
+                    mIcon11 = BitmapFactory.decodeStream(in);
+                } catch (Exception e2) {
+                    Log.e("Error", e2.getMessage());
+                    e2.printStackTrace();
+                }
+
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
+    }
+
 
 }

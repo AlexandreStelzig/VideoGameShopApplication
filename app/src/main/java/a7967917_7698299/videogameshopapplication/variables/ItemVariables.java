@@ -21,5 +21,12 @@ public final class ItemVariables {
         GAME
     }
 
+    public enum CONSOLES{
+        SWITCH,
+        THREE_DS,
+        PS4,
+        XBOXONE
+    }
+
 
 }

@@ -14,11 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import a7967917_7698299.videogameshopapplication.database.Database;
 import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
@@ -30,6 +30,8 @@ import a7967917_7698299.videogameshopapplication.fragments.OrdersFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ResultsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SettingsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
+import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
+import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private NavigationView navigationView;
 
+    // database
+    private DatabaseManager databaseManager;
 
 
     // logic variables
@@ -71,9 +75,10 @@ public class MainActivity extends AppCompatActivity
 
 
         DatabaseManager.initDatabase(this, DELETE_DATABASE_EVERY_REBUILD);
+        databaseManager = DatabaseManager.getInstance();
 
         // if database if empty, populate data
-        if (DatabaseManager.getInstance().isDatabaseEmpty()) {
+        if (databaseManager.isDatabaseEmpty()) {
             DatabaseHardCodedValues.getInstance().initDatabase();
         }
 
@@ -120,7 +125,6 @@ public class MainActivity extends AppCompatActivity
         showingMainDrawerMenu = true;
 
 
-
         // set first fragment to home
         displayFragment(R.id.nav_home);
 
@@ -139,8 +143,6 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
 
-            // todo issue with back button when navigating to results screen (need to click twice)
-
             if (previousFragmentTag != -1) {
                 displayFragment(previousFragmentTag);
                 previousFragmentTag = -1;
@@ -153,7 +155,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
 
 
     @Override
@@ -222,18 +223,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     public void displayFragment(int itemId) {
-
-
 
 
         if (itemId == currentFragmentTag)
             return;
 
-        previousFragmentTag = currentFragmentTag;
-        currentFragmentTag = itemId;
+
         currentFragment = null;
         String title = getString(R.string.app_name);
         String subtitle = "";
@@ -249,51 +245,63 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_switch:
                 currentFragment = resultsFragment;
                 title = "Results";
+                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.SWITCH);
                 break;
             case R.id.nav_3ds:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.THREE_DS);
                 title = "Results";
                 break;
             case R.id.nav_ps4:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.PS4);
                 title = "Results";
                 break;
             case R.id.nav_xbox:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.XBOXONE);
                 title = "Results";
                 break;
             // games by category
             case R.id.nav_game_action:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.ACTION);
                 title = "Results";
                 break;
             case R.id.nav_game_adventure:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.ADVENTURE);
                 title = "Results";
                 break;
             case R.id.nav_game_rpg:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.RPG);
                 title = "Results";
                 break;
             case R.id.nav_game_sport:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.SPORTS);
                 title = "Results";
                 break;
             // games by console
             case R.id.nav_game_switch:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.SWITCH);
                 title = "Results";
                 break;
             case R.id.nav_game_3ds:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.THREE_DS);
                 title = "Results";
                 break;
             case R.id.nav_game_ps4:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.PS4);
                 title = "Results";
                 break;
             case R.id.nav_game_xbox:
                 currentFragment = resultsFragment;
+                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.XBOXONE);
                 title = "Results";
                 break;
 
@@ -357,7 +365,15 @@ public class MainActivity extends AppCompatActivity
         // animate the fragment navigation
         if (currentFragment != null) {
             if (!currentFragment.isVisible()) {
-                replaceFragmentWithAnimation(currentFragment, ""+ currentFragmentTag);
+                previousFragmentTag = currentFragmentTag;
+                currentFragmentTag = itemId;
+                replaceFragmentWithAnimation(currentFragment, "" + currentFragmentTag);
+            } else {
+                if (currentFragment.equals(resultsFragment)) {
+                    previousFragmentTag = currentFragmentTag = itemId;
+                    // repopulate list view with the new query if it's the fragment is already displayed
+                    resultsFragment.populateListView();
+                }
             }
         }
 
@@ -426,6 +442,32 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void addItemToCart(long itemId, ItemVariables.TYPE itemType) {
+        Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+    }
+
+    public void toggleWishlistAdd(long itemId, ItemVariables.TYPE itemType) {
+        boolean itemAlreadyInWishlist = databaseManager.isItemAlreadyInWishlist(itemId, itemType);
+
+        if (isUserConnected()) {
+            if (itemAlreadyInWishlist) {
+                databaseManager.deleteWishlist(itemId, itemType);
+                Toast.makeText(this, "Item removed from wishlist", Toast.LENGTH_SHORT).show();
+            } else {
+                databaseManager.createWishList(itemType, itemId);
+                Toast.makeText(this, "Item added to wishlist", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public boolean isUserConnected() {
+        if (databaseManager.getCurrentActiveUser() == null) {
+            Toast.makeText(this, "Please Log In", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     public void drawerHeaderButtonClicked(View view) {
         resetMainDrawerMenu();
     }
@@ -434,7 +476,12 @@ public class MainActivity extends AppCompatActivity
         resultsFragment.setSearchViewQuery(query);
     }
 
+    public void setItemIdToOpenAtInfoLaunch(long itemId, ItemVariables.TYPE itemType) {
+        itemInfoFragment.setItemIdToOpenAtLaunch(itemId, itemType);
+    }
 
-
-
+    public void continueShoppingClicked(View view) {
+        setSearchQuery("");
+        displayFragment(R.id.search_view_results);
+    }
 }

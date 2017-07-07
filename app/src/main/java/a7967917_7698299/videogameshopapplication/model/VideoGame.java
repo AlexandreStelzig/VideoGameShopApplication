@@ -10,29 +10,27 @@ import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
 public class VideoGame extends Item {
 
 
-    private VideoGameVariables.ERSB ersbRating;
+    private VideoGameVariables.ESRB esrbRating;
     private double gameLength;
     private VideoGameVariables.CATEGORY gameCategory;
     private VideoGameVariables.REGION gameRegion;
     private int numberOfPlayers;
-    private long gameId;
 
-    public VideoGame(String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished, VideoGameVariables.ERSB ersbRating, double gameLength, VideoGameVariables.CATEGORY gameCategory, VideoGameVariables.REGION gameRegion, int numberOfPlayers, long gameId) {
-        super(ItemVariables.TYPE.GAME, name, price, description, review, publisher, datePublished);
-        this.ersbRating = ersbRating;
+    public VideoGame(String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished, VideoGameVariables.ESRB esrbRating, double gameLength, VideoGameVariables.CATEGORY gameCategory, VideoGameVariables.REGION gameRegion, int numberOfPlayers, long gameId) {
+        super(gameId, ItemVariables.TYPE.GAME, name, price, description, review, publisher, datePublished);
+        this.esrbRating = esrbRating;
         this.gameLength = gameLength;
         this.gameCategory = gameCategory;
         this.gameRegion = gameRegion;
         this.numberOfPlayers = numberOfPlayers;
-        this.gameId = gameId;
     }
 
-    public VideoGameVariables.ERSB getErsbRating() {
-        return ersbRating;
+    public VideoGameVariables.ESRB getesrbRating() {
+        return esrbRating;
     }
 
-    public void setErsbRating(VideoGameVariables.ERSB ersbRating) {
-        this.ersbRating = ersbRating;
+    public void setesrbRating(VideoGameVariables.ESRB esrbRating) {
+        this.esrbRating = esrbRating;
     }
 
     public double getGameLength() {
@@ -65,13 +63,5 @@ public class VideoGame extends Item {
 
     public void setNumberOfPlayers(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
-    }
-
-    public long getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(long gameId) {
-        this.gameId = gameId;
     }
 }

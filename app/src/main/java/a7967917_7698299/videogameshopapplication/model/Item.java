@@ -15,9 +15,10 @@ public class Item {
     private ItemVariables.STAR_REVIEW review;
     private String publisher;
     private String datePublished;
+    private long itemId;
 
 
-    public Item(ItemVariables.TYPE itemType, String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished) {
+    public Item(long itemId, ItemVariables.TYPE itemType, String name, double price, String description, ItemVariables.STAR_REVIEW review, String publisher, String datePublished) {
         this.itemType = itemType;
         this.name = name;
         this.price = price;
@@ -25,6 +26,7 @@ public class Item {
         this.review = review;
         this.publisher = publisher;
         this.datePublished = datePublished;
+        this.itemId = itemId;
     }
 
     public ItemVariables.TYPE getItemType() {
@@ -81,5 +83,13 @@ public class Item {
 
     public void setDatePublished(String datePublished) {
         this.datePublished = datePublished;
+    }
+
+    public long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(long itemId) {
+        this.itemId = itemId;
     }
 }

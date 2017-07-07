@@ -57,7 +57,7 @@
             android:textColor="@color/primaryText"/>
 
         <TextView
-            android:id="@+id/custom_layout_item_listview_ERSB"
+            android:id="@+id/custom_layout_item_listview_esrb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -102,6 +102,7 @@
             android:clickable="true">
 
             <Button
+                android:id="@+id/custom_layout_item_add_cart"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"

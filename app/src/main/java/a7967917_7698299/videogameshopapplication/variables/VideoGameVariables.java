@@ -7,7 +7,7 @@ package a7967917_7698299.videogameshopapplication.variables;
 public final class VideoGameVariables {
 
 
-    public enum ERSB{
+    public enum ESRB{
         CHILDHOOD,
         EVERYONE,
         EVERYONE_10PLUS,
