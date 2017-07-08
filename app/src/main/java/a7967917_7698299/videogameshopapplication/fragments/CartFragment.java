@@ -134,7 +134,7 @@ public class CartFragment extends Fragment {
 
         }
 
-        totalTextView.setText(String.format("%.2f$", total));
+        totalTextView.setText("Subtotal: " + String.format("%.2f$", total));
     }
 
     private void amountDialog() {

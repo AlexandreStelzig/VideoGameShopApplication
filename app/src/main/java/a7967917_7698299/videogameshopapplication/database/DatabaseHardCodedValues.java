@@ -186,7 +186,7 @@ public class DatabaseHardCodedValues {
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.THREE_DS, itemId);
 
         // Pokemon Moon
-        itemId = databaseManager.createVideoGame("Pokémon Sun", 49.99, "In the Pokémon Sun and Pokémon Moon games, embark on an adventure as a Pokémon Trainer and catch, battle and trade all-new Pokémon on the tropical islands of the Alola Region. Engage in intense battles, and unleash new powerful moves. Discover and interact with Pokémon while training and connecting with your Pokémon to become the Pokémon Champion!",
+        itemId = databaseManager.createVideoGame("Pokémon Moon", 49.99, "In the Pokémon Sun and Pokémon Moon games, embark on an adventure as a Pokémon Trainer and catch, battle and trade all-new Pokémon on the tropical islands of the Alola Region. Engage in intense battles, and unleash new powerful moves. Discover and interact with Pokémon while training and connecting with your Pokémon to become the Pokémon Champion!",
                 5, "Nintendo", "November 18, 2016", VideoGameVariables.ESRB.EVERYONE.toString(), 35, VideoGameVariables.CATEGORY.ADVENTURE.toString(), VideoGameVariables.REGION.ALL.toString(), 1);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://www.serebii.net/sunmoon/moonbox.jpg", itemId);
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.THREE_DS, itemId);

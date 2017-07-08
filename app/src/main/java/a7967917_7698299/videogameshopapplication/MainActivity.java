@@ -35,6 +35,7 @@ import a7967917_7698299.videogameshopapplication.fragments.PaymentListFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ResultsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SettingsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SignInFragment;
+import a7967917_7698299.videogameshopapplication.fragments.SignUpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity
     private OrderInfoFragment orderInfoFragment;
     private PaymentInfoFragment paymentInfoFragment;
     private PaymentListFragment paymentListFragment;
+    private SignUpFragment signUpFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity
         orderInfoFragment = new OrderInfoFragment();
         paymentInfoFragment = new PaymentInfoFragment();
         paymentListFragment = new PaymentListFragment();
+        signUpFragment = new SignUpFragment();
 
         // init other
         viewIsAtHome = false;
@@ -444,6 +447,10 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = paymentListFragment;
                 title = "Payment List";
                 break;
+            case R.id.nav_sign_up :
+                currentFragment = signUpFragment;
+                title = "Create Account";
+                break;
             default:
                 currentFragment = homeFragment;
                 title = "Home";
@@ -512,6 +519,7 @@ public class MainActivity extends AppCompatActivity
         MenuItem navWishList = menuNav.findItem(R.id.nav_wishlist);
         MenuItem navOrders = menuNav.findItem(R.id.nav_orders);
         MenuItem signInOut = menuNav.findItem(R.id.nav_sign_in_out);
+        MenuItem signup = menuNav.findItem(R.id.nav_sign_up);
 
         boolean userActive = databaseManager.getCurrentActiveUser() != null;
 
@@ -519,9 +527,11 @@ public class MainActivity extends AppCompatActivity
         navAccount.setEnabled(userActive);
         navWishList.setEnabled(userActive);
         navOrders.setEnabled(userActive);
+        signup.setVisible(!userActive);
 
         if (userActive)
             signInOut.setTitle("Sign out");
+
         else
             signInOut.setTitle("Sign in");
 
