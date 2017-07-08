@@ -16,10 +16,11 @@ public class Order {
     private String dateOrdered;
     private String dateArriving;
     private OrderVariables.STATUS status;
+    private String deliverTo;
 
     // payment
     private int cardNumber;
-    private int nameOnCard;
+    private String nameOnCard;
     private int expirationMonth;
     private int expirationYear;
 
@@ -30,7 +31,7 @@ public class Order {
     private String city;
     private String postalCode;
 
-    public Order(long orderId, long userId, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, int nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+    public Order(long orderId, long userId, String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
         this.orderId = orderId;
         this.userId = userId;
         this.dateOrdered = dateOrdered;
@@ -45,8 +46,16 @@ public class Order {
         this.state = state;
         this.city = city;
         this.postalCode = postalCode;
+        this.deliverTo = deliverTo;
     }
 
+    public String getDeliverTo() {
+        return deliverTo;
+    }
+
+    public void setDeliverTo(String deliverTo) {
+        this.deliverTo = deliverTo;
+    }
 
     public long getOrderId() {
         return orderId;
@@ -96,11 +105,11 @@ public class Order {
         this.cardNumber = cardNumber;
     }
 
-    public int getNameOnCard() {
+    public String getNameOnCard() {
         return nameOnCard;
     }
 
-    public void setNameOnCard(int nameOnCard) {
+    public void setNameOnCard(String nameOnCard) {
         this.nameOnCard = nameOnCard;
     }
 

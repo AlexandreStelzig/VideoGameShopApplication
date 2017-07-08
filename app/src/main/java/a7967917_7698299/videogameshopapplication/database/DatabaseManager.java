@@ -938,6 +938,109 @@ public class DatabaseManager {
         return newRowId;
     }
 
+    public long createOrderFromItemsInCart(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+
+
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_CARD_NUMBER, cardNumber);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_CITY, city);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_COUNTRY, country);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_DATE_ARRIVING, dateArriving);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_DATE_ORDERED, dateOrdered);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_DELIVER_TO, deliverTo);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_EXPIRATION_MONTH, expirationMonth);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_EXPIRATION_YEAR, expirationYear);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_NAME_ON_CARD, nameOnCard);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_POSTAL_CODE, postalCode);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STATE, state);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STATUS, status.toString());
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STREET, street);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID, getCurrentActiveUser().getUserId());
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_ORDER.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding TABLE_ORDER ");
+        else {
+            Log.d("DatabaseManager", "added TABLE_ORDER");
+        }
+
+
+        // add items from cart
+        List<CartItem> cartItemist = getAllCartItems();
+        List<Item> itemList = getCurrentActiveUserItemsInCart();
+
+        for (int i = 0; i < itemList.size(); i++) {
+
+            Item temp = itemList.get(i);
+
+            if (temp.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                createOrderItemConsole(temp, cartItemist.get(i).getAmount(), newRowId);
+            } else {
+                createOrderItemGame(temp, cartItemist.get(i).getAmount(), newRowId);
+            }
+        }
+
+
+        // empty cart
+        deleteAllCartItems();
+
+        // empty wishlist that was in cart
+
+        return newRowId;
+    }
+
+
+    private long createOrderItemGame(Item item, int amount, long orderId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_ORDER_ID, orderId);
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID, item.getItemId());
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_AMOUNT, amount);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_ORDER_ITEM_GAME.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding TABLE_ORDER_ITEM_CONSOLE " + item.getItemId());
+        else {
+            Log.d("DatabaseManager", "added TABLE_ORDER_ITEM_CONSOLE" + item.getItemId());
+        }
+        return newRowId;
+    }
+
+    private long createOrderItemConsole(Item item, int amount, long orderId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_ORDER_ID, orderId);
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_CONSOLE_ID, item.getItemId());
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_AMOUNT, amount);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding TABLE_ORDER_ITEM_CONSOLE " + item.getItemId());
+        else {
+            Log.d("DatabaseManager", "added TABLE_ORDER_ITEM_CONSOLE" + item.getItemId());
+        }
+        return newRowId;
+    }
+
 
     ////////////// UPDATE METHODS //////////////
 
@@ -1020,6 +1123,22 @@ public class DatabaseManager {
                     + "=" + itemId + " AND " + DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_CART_ID + "=" + getCartByUserId(getCurrentActiveUser().getUserId()).getCartId(), null) > 0;
 
 
+    }
+
+    public boolean deleteAllCartItems() {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        List<CartItem> cartItems = getAllCartItems();
+
+        boolean passed = true;
+
+        for (int i = 0; i < cartItems.size(); i++) {
+            boolean ok = deleteCartItem(cartItems.get(i).getItemId(), cartItems.get(i).getItemType());
+            if (passed && !ok)
+                passed = false;
+        }
+
+        return passed;
     }
 
 
@@ -1151,7 +1270,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_STATUS));
         int cardNumber = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_CARD_NUMBER));
-        int nameOnCard = cursor.getInt(cursor
+        String nameOnCard = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_NAME_ON_CARD));
         int expirationMonth = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_EXPIRATION_MONTH));
@@ -1167,10 +1286,13 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_CITY));
         String postalCode = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_POSTAL_CODE));
+        String deliverTo = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_DELIVER_TO));
+
 
         OrderVariables.STATUS convertedStatus = Helper.convertStringToStatus(status);
 
-        return new Order(orderId, userId, dateOrdered,
+        return new Order(orderId, userId, dateOrdered, deliverTo,
                 dateArriving, convertedStatus, cardNumber, nameOnCard,
                 expirationMonth, expirationYear, street, country, state,
                 city, postalCode);

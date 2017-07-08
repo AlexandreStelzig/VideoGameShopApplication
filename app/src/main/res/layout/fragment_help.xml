@@ -4,11 +4,13 @@
     android:clickable="true"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <Button
+        android:id="@+id/test"
         android:gravity="center"
-        android:text="HELP"
-        android:textSize="28sp" />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_navigate_next_blue_grey_200_24dp"
+        android:padding="10dp"
+        android:text="Create order" />
 
 </LinearLayout>

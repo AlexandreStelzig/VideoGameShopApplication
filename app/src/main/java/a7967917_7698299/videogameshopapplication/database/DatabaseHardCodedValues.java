@@ -35,6 +35,7 @@ public class DatabaseHardCodedValues {
         databaseManager.setCurrentActiveUser(userId);
 
 
+
         // call the hardcoded data here
         initConsoles();
         initGames();
