@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.manager.SortingManager;
 import a7967917_7698299.videogameshopapplication.model.ApplicationTable;
 import a7967917_7698299.videogameshopapplication.model.Cart;
 import a7967917_7698299.videogameshopapplication.model.CartItem;
@@ -148,6 +149,8 @@ public class DatabaseManager {
         for (int i = 0; i < gameList.size(); i++) {
             itemList.add(gameList.get(i));
         }
+
+        itemList = SortingManager.getInstance().sortItemList(itemList);
 
         return itemList;
     }
@@ -288,6 +291,8 @@ public class DatabaseManager {
                 videoGames.add((Item) game);
         }
 
+        videoGames = SortingManager.getInstance().sortItemList(videoGames);
+
         return videoGames;
     }
 
@@ -323,6 +328,8 @@ public class DatabaseManager {
 
         }
 
+        gameList = SortingManager.getInstance().sortItemList(gameList);
+
         cursor.close();
         return gameList;
     }
@@ -347,6 +354,9 @@ public class DatabaseManager {
         }
 
 
+        items = SortingManager.getInstance().sortItemList(items);
+
+
         return items;
 
     }
@@ -367,6 +377,8 @@ public class DatabaseManager {
             }
 
         }
+
+        consoleList = SortingManager.getInstance().sortItemList(consoleList);
 
         cursor.close();
         return consoleList;
@@ -952,7 +964,6 @@ public class DatabaseManager {
         else
             updateCartAmountGame(itemId, amount);
     }
-
 
 
     public void updateCartAmountConsole(long itemId, int amount) {

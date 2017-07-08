@@ -331,6 +331,7 @@ public class ResultsFragment extends Fragment {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    searchView.clearFocus();
                     ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(rowItem.getItemId(), rowItem.getItemType());
                     ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
                 }

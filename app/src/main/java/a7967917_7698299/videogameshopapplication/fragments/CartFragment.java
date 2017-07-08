@@ -191,6 +191,7 @@ public class CartFragment extends Fragment {
                 cartItemList.get(positionSelected).setAmount(amountHolder);
                 customListAdapter.notifyDataSetChanged();
                 changeTotalText();
+                ((MainActivity) getActivity()).invalidateOptionsMenu();
             }
         });
 

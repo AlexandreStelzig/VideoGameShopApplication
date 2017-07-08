@@ -12,7 +12,7 @@ import a7967917_7698299.videogameshopapplication.R;
  * Created by alex on 2017-06-24.
  */
 
-public class OrdersFragment extends Fragment{
+public class PaymentInfoFragment extends Fragment {
 
 
     private View view;
@@ -21,7 +21,7 @@ public class OrdersFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_orders, container, false);
+        view = inflater.inflate(R.layout.fragment_payment_info, container, false);
         setHasOptionsMenu(true);
 
         return view;
