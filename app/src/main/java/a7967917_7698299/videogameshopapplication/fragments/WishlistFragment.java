@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -170,6 +171,8 @@ public class WishlistFragment extends Fragment {
 
             final Item rowItem = itemList.get(position);
 
+            ((TextView) rowView.findViewById(R.id.custom_layout_item_amount_edittext)).setVisibility(View.GONE);
+
 
             ((Button) rowView.findViewById(R.id.custom_layout_item_close_button)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,7 +186,16 @@ public class WishlistFragment extends Fragment {
                     imagesURLList.remove(position);
                     itemList.remove(position);
 
+                    setNumberOfResults();
                     customListAdapter.notifyDataSetChanged();
+
+                    if (itemList.isEmpty()) {
+                        listView.setVisibility(View.GONE);
+                        noResultsLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        listView.setVisibility(View.VISIBLE);
+                        noResultsLayout.setVisibility(View.GONE);
+                    }
                 }
             });
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -275,6 +276,7 @@ public class ResultsFragment extends Fragment {
             holder.cartButton = (Button) rowView.findViewById(R.id.custom_layout_item_add_cart);
 
             ((Button) rowView.findViewById(R.id.custom_layout_item_close_button)).setVisibility(View.GONE);
+            ((TextView) rowView.findViewById(R.id.custom_layout_item_amount_edittext)).setVisibility(View.GONE);
 
             final Item rowItem = itemList.get(position);
 

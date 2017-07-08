@@ -22,6 +22,7 @@ import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValue
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CartFragment;
+import a7967917_7698299.videogameshopapplication.fragments.CheckoutFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HelpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HomeFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ItemInfoFragment;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // IMPORTANT!!! TURN OFF FOR RELEASE
+    // TODO IMPORTANT!!! TURN OFF FOR RELEASE
     private boolean DELETE_DATABASE_EVERY_REBUILD = true;
 
     // components
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     private CartFragment cartFragment;
     private ItemInfoFragment itemInfoFragment;
     private SignInFragment signInFragment;
+    private CheckoutFragment checkoutFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity
         cartFragment = new CartFragment();
         itemInfoFragment = new ItemInfoFragment();
         signInFragment = new SignInFragment();
+        checkoutFragment = new CheckoutFragment();
 
         // init other
         viewIsAtHome = false;
@@ -390,6 +393,10 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = itemInfoFragment;
                 title = "Item info";
                 break;
+            case R.layout.fragment_checkout:
+                currentFragment = checkoutFragment;
+                title = "Checkout";
+                break;
             case R.id.nav_sign_in_out:
                 if (databaseManager.getCurrentActiveUser() == null) {
                     // sign in
@@ -439,13 +446,6 @@ public class MainActivity extends AppCompatActivity
             viewIsAtHome = false;
         }
 
-//        // hide keyboard (fix an issue with the keyboard staying up when changing fragments)
-//        View view = this.getCurrentFocus();
-//        if (view != null) {
-////            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-////            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//        }
-
     }
 
 
@@ -454,9 +454,9 @@ public class MainActivity extends AppCompatActivity
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (fragment.equals(cartFragment)) {
+        if (fragment.equals(cartFragment) && previousFragmentTag != R.layout.fragment_checkout || fragment.equals(checkoutFragment)) {
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        } else if (previousFragmentTag == R.id.action_cart) {
+        } else if (previousFragmentTag == R.id.action_cart || (previousFragmentTag == R.layout.fragment_checkout)) {
             transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         } else {
             transaction.setCustomAnimations(android.R.anim.fade_in,
