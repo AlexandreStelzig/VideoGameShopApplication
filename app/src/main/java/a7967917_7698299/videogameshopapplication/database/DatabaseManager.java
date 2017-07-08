@@ -19,8 +19,7 @@ import a7967917_7698299.videogameshopapplication.model.ConsoleVideoGame;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.model.Order;
-import a7967917_7698299.videogameshopapplication.model.OrderItemConsole;
-import a7967917_7698299.videogameshopapplication.model.OrderItemGame;
+import a7967917_7698299.videogameshopapplication.model.OrderItem;
 import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
 import a7967917_7698299.videogameshopapplication.model.User;
 import a7967917_7698299.videogameshopapplication.model.UserAddress;
@@ -595,6 +594,81 @@ public class DatabaseManager {
             return getCartByUserId(currentUser.getUserId());
         return null;
     }
+
+
+    public List<Order> getAllOrdersFromActiveUser() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId(), null);
+
+
+        List<Order> orderList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                orderList.add(fetchOrderFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return orderList;
+    }
+
+
+    public List<OrderItem> getOrderItemsFromOrderId(long orderId) {
+
+        List<OrderItem> consoles = getAllOrderItemConsoleFromOrderId( orderId);
+        List<OrderItem> games = getAllOrderItemGameFromOrderId(orderId);
+
+        List<OrderItem> items = new ArrayList<>();
+        items.addAll(consoles);
+        items.addAll(games);
+
+        return items;
+    }
+
+    private List<OrderItem> getAllOrderItemConsoleFromOrderId(long orderId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_ORDER_ID + "=" + orderId, null);
+
+
+        List<OrderItem> orderItemsConsole = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                orderItemsConsole.add(fetchOrderItemConsoleFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return orderItemsConsole;
+    }
+
+    private List<OrderItem> getAllOrderItemGameFromOrderId(long orderId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER_ITEM_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_ORDER_ID + "=" + orderId, null);
+
+
+        List<OrderItem> orderItemsGame = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                orderItemsGame.add(fetchOrderItemGameFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return orderItemsGame;
+    }
+
+
+
+
 
 
     ////////////// CREATE METHODS //////////////
@@ -1299,7 +1373,7 @@ public class DatabaseManager {
     }
 
 
-    private OrderItemConsole fetchOrderItemConsoleFromCursor(Cursor cursor) {
+    private OrderItem fetchOrderItemConsoleFromCursor(Cursor cursor) {
 
         long consoleId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_CONSOLE_ID));
@@ -1309,11 +1383,11 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_AMOUNT));
 
 
-        return new OrderItemConsole(consoleId, orderId, amount);
+        return new OrderItem(consoleId, orderId, amount, ItemVariables.TYPE.CONSOLE);
     }
 
 
-    private OrderItemGame fetchOrderItemGameFromCursor(Cursor cursor) {
+    private OrderItem fetchOrderItemGameFromCursor(Cursor cursor) {
 
         long gameId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID));
@@ -1323,7 +1397,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_AMOUNT));
 
 
-        return new OrderItemGame(gameId, orderId, amount);
+        return new OrderItem(gameId, orderId, amount, ItemVariables.TYPE.GAME);
     }
 
     private PaymentInformation fetchPaymentInformationFromCursor(Cursor cursor) {

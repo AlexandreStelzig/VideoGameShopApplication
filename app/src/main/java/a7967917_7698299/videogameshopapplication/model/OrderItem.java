@@ -6,24 +6,26 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
  * Created by alex on 2017-06-26.
  */
 
-public class OrderItemConsole {
+public class OrderItem {
 
-    private long consoleId;
+    private long itemId;
     private long orderId;
     private int amount;
+    private ItemVariables.TYPE itemType;
 
-    public OrderItemConsole(long consoleId, long orderId, int amount) {
-        this.consoleId = consoleId;
+    public OrderItem(long itemId, long orderId, int amount, ItemVariables.TYPE itemType) {
+        this.itemId = itemId;
         this.orderId = orderId;
         this.amount = amount;
+        this.itemType = itemType;
     }
 
-    public long getConsoleId() {
-        return consoleId;
+    public long getItemId() {
+        return itemId;
     }
 
-    public void setConsoleId(long consoleId) {
-        this.consoleId = consoleId;
+    public void setItemId(long itemId) {
+        this.itemId = itemId;
     }
 
     public long getOrderId() {
@@ -40,5 +42,13 @@ public class OrderItemConsole {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public ItemVariables.TYPE getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(ItemVariables.TYPE itemType) {
+        this.itemType = itemType;
     }
 }

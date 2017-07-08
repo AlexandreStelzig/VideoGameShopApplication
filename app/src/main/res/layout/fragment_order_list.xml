@@ -41,7 +41,8 @@
     <ListView
         android:id="@+id/fragment_order_list_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:padding="5dp"/>
 
     <LinearLayout
         android:id="@+id/fragment_order_list_no_results_layout"
