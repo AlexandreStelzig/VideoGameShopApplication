@@ -1,13 +1,97 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true">
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <TextView
+        android:id="@+id/signInText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="30dp"
+        android:text="SIGN IN"
+        android:textColor="@color/black"
+        android:textSize="28sp" />
+
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="SIGN IN"
-        android:textSize="28sp" />
+        android:gravity="center_horizontal"
+        android:text="E-mail:"
+        android:textColor="@color/black"
+        android:padding="5dp"
+        android:textSize="15sp"/>
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/editEmailSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:inputType="textEmailAddress"
+        android:padding="5dp"/>
+
+    <TextView
+        android:id="@+id/textPasswordSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="@color/black"
+        android:text="Password:"
+        android:textSize="15sp"/>
+
+    <EditText
+        android:id="@+id/editPasswordSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:inputType="textPassword"
+        android:padding="5dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <TextView
+        android:id="@+id/createAccountLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="displayFragment"
+        android:tag="@id/R.id."
+        android:text="Create account"
+        android:padding="3dp"
+        tools:textColor="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/forgotPasswordLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="forgotPassword"
+        android:text="Forgot Password?"
+        android:padding="3dp"
+        tools:textColor="@color/colorAccent" />
+
+    <Button
+        android:id="@+id/signInButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Sign In"
+        android:clickable="true"
+        android:onClick="signIn"/>
+
+
+</LinearLayout>

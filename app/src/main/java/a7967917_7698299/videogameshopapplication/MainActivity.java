@@ -574,4 +574,8 @@ public class MainActivity extends AppCompatActivity
         setSearchQuery("");
         displayFragment(R.id.search_view_results);
     }
+
+    public void signIn(View v) {
+        signInFragment.signIn(v);
+    }
 }
