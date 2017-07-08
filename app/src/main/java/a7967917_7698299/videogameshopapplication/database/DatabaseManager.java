@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.manager.SortingManager;
 import a7967917_7698299.videogameshopapplication.model.ApplicationTable;
 import a7967917_7698299.videogameshopapplication.model.Cart;
 import a7967917_7698299.videogameshopapplication.model.CartItem;
@@ -18,8 +19,7 @@ import a7967917_7698299.videogameshopapplication.model.ConsoleVideoGame;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.model.Order;
-import a7967917_7698299.videogameshopapplication.model.OrderItemConsole;
-import a7967917_7698299.videogameshopapplication.model.OrderItemGame;
+import a7967917_7698299.videogameshopapplication.model.OrderItem;
 import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
 import a7967917_7698299.videogameshopapplication.model.User;
 import a7967917_7698299.videogameshopapplication.model.UserAddress;
@@ -148,6 +148,8 @@ public class DatabaseManager {
         for (int i = 0; i < gameList.size(); i++) {
             itemList.add(gameList.get(i));
         }
+
+        itemList = SortingManager.getInstance().sortItemList(itemList);
 
         return itemList;
     }
@@ -288,6 +290,8 @@ public class DatabaseManager {
                 videoGames.add((Item) game);
         }
 
+        videoGames = SortingManager.getInstance().sortItemList(videoGames);
+
         return videoGames;
     }
 
@@ -323,6 +327,8 @@ public class DatabaseManager {
 
         }
 
+        gameList = SortingManager.getInstance().sortItemList(gameList);
+
         cursor.close();
         return gameList;
     }
@@ -347,6 +353,9 @@ public class DatabaseManager {
         }
 
 
+        items = SortingManager.getInstance().sortItemList(items);
+
+
         return items;
 
     }
@@ -367,6 +376,8 @@ public class DatabaseManager {
             }
 
         }
+
+        consoleList = SortingManager.getInstance().sortItemList(consoleList);
 
         cursor.close();
         return consoleList;
@@ -492,6 +503,25 @@ public class DatabaseManager {
         return gameList;
     }
 
+    public List<Item> getCurrentActiveUserItemsInCart() {
+        List<CartItem> cartItems = getAllCartItems();
+
+
+        List<Item> items = new ArrayList<>();
+        for (int i = 0; i < cartItems.size(); i++) {
+
+            CartItem temp = cartItems.get(i);
+
+            if (temp.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                items.add(getConsoleById(temp.getItemId()));
+            } else {
+                items.add(getGameById(temp.getItemId()));
+            }
+        }
+        return items;
+
+    }
+
     public List<CartItem> getAllCartItems() {
         List<CartItem> cartItemList = new ArrayList<>();
         cartItemList.addAll(getAllCartItemConsoles());
@@ -564,6 +594,81 @@ public class DatabaseManager {
             return getCartByUserId(currentUser.getUserId());
         return null;
     }
+
+
+    public List<Order> getAllOrdersFromActiveUser() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId(), null);
+
+
+        List<Order> orderList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                orderList.add(fetchOrderFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return orderList;
+    }
+
+
+    public List<OrderItem> getOrderItemsFromOrderId(long orderId) {
+
+        List<OrderItem> consoles = getAllOrderItemConsoleFromOrderId( orderId);
+        List<OrderItem> games = getAllOrderItemGameFromOrderId(orderId);
+
+        List<OrderItem> items = new ArrayList<>();
+        items.addAll(consoles);
+        items.addAll(games);
+
+        return items;
+    }
+
+    private List<OrderItem> getAllOrderItemConsoleFromOrderId(long orderId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_ORDER_ID + "=" + orderId, null);
+
+
+        List<OrderItem> orderItemsConsole = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                orderItemsConsole.add(fetchOrderItemConsoleFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return orderItemsConsole;
+    }
+
+    private List<OrderItem> getAllOrderItemGameFromOrderId(long orderId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER_ITEM_GAME.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_ORDER_ID + "=" + orderId, null);
+
+
+        List<OrderItem> orderItemsGame = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+                orderItemsGame.add(fetchOrderItemGameFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return orderItemsGame;
+    }
+
+
+
+
 
 
     ////////////// CREATE METHODS //////////////
@@ -845,7 +950,7 @@ public class DatabaseManager {
     public long addItemToCart(ItemVariables.TYPE itemType, long itemId) {
 
         if (isItemAlreadyInCart(itemId, itemType)) {
-            updateCartAmount(itemType, itemId);
+            incrementCartAmount(itemType, itemId);
             return -1;
         }
 
@@ -907,6 +1012,109 @@ public class DatabaseManager {
         return newRowId;
     }
 
+    public long createOrderFromItemsInCart(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+
+
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_CARD_NUMBER, cardNumber);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_CITY, city);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_COUNTRY, country);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_DATE_ARRIVING, dateArriving);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_DATE_ORDERED, dateOrdered);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_DELIVER_TO, deliverTo);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_EXPIRATION_MONTH, expirationMonth);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_EXPIRATION_YEAR, expirationYear);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_NAME_ON_CARD, nameOnCard);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_POSTAL_CODE, postalCode);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STATE, state);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STATUS, status.toString());
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STREET, street);
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID, getCurrentActiveUser().getUserId());
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_ORDER.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding TABLE_ORDER ");
+        else {
+            Log.d("DatabaseManager", "added TABLE_ORDER");
+        }
+
+
+        // add items from cart
+        List<CartItem> cartItemist = getAllCartItems();
+        List<Item> itemList = getCurrentActiveUserItemsInCart();
+
+        for (int i = 0; i < itemList.size(); i++) {
+
+            Item temp = itemList.get(i);
+
+            if (temp.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                createOrderItemConsole(temp, cartItemist.get(i).getAmount(), newRowId);
+            } else {
+                createOrderItemGame(temp, cartItemist.get(i).getAmount(), newRowId);
+            }
+        }
+
+
+        // empty cart
+        deleteAllCartItems();
+
+        // empty wishlist that was in cart
+
+        return newRowId;
+    }
+
+
+    private long createOrderItemGame(Item item, int amount, long orderId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_ORDER_ID, orderId);
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID, item.getItemId());
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_AMOUNT, amount);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_ORDER_ITEM_GAME.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding TABLE_ORDER_ITEM_CONSOLE " + item.getItemId());
+        else {
+            Log.d("DatabaseManager", "added TABLE_ORDER_ITEM_CONSOLE" + item.getItemId());
+        }
+        return newRowId;
+    }
+
+    private long createOrderItemConsole(Item item, int amount, long orderId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_ORDER_ID, orderId);
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_CONSOLE_ID, item.getItemId());
+        values.put(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_AMOUNT, amount);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding TABLE_ORDER_ITEM_CONSOLE " + item.getItemId());
+        else {
+            Log.d("DatabaseManager", "added TABLE_ORDER_ITEM_CONSOLE" + item.getItemId());
+        }
+        return newRowId;
+    }
+
 
     ////////////// UPDATE METHODS //////////////
 
@@ -920,33 +1128,41 @@ public class DatabaseManager {
 
     }
 
-    public void updateCartAmount(ItemVariables.TYPE itemType, long itemId) {
+    public void incrementCartAmount(ItemVariables.TYPE itemType, long itemId) {
         if (itemType == ItemVariables.TYPE.CONSOLE)
-            updateCartAmountConsole(itemId);
+            updateCartAmountConsole(itemId, getCartItemConsoleById(itemId).getAmount() + 1);
         else
-            updateCartAmountGame(itemId);
+            updateCartAmountGame(itemId, getCartItemGameById(itemId).getAmount() + 1);
     }
 
-    public void updateCartAmountConsole(long itemId) {
+    public void updateCartAmount(ItemVariables.TYPE itemType, long itemId, int amount) {
+        if (itemType == ItemVariables.TYPE.CONSOLE)
+            updateCartAmountConsole(itemId, amount);
+        else
+            updateCartAmountGame(itemId, amount);
+    }
+
+
+    public void updateCartAmountConsole(long itemId, int amount) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
         CartItem cartItemConsole = getCartItemConsoleById(itemId);
 
-        values.put(DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_AMOUNT, cartItemConsole.getAmount() + 1);
+        values.put(DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_AMOUNT, amount);
         db.update(DatabaseVariables.TABLE_CART_ITEM_CONSOLE.TABLE_NAME, values,
                 DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_CONSOLE_ID + "=" + itemId
                         + " AND " + DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_CART_ID + "=" + getCartByUserId(getCurrentActiveUser().getUserId()).getCartId(), null);
 
     }
 
-    public void updateCartAmountGame(long itemId) {
+    public void updateCartAmountGame(long itemId, int amount) {
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
         CartItem cartItemConsole = getCartItemGameById(itemId);
 
-        values.put(DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_AMOUNT, cartItemConsole.getAmount() + 1);
+        values.put(DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_AMOUNT, amount);
         db.update(DatabaseVariables.TABLE_CART_ITEM_GAME.TABLE_NAME, values,
                 DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_GAME_ID + "=" + itemId
                         + " AND " + DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_CART_ID + "=" + getCartByUserId(getCurrentActiveUser().getUserId()).getCartId(), null);
@@ -967,6 +1183,36 @@ public class DatabaseManager {
                     + "=" + itemId, null) > 0;
 
 
+    }
+
+
+    public boolean deleteCartItem(long itemId, ItemVariables.TYPE itemType) {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        if (itemType == ItemVariables.TYPE.CONSOLE)
+            return db.delete(DatabaseVariables.TABLE_CART_ITEM_CONSOLE.TABLE_NAME, DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_CONSOLE_ID
+                    + "=" + itemId + " AND " + DatabaseVariables.TABLE_CART_ITEM_CONSOLE.COLUMN_CART_ID + "=" + getCartByUserId(getCurrentActiveUser().getUserId()).getCartId(), null) > 0;
+        else
+            return db.delete(DatabaseVariables.TABLE_CART_ITEM_GAME.TABLE_NAME, DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_GAME_ID
+                    + "=" + itemId + " AND " + DatabaseVariables.TABLE_CART_ITEM_GAME.COLUMN_CART_ID + "=" + getCartByUserId(getCurrentActiveUser().getUserId()).getCartId(), null) > 0;
+
+
+    }
+
+    public boolean deleteAllCartItems() {
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        List<CartItem> cartItems = getAllCartItems();
+
+        boolean passed = true;
+
+        for (int i = 0; i < cartItems.size(); i++) {
+            boolean ok = deleteCartItem(cartItems.get(i).getItemId(), cartItems.get(i).getItemType());
+            if (passed && !ok)
+                passed = false;
+        }
+
+        return passed;
     }
 
 
@@ -1098,7 +1344,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_STATUS));
         int cardNumber = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_CARD_NUMBER));
-        int nameOnCard = cursor.getInt(cursor
+        String nameOnCard = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_NAME_ON_CARD));
         int expirationMonth = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_EXPIRATION_MONTH));
@@ -1114,17 +1360,20 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_CITY));
         String postalCode = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_POSTAL_CODE));
+        String deliverTo = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_DELIVER_TO));
+
 
         OrderVariables.STATUS convertedStatus = Helper.convertStringToStatus(status);
 
-        return new Order(orderId, userId, dateOrdered,
+        return new Order(orderId, userId, dateOrdered, deliverTo,
                 dateArriving, convertedStatus, cardNumber, nameOnCard,
                 expirationMonth, expirationYear, street, country, state,
                 city, postalCode);
     }
 
 
-    private OrderItemConsole fetchOrderItemConsoleFromCursor(Cursor cursor) {
+    private OrderItem fetchOrderItemConsoleFromCursor(Cursor cursor) {
 
         long consoleId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_CONSOLE_ID));
@@ -1134,11 +1383,11 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_AMOUNT));
 
 
-        return new OrderItemConsole(consoleId, orderId, amount);
+        return new OrderItem(consoleId, orderId, amount, ItemVariables.TYPE.CONSOLE);
     }
 
 
-    private OrderItemGame fetchOrderItemGameFromCursor(Cursor cursor) {
+    private OrderItem fetchOrderItemGameFromCursor(Cursor cursor) {
 
         long gameId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_GAME_ID));
@@ -1148,7 +1397,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_AMOUNT));
 
 
-        return new OrderItemGame(gameId, orderId, amount);
+        return new OrderItem(gameId, orderId, amount, ItemVariables.TYPE.GAME);
     }
 
     private PaymentInformation fetchPaymentInformationFromCursor(Cursor cursor) {
@@ -1319,12 +1568,12 @@ public class DatabaseManager {
 
     }
 
-    public int getNbItemsInCart(){
+    public int getNbItemsInCart() {
         List<CartItem> cartItems = getAllCartItems();
 
         int nb = 0;
 
-        for(int i = 0; i < cartItems.size(); i++){
+        for (int i = 0; i < cartItems.size(); i++) {
             CartItem cartItemTemp = cartItems.get(i);
             nb += cartItemTemp.getAmount();
         }

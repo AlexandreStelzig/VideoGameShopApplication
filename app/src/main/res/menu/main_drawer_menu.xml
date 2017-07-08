@@ -10,11 +10,11 @@
             android:title="Home" />
         <item
             android:id="@+id/nav_shop_console"
-            android:title="Shop Console"
+            android:title="Shop Consoles"
             app:actionLayout="@layout/arrow_layout"/>
         <item
             android:id="@+id/nav_shop_game_by_category"
-            android:title="Shop Game by Category"
+            android:title="Shop Games by Category"
             app:actionLayout="@layout/arrow_layout"/>
         <item
             android:id="@+id/nav_shop_game_by_console"
@@ -36,6 +36,9 @@
         <item
             android:id="@+id/nav_sign_in_out"
             android:title="Sign in"/>
+        <item
+            android:id="@+id/nav_sign_up"
+            android:title="Create Account"/>
 
     </group>
 

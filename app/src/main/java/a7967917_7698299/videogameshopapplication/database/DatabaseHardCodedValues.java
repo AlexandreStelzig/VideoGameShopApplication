@@ -35,6 +35,7 @@ public class DatabaseHardCodedValues {
         databaseManager.setCurrentActiveUser(userId);
 
 
+
         // call the hardcoded data here
         initConsoles();
         initGames();
@@ -43,23 +44,72 @@ public class DatabaseHardCodedValues {
 
     private void initConsoles() {
 
+        // SWITCH
+
         long switchId = databaseManager.createConsole(ItemVariables.CONSOLES.SWITCH, "Nintendo Switch", 399.99, "Introducing Nintendo Switch! In addition to providing single and multiplayer thrills at home, the Nintendo Switch system also enables gamers to play the same title wherever, whenever and with whomever they choose. The mobility of a handheld is now added to the power of a home gaming system to enable unprecedented new video game play styles.",
                 5, "Nintendo", "March 3, 2017");
         databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "http://media.nintendo.com/nintendo/cocoon/switch-static-pages/switch/etRgxnAu0zRX4bmWnt9K628wG7YQUI6t/images/switch/home/bundle1.jpg", switchId);
+
+
+        // XBOX
 
         long xboxId = databaseManager.createConsole(ItemVariables.CONSOLES.XBOXONE, "Xbox One S", 279.99, "Own the Xbox One S Battlefield™ 1 Bundle (500GB), featuring 4K Blu-ray™, 4K video streaming, High Dynamic Range, a full game download of Battlefield™ 1, and one month of EA Access. Discover a world at war through an adventure-filled campaign, or join in epic multiplayer battles with up to 64 players on Xbox Live. Fight as infantry or take control of amazing vehicles on land, air and sea, and adapt your gameplay to the most dynamic battles in Battlefield history. And with EA Access, play EA games for a limited time before they're released and get unlimited access to The Vault, exclusively on Xbox One. With over 100 console exclusives, and a growing library of Xbox 360 games, there's never been a better time to game with Xbox One.\n",
                 3, "Microsoft", "November 21, 2016");
         databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "  https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5613/5613745_sd.jpg;maxHeight=550;maxWidth=642", xboxId);
 
+        xboxId = databaseManager.createConsole(ItemVariables.CONSOLES.XBOXONE, "Microsoft Xbox One 500 GB", 269.99, "This item includes the Xbox One console, 1 wireless controller, HDMI cable, and power supply\n" +
+                        "The best exclusive games, the most advanced multiplayer, and unique entertainment experiences\n" +
+                        "Play games like Titanfall and Halo on a network powered by over 300,000 servers for maximum performance\n" +
+                        "The most advanced multiplayer on Xbox Live with Smart Match to find new challengers\n" +
+                        "Note: Kinect sensor sold separate\n" +
+                        "Shop for the newest Xbox One Bundle or Xbox One Console.",
+                4, "Microsoft", "June 9, 2014");
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/61CnOKdmBeL._AC_SL1500_.jpg", xboxId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/51k5EFggZoL._AC_SL1000_.jpg", xboxId);
+
+        xboxId = databaseManager.createConsole(ItemVariables.CONSOLES.XBOXONE, "Xbox One 1TB Console - Tom Clancy's The Division Bundle", 268.95, "This product includes: 1TB hard drive Xbox One, Tom Clancy's The Division, newly updated Xbox One black wireless controller with a 3.5mm headset jack so you can plug in any compatible headset, 14-day trial of Xbox Live Gold, AC Power Cable, and an HDMI Cable.\n" +
+                        "Take back New York City from a deadly pandemic in The Division, an online, open-world, RPG experience like no other.\n" +
+                        "Get new game content first on Xbox.\n" +
+                        "Quickly switch between your games, live TV, and apps like Amazon Video, Netflix, YouTube, and HBO GO.\n" +
+                        "Play select Xbox 360 games on your Xbox One with backwards compatibility.",
+                4, "Microsoft", "March 8, 2016");
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/81MFkS3EtjL._AC_SL1276_.jpg", xboxId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/61NPl2e9k2L._AC_SL1500_.jpg", xboxId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/81AF66%2BmQ5L._AC_SL1026_.jpg", xboxId);
+
+
+        // PS4
+
         long ps4Id = databaseManager.createConsole(ItemVariables.CONSOLES.PS4, "PlayStation 4", 349.99, "Lose yourself in a world of immersive gaming and top-tier entertainment with PlayStation 4 Pro. Enjoy blockbuster storytelling with a unified gaming library full of exclusive content tailor-made for the PS4. Plus, the PS4 Pro streams 4K-compatible content, upscales standard Blu-ray DVDs to 4K, and delivers PS4 Pro Enhanced gaming content.",
                 4, "Sony", "November 15, 2013");
         databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://media.playstation.com/is/image/SCEA/playstation-4-slim-vertical-product-shot-01-us-07sep16?$TwoColumn_Image$", ps4Id);
+
+
+        // 3DS
 
         long threeDsId = databaseManager.createConsole(ItemVariables.CONSOLES.THREE_DS, "Nintendo 3DS XL - RED", 289.95, "New Nintendo 3DS XL offers the biggest screens, new speed, new controls, new 3D viewing and a whole new experience!\n" +
                         "\n" +
                         "New Nintendo 3DS has an area on the bottom screen with NFC reading and writing functions built in, so you can enjoy playing with amiibo in compatible software. Details about compatible software planned for Nintendo 3DS will be announced in the future.",
                 5, "Nintendo", "August 19, 2012");
         databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "  https://images-na.ssl-images-amazon.com/images/I/51FMjaFKYNL._AC_SX215_.jpg", threeDsId);
+
+        threeDsId = databaseManager.createConsole(ItemVariables.CONSOLES.THREE_DS, "Nintendo 3DS Aqua Blue", 289.95, "Nintendo 3DS offers a new way to play, 3D without the need for special glasses. The 3D Depth Slider lets your determine how much 3D you want to see.\n" +
+                        "Play 3D games and take 3D pictures with Nintendo 3DS. One inner camera and two outer cameras. Resolutions are 640 x 480 for each camera. Lens are single focus and uses the CMOS capture element.\n" +
+                        "Connect to a deeper wireless experience with SpotPass and StreetPass, giving you more exclusive content and connecting you with other Nintendo 3DS users\n" +
+                        "Complete with an adjustable stylus, 6 AR cards, and fun built-in software such as Face Raiders, Nintendo 3DS Sound, and the Mii Maker application\n" +
+                        "Use Parental Controls to restrict 3D mode for children 6 and under",
+                4, "Nintendo", "August 19, 2012");
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/51XU4kVlohL.jpg", threeDsId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/315KROuPm0L.jpg", threeDsId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/41UkjYJpwkL.jpg", threeDsId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/41MRJzkUtQL.jpg", threeDsId);
+
+
+        threeDsId = databaseManager.createConsole(ItemVariables.CONSOLES.THREE_DS, "Nintendo 3DS XL Black/Black", 268.95, "Nintendo 3DS XL Black/Black",
+                5, "Nintendo", "May 21, 2013");
+
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/41JeC0J6v9L.jpg", threeDsId);
+        databaseManager.createItemImage(ItemVariables.TYPE.CONSOLE, "https://images-na.ssl-images-amazon.com/images/I/313XMMdKG8L.jpg", threeDsId);
 
 
     }
@@ -89,6 +139,68 @@ public class DatabaseHardCodedValues {
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://fireemblem.nintendo.com/about/img/sc2_2.jpg", itemId);
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.THREE_DS, itemId);
 
+        // THE DIVISION
+        itemId = databaseManager.createVideoGame("Tom Clancy's The Division", 39.99, "Tom Clancy’s The Division™ is a ground-breaking RPG experience that brings the genre into a modern military setting for the first time. In the wake of a devastating pandemic that sweeps through New York City, basic services fail one by one, and without access to food or water, the city quickly descends into chaos. As an agent of The Division, you’ll specialize, modify, and level up your gear, weapons, and skills to take back New York on your own terms.",
+                5, "Ubisoft", "8 March 2016", VideoGameVariables.ESRB.MATURE_17PLUS.toString(), 40, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.NA.toString(), 1);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/3max.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/5scrmax1.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/7scrmax2.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/9scrmax3.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/11scrmax4.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/13scrmax5.jpg", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.XBOXONE, itemId);
+
+        // COD
+        itemId = databaseManager.createVideoGame("Call of Duty: Black Ops III", 49.99, "Co-Op Campaign: Treyarch elevates the Call of Duty® social gaming experience by delivering a campaign with the ability to play cooperatively with up to four players online, using the same battle-tested network infrastructure and social systems that support its world-class Multiplayer and Zombies game modes.\n" +
+                        "\n" +
+                        "Cinematic Arena-Style Play: Designed for co-op and re-playability, players encounter all the epic cinematic gameplay moments Call of Duty is known for delivering as well as new open-area arena-style gameplay elements designed to allow players to approach the game with a different strategy each time they play.\n" +
+                        "\n" +
+                        "Character Progression: And now, every player is completely customizable: from weapons and loadouts, to abilities and outfits, all with full progression systems and a personalized armory to show off accomplishments, providing a constantly-evolving campaign experience.",
+                5, "Activision", "November 6, 2015", VideoGameVariables.ESRB.MATURE_17PLUS.toString(), 35, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.ALL.toString(), 1);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.akamai.steamstatic.com/steam/apps/311210/header.jpg?t=1496943039", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.akamai.steamstatic.com/steam/apps/311210/ss_ca7376d838d5714f916936f0070824c27c4c5641.600x338.jpg?t=1496943039", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.akamai.steamstatic.com/steam/apps/311210/ss_150874824f4fff0915e63ea2ade5410e576a2b70.600x338.jpg?t=1496943039", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.akamai.steamstatic.com/steam/apps/311210/ss_4b270e7a32d3a93a8119e7bcc3d8dcaa784f84f1.600x338.jpg?t=1496943039", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.akamai.steamstatic.com/steam/apps/311210/ss_c4f8101a3529e2e430641af1e061926b1f57e4e7.600x338.jpg?t=1496943039", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.PS4, itemId);
+
+        // Tom Clancy's Ghost Recon: Wildlands
+        itemId = databaseManager.createVideoGame("Tom Clancy's Ghost Recon: Wildlands", 79.99, "Experience total freedom of choice in Tom Clancy's Ghost Recon Wildlands, the ultimate military shooter set in a massive open world setting.\n" +
+                        "\n" +
+                        "The Santa Blanca drug cartel has transformed the beautiful South American country of Bolivia into a perilous narco-state, leading to lawlessness, fear, and rampant violence. With their corrosive influence growing, the cartel plagues the citizens of Bolivia but all hope is not lost. The Ghosts, an elite US Special Forces team, are tasked to combat the cartel and save the country from collapse.\n" +
+                        "\n" +
+                        "You decide how to play, and every decision affects the world around you.\n" +
+                        "\n",
+                4, "Ubisoft", "March 7, 2017", VideoGameVariables.ESRB.MATURE_17PLUS.toString(), 35, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.ALL.toString(), 1);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://upload.wikimedia.org/wikipedia/en/b/b9/Ghost_Recon_Wildlands_cover_art.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/719386/4scrmax1.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/719386/6scrmax2.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/719386/8scrmax3.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/719386/10scrmax4.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/719386/12scrmax5.jpg", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.PS4, itemId);
+
+        // Pokemon Sun
+        itemId = databaseManager.createVideoGame("Pokémon Sun", 49.99, "Catch 'em all and build yourself a powerful Pokémon army in Pokémon Sun for Nintendo 3DS. Set out on a fresh adventure in a new world to capture unique characters, turning them into powerful fighters. You can also transfer Pokémon you collected in previous games using the Pokémon Bank.",
+                5, "Nintendo", "November 18, 2016", VideoGameVariables.ESRB.EVERYONE.toString(), 35, VideoGameVariables.CATEGORY.ADVENTURE.toString(), VideoGameVariables.REGION.ALL.toString(), 1);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://www.serebii.net/sunmoon/sunbox.jpg", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.THREE_DS, itemId);
+
+        // Pokemon Moon
+        itemId = databaseManager.createVideoGame("Pokémon Moon", 49.99, "In the Pokémon Sun and Pokémon Moon games, embark on an adventure as a Pokémon Trainer and catch, battle and trade all-new Pokémon on the tropical islands of the Alola Region. Engage in intense battles, and unleash new powerful moves. Discover and interact with Pokémon while training and connecting with your Pokémon to become the Pokémon Champion!",
+                5, "Nintendo", "November 18, 2016", VideoGameVariables.ESRB.EVERYONE.toString(), 35, VideoGameVariables.CATEGORY.ADVENTURE.toString(), VideoGameVariables.REGION.ALL.toString(), 1);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://www.serebii.net/sunmoon/moonbox.jpg", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.THREE_DS, itemId);
+
+
+        // Splatoon 2
+        itemId = databaseManager.createVideoGame("Splatoon 2", 59.99, "Coat a virtual world with ink when you play this Nintendo Switch Splatoon 2 game, which lets you battle for turf online or keep the action local. Stick to single-player mode for solo fun or challenge your friends in multi-player mode. Vibrant colors and innovative weapons make this Nintendo Switch Splatoon 2 game an engaging choice for kids and adults.",
+                5, "Nintendo", "July 21, 2017", VideoGameVariables.ESRB.EVERYONE.toString(), 35, VideoGameVariables.CATEGORY.ADVENTURE.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523_sd.jpg;maxHeight=550;maxWidth=642", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv11d.jpg;maxHeight=550;maxWidth=642", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv12d.jpg;maxHeight=550;maxWidth=642", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv13d.jpg;maxHeight=550;maxWidth=642", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.SWITCH, itemId);
     }
 
 

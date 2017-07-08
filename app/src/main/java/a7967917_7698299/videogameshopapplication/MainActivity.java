@@ -21,14 +21,21 @@ import android.widget.Toast;
 import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
+import a7967917_7698299.videogameshopapplication.fragments.AddressListFragment;
+import a7967917_7698299.videogameshopapplication.fragments.AddressInfoFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CartFragment;
+import a7967917_7698299.videogameshopapplication.fragments.CheckoutFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HelpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HomeFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ItemInfoFragment;
-import a7967917_7698299.videogameshopapplication.fragments.OrdersFragment;
+import a7967917_7698299.videogameshopapplication.fragments.OrderInfoFragment;
+import a7967917_7698299.videogameshopapplication.fragments.OrderListFragment;
+import a7967917_7698299.videogameshopapplication.fragments.PaymentInfoFragment;
+import a7967917_7698299.videogameshopapplication.fragments.PaymentListFragment;
 import a7967917_7698299.videogameshopapplication.fragments.ResultsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SettingsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SignInFragment;
+import a7967917_7698299.videogameshopapplication.fragments.SignUpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
@@ -37,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // IMPORTANT!!! TURN OFF FOR RELEASE
+    // TODO IMPORTANT!!! TURN OFF FOR RELEASE
     private boolean DELETE_DATABASE_EVERY_REBUILD = true;
 
     // components
@@ -56,13 +63,20 @@ public class MainActivity extends AppCompatActivity
     private AccountFragment accountFragment;
     private HelpFragment helpFragment;
     private HomeFragment homeFragment;
-    private OrdersFragment ordersFragment;
+    private OrderListFragment orderListFragment;
     private ResultsFragment resultsFragment;
     private SettingsFragment settingsFragment;
     private WishlistFragment wishlistFragment;
     private CartFragment cartFragment;
     private ItemInfoFragment itemInfoFragment;
     private SignInFragment signInFragment;
+    private CheckoutFragment checkoutFragment;
+    private AddressListFragment addressListFragment;
+    private AddressInfoFragment addressInfoFragment;
+    private OrderInfoFragment orderInfoFragment;
+    private PaymentInfoFragment paymentInfoFragment;
+    private PaymentListFragment paymentListFragment;
+    private SignUpFragment signUpFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
@@ -114,13 +128,20 @@ public class MainActivity extends AppCompatActivity
         accountFragment = new AccountFragment();
         helpFragment = new HelpFragment();
         homeFragment = new HomeFragment();
-        ordersFragment = new OrdersFragment();
+        orderListFragment = new OrderListFragment();
         resultsFragment = new ResultsFragment();
         settingsFragment = new SettingsFragment();
         wishlistFragment = new WishlistFragment();
         cartFragment = new CartFragment();
         itemInfoFragment = new ItemInfoFragment();
         signInFragment = new SignInFragment();
+        checkoutFragment = new CheckoutFragment();
+        addressListFragment = new AddressListFragment();
+        addressInfoFragment = new AddressInfoFragment();
+        orderInfoFragment = new OrderInfoFragment();
+        paymentInfoFragment = new PaymentInfoFragment();
+        paymentListFragment = new PaymentListFragment();
+        signUpFragment = new SignUpFragment();
 
         // init other
         viewIsAtHome = false;
@@ -354,7 +375,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_orders:
                 if (isUserConnectedWithMessage()) {
-                    currentFragment = ordersFragment;
+                    currentFragment = orderListFragment;
                     title = "Orders";
                 } else {
                     currentFragment = signInFragment;
@@ -390,6 +411,10 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = itemInfoFragment;
                 title = "Item info";
                 break;
+            case R.layout.fragment_checkout:
+                currentFragment = checkoutFragment;
+                title = "Checkout";
+                break;
             case R.id.nav_sign_in_out:
                 if (databaseManager.getCurrentActiveUser() == null) {
                     // sign in
@@ -401,8 +426,30 @@ public class MainActivity extends AppCompatActivity
                     databaseManager.setCurrentActiveUser(-1);
                     title = "Home";
                 }
-
-
+                break;
+            case R.layout.fragment_address_list :
+                currentFragment = addressListFragment;
+                title = "Address List";
+                break;
+            case R.layout.fragment_address_info :
+                currentFragment = this.addressInfoFragment;
+                title = "Address Info";
+                break;
+            case R.layout.fragment_order_info :
+                currentFragment = orderInfoFragment;
+                title = "Order Info";
+                break;
+            case R.layout.fragment_payment_info :
+                currentFragment = paymentInfoFragment;
+                title = "Payment Info";
+                break;
+            case R.layout.fragment_payment_list :
+                currentFragment = paymentListFragment;
+                title = "Payment List";
+                break;
+            case R.id.nav_sign_up :
+                currentFragment = signUpFragment;
+                title = "Create Account";
                 break;
             default:
                 currentFragment = homeFragment;
@@ -439,13 +486,6 @@ public class MainActivity extends AppCompatActivity
             viewIsAtHome = false;
         }
 
-//        // hide keyboard (fix an issue with the keyboard staying up when changing fragments)
-//        View view = this.getCurrentFocus();
-//        if (view != null) {
-////            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-////            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//        }
-
     }
 
 
@@ -454,9 +494,9 @@ public class MainActivity extends AppCompatActivity
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (fragment.equals(cartFragment)) {
+        if (fragment.equals(cartFragment) && previousFragmentTag != R.layout.fragment_checkout || fragment.equals(checkoutFragment)) {
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        } else if (previousFragmentTag == R.id.action_cart) {
+        } else if (previousFragmentTag == R.id.action_cart || (previousFragmentTag == R.layout.fragment_checkout)) {
             transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         } else {
             transaction.setCustomAnimations(android.R.anim.fade_in,
@@ -479,6 +519,7 @@ public class MainActivity extends AppCompatActivity
         MenuItem navWishList = menuNav.findItem(R.id.nav_wishlist);
         MenuItem navOrders = menuNav.findItem(R.id.nav_orders);
         MenuItem signInOut = menuNav.findItem(R.id.nav_sign_in_out);
+        MenuItem signup = menuNav.findItem(R.id.nav_sign_up);
 
         boolean userActive = databaseManager.getCurrentActiveUser() != null;
 
@@ -486,9 +527,11 @@ public class MainActivity extends AppCompatActivity
         navAccount.setEnabled(userActive);
         navWishList.setEnabled(userActive);
         navOrders.setEnabled(userActive);
+        signup.setVisible(!userActive);
 
         if (userActive)
             signInOut.setTitle("Sign out");
+
         else
             signInOut.setTitle("Sign in");
 

@@ -1,13 +1,16 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true">
+    android:clickable="true"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/test"
+        android:gravity="center"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="HELP"
-        android:textSize="28sp" />
+        android:drawableRight="@drawable/ic_navigate_next_blue_grey_200_24dp"
+        android:padding="10dp"
+        android:text="Create order" />
 
-</FrameLayout>
+</LinearLayout>
