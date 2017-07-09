@@ -38,6 +38,7 @@ import a7967917_7698299.videogameshopapplication.fragments.SignInFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SignUpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
+import a7967917_7698299.videogameshopapplication.variables.OrderVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
 
 public class MainActivity extends AppCompatActivity
@@ -427,27 +428,27 @@ public class MainActivity extends AppCompatActivity
                     title = "Home";
                 }
                 break;
-            case R.layout.fragment_address_list :
+            case R.layout.fragment_address_list:
                 currentFragment = addressListFragment;
                 title = "Address List";
                 break;
-            case R.layout.fragment_address_info :
+            case R.layout.fragment_address_info:
                 currentFragment = this.addressInfoFragment;
                 title = "Address Info";
                 break;
-            case R.layout.fragment_order_info :
+            case R.layout.fragment_order_info:
                 currentFragment = orderInfoFragment;
                 title = "Order Info";
                 break;
-            case R.layout.fragment_payment_info :
+            case R.layout.fragment_payment_info:
                 currentFragment = paymentInfoFragment;
                 title = "Payment Info";
                 break;
-            case R.layout.fragment_payment_list :
+            case R.layout.fragment_payment_list:
                 currentFragment = paymentListFragment;
                 title = "Payment List";
                 break;
-            case R.id.nav_sign_up :
+            case R.id.nav_sign_up:
                 currentFragment = signUpFragment;
                 title = "Create Account";
                 break;
@@ -593,6 +594,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+        if (isUserConnectedWithMessage()) {
+            databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode);
+            Toast.makeText(this, "Order Created", Toast.LENGTH_SHORT).show();
+            invalidateOptionsMenu();
+        }else{
+            // should never come here
+            displayFragment(R.id.nav_sign_in_out);
+        }
+    }
+
     public boolean isUserConnectedWithMessage() {
         if (databaseManager.getCurrentActiveUser() == null) {
             Toast.makeText(this, "Please Sign In", Toast.LENGTH_SHORT).show();
@@ -611,6 +623,10 @@ public class MainActivity extends AppCompatActivity
 
     public void setItemIdToOpenAtInfoLaunch(long itemId, ItemVariables.TYPE itemType) {
         itemInfoFragment.setItemIdToOpenAtLaunch(itemId, itemType);
+    }
+
+    public void setOrderIdToOpenAtOrderInfoLaunch(long orderId) {
+        orderInfoFragment.setOrderIdToOpenAtOrderInfoLaunch(orderId);
     }
 
     public void continueShoppingClicked(View view) {

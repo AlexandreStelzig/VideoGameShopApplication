@@ -1,9 +1,14 @@
 package a7967917_7698299.videogameshopapplication.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +22,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
@@ -31,7 +37,7 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
  * Created by alex on 2017-06-24.
  */
 
-public class OrderListFragment extends Fragment{
+public class OrderListFragment extends Fragment {
 
 
     // components
@@ -76,7 +82,6 @@ public class OrderListFragment extends Fragment{
 
         return view;
     }
-
 
 
     private void initListView() {
@@ -142,7 +147,7 @@ public class OrderListFragment extends Fragment{
             TextView dateOrdered;
             TextView status;
             TextView price;
-            ListView listView;
+            TextView itemInfo;
         }
 
         @Override
@@ -156,18 +161,18 @@ public class OrderListFragment extends Fragment{
             holder.dateOrdered = (TextView) rowView.findViewById(R.id.custom_layout_order_date);
             holder.status = (TextView) rowView.findViewById(R.id.custom_layout_order_status);
             holder.price = (TextView) rowView.findViewById(R.id.custom_layout_order_price);
-            holder.listView = (ListView) rowView.findViewById(R.id.custom_layout_order_listview);
+            holder.itemInfo = (TextView) rowView.findViewById(R.id.custom_layout_order_item_info_textview);
 
 
-            Order rowOrder = orders.get(position);
+            final Order rowOrder = orders.get(position);
             List<OrderItem> orderItems = databaseManager.getOrderItemsFromOrderId(rowOrder.getOrderId());
             List<Item> items = new ArrayList<>();
 
-            for(int i = 0; i < orderItems.size(); i++){
+            for (int i = 0; i < orderItems.size(); i++) {
                 OrderItem temp = orderItems.get(i);
-                if(temp.getItemType() == ItemVariables.TYPE.CONSOLE){
+                if (temp.getItemType() == ItemVariables.TYPE.CONSOLE) {
                     items.add(databaseManager.getConsoleById(temp.getItemId()));
-                }else{
+                } else {
                     items.add(databaseManager.getGameById(temp.getItemId()));
                 }
             }
@@ -178,20 +183,45 @@ public class OrderListFragment extends Fragment{
 
 
             double total = 0;
-            for(int i = 0; i < orderItems.size(); i++){
+            for (int i = 0; i < orderItems.size(); i++) {
                 total += orderItems.get(i).getAmount() * items.get(i).getPrice();
             }
 
             holder.price.setText("Total: " + String.format("%.2f$", total));
 
-            List<String> orderItemName = new ArrayList<>();
-            for(int i = 0; i < items.size(); i++)
-                orderItemName.add(items.get(i).getName());
+            String infoText = "";
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            for (int i = 0; i < items.size(); i++) {
 
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, orderItemName);
-            holder.listView.setAdapter(arrayAdapter);
 
-//            Helper.setListViewHeightBasedOnChildren(holder.listView);
+                infoText = (items.get(i).getName());
+                SpannableString normal = new SpannableString(infoText);
+                normal.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.primaryText)), 0, infoText.length(), 0);
+                builder.append(normal);
+
+                infoText = " (" + orderItems.get(i).getAmount() + "x" + items.get(i).getPrice() + "$)";
+                SpannableString redSpannable = new SpannableString(infoText);
+                redSpannable.setSpan(new ForegroundColorSpan(Color.RED), 0, infoText.length(), 0);
+                builder.append(redSpannable);
+
+
+                if (i + 1 < items.size())
+                    builder.append(System.getProperty("line.separator"));
+            }
+
+            rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.custom_border));
+
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) getActivity()).setOrderIdToOpenAtOrderInfoLaunch(rowOrder.getOrderId());
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_order_info);
+                }
+            });
+
+
+            holder.itemInfo.setText(builder, TextView.BufferType.SPANNABLE);
+
 
             return rowView;
 

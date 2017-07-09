@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -269,7 +268,7 @@ public class WishlistFragment extends Fragment {
             loading = true;
             imagesURLList.clear();
 
-            itemList = databaseManager.getAllWishListItems();
+            itemList = databaseManager.getAllWishListItemsFromActiveUser();
 
 
             if (!itemList.isEmpty()) {
