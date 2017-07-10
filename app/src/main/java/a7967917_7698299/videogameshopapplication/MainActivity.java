@@ -481,7 +481,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // set hardware back button logic
-        if (currentFragment.equals(homeFragment)) {
+        if (currentFragment != null && currentFragment.equals(homeFragment)) {
             viewIsAtHome = true;
         } else {
             viewIsAtHome = false;

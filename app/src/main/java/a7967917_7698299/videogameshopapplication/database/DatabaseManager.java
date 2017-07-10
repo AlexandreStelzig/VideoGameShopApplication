@@ -615,6 +615,24 @@ public class DatabaseManager {
         return orderList;
     }
 
+    public Order getOrderByOrderId(long orderId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId()
+                + " AND " + DatabaseVariables.TABLE_ORDER.COLUMN_ORDER_ID + "=" + orderId, null);
+
+
+        Order order = null;
+
+        if (cursor.moveToFirst()) {
+            order = (fetchOrderFromCursor(cursor));
+            cursor.moveToNext();
+
+        }
+        cursor.close();
+        return order;
+    }
+
 
     public List<OrderItem> getOrderItemsFromOrderId(long orderId) {
 

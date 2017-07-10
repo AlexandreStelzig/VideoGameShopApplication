@@ -147,7 +147,7 @@ public class OrderListFragment extends Fragment {
             TextView dateOrdered;
             TextView status;
             TextView price;
-            TextView itemInfo;
+            ListView itemInfo;
         }
 
         @Override
@@ -161,7 +161,7 @@ public class OrderListFragment extends Fragment {
             holder.dateOrdered = (TextView) rowView.findViewById(R.id.custom_layout_order_date);
             holder.status = (TextView) rowView.findViewById(R.id.custom_layout_order_status);
             holder.price = (TextView) rowView.findViewById(R.id.custom_layout_order_price);
-            holder.itemInfo = (TextView) rowView.findViewById(R.id.custom_layout_order_item_info_textview);
+            holder.itemInfo = (ListView) rowView.findViewById(R.id.custom_layout_order_item_info_listview);
 
 
             final Order rowOrder = orders.get(position);
@@ -189,27 +189,6 @@ public class OrderListFragment extends Fragment {
 
             holder.price.setText("Total: " + String.format("%.2f$", total));
 
-            String infoText = "";
-            SpannableStringBuilder builder = new SpannableStringBuilder();
-            for (int i = 0; i < items.size(); i++) {
-
-
-                infoText = (items.get(i).getName());
-                SpannableString normal = new SpannableString(infoText);
-                normal.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.primaryText)), 0, infoText.length(), 0);
-                builder.append(normal);
-
-                infoText = " (" + orderItems.get(i).getAmount() + "x" + items.get(i).getPrice() + "$)";
-                SpannableString redSpannable = new SpannableString(infoText);
-                redSpannable.setSpan(new ForegroundColorSpan(Color.RED), 0, infoText.length(), 0);
-                builder.append(redSpannable);
-
-
-                if (i + 1 < items.size())
-                    builder.append(System.getProperty("line.separator"));
-            }
-
-            rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.custom_border));
 
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -219,13 +198,88 @@ public class OrderListFragment extends Fragment {
                 }
             });
 
+            CustomItemListAdapter customItemListAdapter = new CustomItemListAdapter(getContext(), items, rowOrder.getOrderId());
+            holder.itemInfo.setAdapter(customItemListAdapter);
 
-            holder.itemInfo.setText(builder, TextView.BufferType.SPANNABLE);
+            Helper.setListViewHeightBasedOnChildren(holder.itemInfo);
 
 
             return rowView;
 
         }
+
+
+        // Very ugly but works (missing time)
+        private class CustomItemListAdapter extends BaseAdapter {
+
+            Context context;
+
+            private LayoutInflater inflater = null;
+
+            private List<Item> itemInOrderList;
+            private long orderId;
+
+            public CustomItemListAdapter(Context context, List<Item> itemInOrderList, long orderId) {
+                // TODO Auto-generated constructor stub
+                super();
+                this.context = context;
+                this.orderId = orderId;
+                this.itemInOrderList = itemInOrderList;
+                inflater = (LayoutInflater) context.
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            }
+
+            @Override
+            public int getCount() {
+                // TODO Auto-generated method stub
+                return itemInOrderList.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                // TODO Auto-generated method stub
+                return position;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                // TODO Auto-generated method stub
+                return position;
+            }
+
+            public class HolderItem {
+                TextView name;
+                TextView price;
+            }
+
+            @Override
+            public View getView(final int position, View convertView, ViewGroup parent) {
+
+                final CustomItemListAdapter.HolderItem holder = new CustomItemListAdapter.HolderItem();
+                final View rowView;
+                rowView = inflater.inflate(R.layout.custom_layout_order_item_listview, null);
+
+                holder.name = (TextView) rowView.findViewById(R.id.custom_layout_order_item_name);
+                holder.price = (TextView) rowView.findViewById(R.id.custom_layout_order_item_price);
+
+                holder.name.setText(itemInOrderList.get(position).getName());
+                holder.price.setText(itemInOrderList.get(position).getPrice() + "");
+
+                rowView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((MainActivity) getActivity()).setOrderIdToOpenAtOrderInfoLaunch(orderId);
+                        ((MainActivity) getActivity()).displayFragment(R.layout.fragment_order_info);
+                    }
+                });
+
+
+                return rowView;
+
+            }
+        }
+
     }
 
     private class LoadData extends AsyncTask<String, Void, String> {
