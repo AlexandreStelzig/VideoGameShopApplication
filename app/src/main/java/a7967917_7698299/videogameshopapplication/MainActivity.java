@@ -21,8 +21,9 @@ import android.widget.Toast;
 import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
-import a7967917_7698299.videogameshopapplication.fragments.AddressListFragment;
+import a7967917_7698299.videogameshopapplication.fragments.AccountInfoFragment;
 import a7967917_7698299.videogameshopapplication.fragments.AddressInfoFragment;
+import a7967917_7698299.videogameshopapplication.fragments.AddressListFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CartFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CheckoutFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HelpFragment;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     private PaymentInfoFragment paymentInfoFragment;
     private PaymentListFragment paymentListFragment;
     private SignUpFragment signUpFragment;
+    private AccountInfoFragment accountInfoFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
@@ -143,6 +145,7 @@ public class MainActivity extends AppCompatActivity
         paymentInfoFragment = new PaymentInfoFragment();
         paymentListFragment = new PaymentListFragment();
         signUpFragment = new SignUpFragment();
+        accountInfoFragment = new AccountInfoFragment();
 
         // init other
         viewIsAtHome = false;
@@ -268,7 +271,8 @@ public class MainActivity extends AppCompatActivity
     public void displayFragment(int itemId) {
 
 
-        if (itemId == currentFragmentTag)
+        //  itemId != R.id.search_view_results fixes a bug where you couldn't search twice
+        if (itemId == currentFragmentTag && itemId != R.id.search_view_results)
             return;
 
 
@@ -348,14 +352,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             // other nav
-            case R.id.nav_shop_game_by_category:
-                currentFragment = resultsFragment;
-                title = "Results";
-                break;
-            case R.id.nav_shop_game_by_console:
-                currentFragment = resultsFragment;
-                title = "Results";
-                break;
             case R.id.nav_account:
                 if (isUserConnectedWithMessage()) {
                     currentFragment = accountFragment;
@@ -451,6 +447,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_sign_up:
                 currentFragment = signUpFragment;
                 title = "Create Account";
+                break;
+            case R.layout.fragment_account_info:
+                currentFragment = accountInfoFragment;
                 break;
             default:
                 currentFragment = homeFragment;
@@ -599,7 +598,7 @@ public class MainActivity extends AppCompatActivity
             databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode);
             Toast.makeText(this, "Order Created", Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
-        }else{
+        } else {
             // should never come here
             displayFragment(R.id.nav_sign_in_out);
         }
