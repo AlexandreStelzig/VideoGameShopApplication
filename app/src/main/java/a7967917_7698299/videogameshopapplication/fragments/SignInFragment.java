@@ -7,8 +7,12 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 
 /**
@@ -26,7 +30,24 @@ public class SignInFragment extends Fragment{
 
         view = inflater.inflate(R.layout.fragment_sign_in, container, false);
         setHasOptionsMenu(true);
-
+        Button signInButton = (Button)view.findViewById(R.id.signInButton);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){signIn(v);}
+        });
+        TextView createAccountText = (TextView)view.findViewById(R.id.createAccountLink);
+        createAccountText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).displayFragment(R.id.nav_sign_up);
+            }
+        });
+        TextView forgotPasswordText = (TextView)view.findViewById(R.id.forgotPasswordLink);
+        forgotPasswordText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity().getApplicationContext(), "Sorry, this feature is not yet implemented.", Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 
