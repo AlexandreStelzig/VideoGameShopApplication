@@ -70,7 +70,7 @@
         android:clickable="true"
         android:text="Create account"
         android:padding="3dp"
-        tools:textColor="@color/colorAccent" />
+        android:textColor="@color/colorAccent" />
 
     <TextView
         android:id="@+id/forgotPasswordLink"
@@ -79,7 +79,7 @@
         android:clickable="true"
         android:text="Forgot Password?"
         android:padding="3dp"
-        tools:textColor="@color/colorAccent" />
+        android:textColor="@color/colorAccent" />
 
     <Button
         android:id="@+id/signInButton"

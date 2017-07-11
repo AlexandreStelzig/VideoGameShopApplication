@@ -16,7 +16,7 @@ import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 
 /**
- * @author Mathieu Perron, Alexandre Stelzig
+ * @author Alexandre Stelzig, Mathieu Perron
  */
 
 public class SignInFragment extends Fragment{
@@ -32,7 +32,7 @@ public class SignInFragment extends Fragment{
         setHasOptionsMenu(true);
         Button signInButton = (Button)view.findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){signIn(v);}
+            public void onClick(View v){signIn();}
         });
         TextView createAccountText = (TextView)view.findViewById(R.id.createAccountLink);
         createAccountText.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +51,7 @@ public class SignInFragment extends Fragment{
         return view;
     }
 
-    public void signIn(View v) {
+    public void signIn() {
         EditText editEmail = (EditText)getView().findViewById(R.id.editEmailSignIn);
         if(TextUtils.isEmpty(editEmail.getText())){
             editEmail.setError("E-mail field is empty!");
@@ -71,7 +71,7 @@ public class SignInFragment extends Fragment{
 
         //TODO: Set up validation
 
-
+        ((MainActivity) getActivity()).displayFragment(R.id.nav_home);
 
     }
 
