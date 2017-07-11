@@ -123,6 +123,7 @@ public class ResultsFragment extends Fragment {
                 searchView.clearFocus();
                 setSearchViewQuery(query);
                 ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
+//                populateListView();
 
                 return false;
             }

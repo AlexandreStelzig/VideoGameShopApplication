@@ -1,9 +1,14 @@
 package a7967917_7698299.videogameshopapplication.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +22,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
@@ -31,7 +37,7 @@ import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
  * Created by alex on 2017-06-24.
  */
 
-public class OrderListFragment extends Fragment{
+public class OrderListFragment extends Fragment {
 
 
     // components
@@ -76,7 +82,6 @@ public class OrderListFragment extends Fragment{
 
         return view;
     }
-
 
 
     private void initListView() {
@@ -142,7 +147,7 @@ public class OrderListFragment extends Fragment{
             TextView dateOrdered;
             TextView status;
             TextView price;
-            ListView listView;
+            ListView itemInfo;
         }
 
         @Override
@@ -156,18 +161,18 @@ public class OrderListFragment extends Fragment{
             holder.dateOrdered = (TextView) rowView.findViewById(R.id.custom_layout_order_date);
             holder.status = (TextView) rowView.findViewById(R.id.custom_layout_order_status);
             holder.price = (TextView) rowView.findViewById(R.id.custom_layout_order_price);
-            holder.listView = (ListView) rowView.findViewById(R.id.custom_layout_order_listview);
+            holder.itemInfo = (ListView) rowView.findViewById(R.id.custom_layout_order_item_info_listview);
 
 
-            Order rowOrder = orders.get(position);
+            final Order rowOrder = orders.get(position);
             List<OrderItem> orderItems = databaseManager.getOrderItemsFromOrderId(rowOrder.getOrderId());
             List<Item> items = new ArrayList<>();
 
-            for(int i = 0; i < orderItems.size(); i++){
+            for (int i = 0; i < orderItems.size(); i++) {
                 OrderItem temp = orderItems.get(i);
-                if(temp.getItemType() == ItemVariables.TYPE.CONSOLE){
+                if (temp.getItemType() == ItemVariables.TYPE.CONSOLE) {
                     items.add(databaseManager.getConsoleById(temp.getItemId()));
-                }else{
+                } else {
                     items.add(databaseManager.getGameById(temp.getItemId()));
                 }
             }
@@ -178,24 +183,103 @@ public class OrderListFragment extends Fragment{
 
 
             double total = 0;
-            for(int i = 0; i < orderItems.size(); i++){
+            for (int i = 0; i < orderItems.size(); i++) {
                 total += orderItems.get(i).getAmount() * items.get(i).getPrice();
             }
 
             holder.price.setText("Total: " + String.format("%.2f$", total));
 
-            List<String> orderItemName = new ArrayList<>();
-            for(int i = 0; i < items.size(); i++)
-                orderItemName.add(items.get(i).getName());
 
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, orderItemName);
-            holder.listView.setAdapter(arrayAdapter);
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) getActivity()).setOrderIdToOpenAtOrderInfoLaunch(rowOrder.getOrderId());
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_order_info);
+                }
+            });
 
-//            Helper.setListViewHeightBasedOnChildren(holder.listView);
+            CustomItemListAdapter customItemListAdapter = new CustomItemListAdapter(getContext(), items, rowOrder.getOrderId());
+            holder.itemInfo.setAdapter(customItemListAdapter);
+
+            Helper.setListViewHeightBasedOnChildren(holder.itemInfo);
+
 
             return rowView;
 
         }
+
+
+        // Very ugly but works (missing time)
+        private class CustomItemListAdapter extends BaseAdapter {
+
+            Context context;
+
+            private LayoutInflater inflater = null;
+
+            private List<Item> itemInOrderList;
+            private long orderId;
+
+            public CustomItemListAdapter(Context context, List<Item> itemInOrderList, long orderId) {
+                // TODO Auto-generated constructor stub
+                super();
+                this.context = context;
+                this.orderId = orderId;
+                this.itemInOrderList = itemInOrderList;
+                inflater = (LayoutInflater) context.
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            }
+
+            @Override
+            public int getCount() {
+                // TODO Auto-generated method stub
+                return itemInOrderList.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                // TODO Auto-generated method stub
+                return position;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                // TODO Auto-generated method stub
+                return position;
+            }
+
+            public class HolderItem {
+                TextView name;
+                TextView price;
+            }
+
+            @Override
+            public View getView(final int position, View convertView, ViewGroup parent) {
+
+                final CustomItemListAdapter.HolderItem holder = new CustomItemListAdapter.HolderItem();
+                final View rowView;
+                rowView = inflater.inflate(R.layout.custom_layout_order_item_listview, null);
+
+                holder.name = (TextView) rowView.findViewById(R.id.custom_layout_order_item_name);
+                holder.price = (TextView) rowView.findViewById(R.id.custom_layout_order_item_price);
+
+                holder.name.setText(itemInOrderList.get(position).getName());
+                holder.price.setText(itemInOrderList.get(position).getPrice() + "");
+
+                rowView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((MainActivity) getActivity()).setOrderIdToOpenAtOrderInfoLaunch(orderId);
+                        ((MainActivity) getActivity()).displayFragment(R.layout.fragment_order_info);
+                    }
+                });
+
+
+                return rowView;
+
+            }
+        }
+
     }
 
     private class LoadData extends AsyncTask<String, Void, String> {

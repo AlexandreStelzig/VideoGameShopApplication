@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.variables.OrderVariables;
@@ -36,7 +37,7 @@ public class HelpFragment extends Fragment{
         ((Button) view.findViewById(R.id.test)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                databaseManager.createOrderFromItemsInCart("test","test","test", OrderVariables.STATUS.DELIVERED, 1234, "test",  2,2,"test","test","test","test","test" );
+                ((MainActivity)getActivity()).createOrderFromCartItems("test","test","test", OrderVariables.STATUS.DELIVERED, 1234, "test",  2,2,"test","test","test","test","test" );
             }
         });
 

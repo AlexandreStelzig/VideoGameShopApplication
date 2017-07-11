@@ -21,8 +21,9 @@ import android.widget.Toast;
 import a7967917_7698299.videogameshopapplication.database.DatabaseHardCodedValues;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.fragments.AccountFragment;
-import a7967917_7698299.videogameshopapplication.fragments.AddressListFragment;
+import a7967917_7698299.videogameshopapplication.fragments.AccountInfoFragment;
 import a7967917_7698299.videogameshopapplication.fragments.AddressInfoFragment;
+import a7967917_7698299.videogameshopapplication.fragments.AddressListFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CartFragment;
 import a7967917_7698299.videogameshopapplication.fragments.CheckoutFragment;
 import a7967917_7698299.videogameshopapplication.fragments.HelpFragment;
@@ -38,6 +39,7 @@ import a7967917_7698299.videogameshopapplication.fragments.SignInFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SignUpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
+import a7967917_7698299.videogameshopapplication.variables.OrderVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
 
 public class MainActivity extends AppCompatActivity
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     private PaymentInfoFragment paymentInfoFragment;
     private PaymentListFragment paymentListFragment;
     private SignUpFragment signUpFragment;
+    private AccountInfoFragment accountInfoFragment;
 
     // variables to keep track of the current and previous fragments
     private Fragment currentFragment;
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity
         paymentInfoFragment = new PaymentInfoFragment();
         paymentListFragment = new PaymentListFragment();
         signUpFragment = new SignUpFragment();
+        accountInfoFragment = new AccountInfoFragment();
 
         // init other
         viewIsAtHome = false;
@@ -267,7 +271,8 @@ public class MainActivity extends AppCompatActivity
     public void displayFragment(int itemId) {
 
 
-        if (itemId == currentFragmentTag)
+        //  itemId != R.id.search_view_results fixes a bug where you couldn't search twice
+        if (itemId == currentFragmentTag && itemId != R.id.search_view_results)
             return;
 
 
@@ -347,14 +352,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             // other nav
-            case R.id.nav_shop_game_by_category:
-                currentFragment = resultsFragment;
-                title = "Results";
-                break;
-            case R.id.nav_shop_game_by_console:
-                currentFragment = resultsFragment;
-                title = "Results";
-                break;
             case R.id.nav_account:
                 if (isUserConnectedWithMessage()) {
                     currentFragment = accountFragment;
@@ -427,29 +424,32 @@ public class MainActivity extends AppCompatActivity
                     title = "Home";
                 }
                 break;
-            case R.layout.fragment_address_list :
+            case R.layout.fragment_address_list:
                 currentFragment = addressListFragment;
                 title = "Address List";
                 break;
-            case R.layout.fragment_address_info :
+            case R.layout.fragment_address_info:
                 currentFragment = this.addressInfoFragment;
                 title = "Address Info";
                 break;
-            case R.layout.fragment_order_info :
+            case R.layout.fragment_order_info:
                 currentFragment = orderInfoFragment;
                 title = "Order Info";
                 break;
-            case R.layout.fragment_payment_info :
+            case R.layout.fragment_payment_info:
                 currentFragment = paymentInfoFragment;
                 title = "Payment Info";
                 break;
-            case R.layout.fragment_payment_list :
+            case R.layout.fragment_payment_list:
                 currentFragment = paymentListFragment;
                 title = "Payment List";
                 break;
-            case R.id.nav_sign_up :
+            case R.id.nav_sign_up:
                 currentFragment = signUpFragment;
                 title = "Create Account";
+                break;
+            case R.layout.fragment_account_info:
+                currentFragment = accountInfoFragment;
                 break;
             default:
                 currentFragment = homeFragment;
@@ -480,7 +480,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // set hardware back button logic
-        if (currentFragment.equals(homeFragment)) {
+        if (currentFragment != null && currentFragment.equals(homeFragment)) {
             viewIsAtHome = true;
         } else {
             viewIsAtHome = false;
@@ -593,6 +593,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+        if (isUserConnectedWithMessage()) {
+            databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode);
+            Toast.makeText(this, "Order Created", Toast.LENGTH_SHORT).show();
+            invalidateOptionsMenu();
+        } else {
+            // should never come here
+            displayFragment(R.id.nav_sign_in_out);
+        }
+    }
+
     public boolean isUserConnectedWithMessage() {
         if (databaseManager.getCurrentActiveUser() == null) {
             Toast.makeText(this, "Please Sign In", Toast.LENGTH_SHORT).show();
@@ -611,6 +622,10 @@ public class MainActivity extends AppCompatActivity
 
     public void setItemIdToOpenAtInfoLaunch(long itemId, ItemVariables.TYPE itemType) {
         itemInfoFragment.setItemIdToOpenAtLaunch(itemId, itemType);
+    }
+
+    public void setOrderIdToOpenAtOrderInfoLaunch(long orderId) {
+        orderInfoFragment.setOrderIdToOpenAtOrderInfoLaunch(orderId);
     }
 
     public void continueShoppingClicked(View view) {

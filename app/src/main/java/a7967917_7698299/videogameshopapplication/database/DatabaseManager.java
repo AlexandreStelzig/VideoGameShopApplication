@@ -445,7 +445,7 @@ public class DatabaseManager {
     }
 
 
-    public List<Item> getAllWishListItems() {
+    public List<Item> getAllWishListItemsFromActiveUser() {
         List<Item> itemList = new ArrayList<>();
         itemList.addAll(getAllWishlistConsoles());
         itemList.addAll(getAllWishlistGames());
@@ -615,10 +615,28 @@ public class DatabaseManager {
         return orderList;
     }
 
+    public Order getOrderByOrderId(long orderId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId()
+                + " AND " + DatabaseVariables.TABLE_ORDER.COLUMN_ORDER_ID + "=" + orderId, null);
+
+
+        Order order = null;
+
+        if (cursor.moveToFirst()) {
+            order = (fetchOrderFromCursor(cursor));
+            cursor.moveToNext();
+
+        }
+        cursor.close();
+        return order;
+    }
+
 
     public List<OrderItem> getOrderItemsFromOrderId(long orderId) {
 
-        List<OrderItem> consoles = getAllOrderItemConsoleFromOrderId( orderId);
+        List<OrderItem> consoles = getAllOrderItemConsoleFromOrderId(orderId);
         List<OrderItem> games = getAllOrderItemGameFromOrderId(orderId);
 
         List<OrderItem> items = new ArrayList<>();
@@ -628,7 +646,7 @@ public class DatabaseManager {
         return items;
     }
 
-    private List<OrderItem> getAllOrderItemConsoleFromOrderId(long orderId){
+    private List<OrderItem> getAllOrderItemConsoleFromOrderId(long orderId) {
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.TABLE_NAME + " WHERE "
                 + DatabaseVariables.TABLE_ORDER_ITEM_CONSOLE.COLUMN_ORDER_ID + "=" + orderId, null);
@@ -647,7 +665,7 @@ public class DatabaseManager {
         return orderItemsConsole;
     }
 
-    private List<OrderItem> getAllOrderItemGameFromOrderId(long orderId){
+    private List<OrderItem> getAllOrderItemGameFromOrderId(long orderId) {
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER_ITEM_GAME.TABLE_NAME + " WHERE "
                 + DatabaseVariables.TABLE_ORDER_ITEM_GAME.COLUMN_ORDER_ID + "=" + orderId, null);
@@ -665,10 +683,6 @@ public class DatabaseManager {
         cursor.close();
         return orderItemsGame;
     }
-
-
-
-
 
 
     ////////////// CREATE METHODS //////////////
@@ -1061,11 +1075,12 @@ public class DatabaseManager {
             }
         }
 
+        // empty wishlist that was in cart
+        deleteWishListItemThatWereInCart();
 
         // empty cart
         deleteAllCartItems();
 
-        // empty wishlist that was in cart
 
         return newRowId;
     }
@@ -1200,8 +1215,6 @@ public class DatabaseManager {
     }
 
     public boolean deleteAllCartItems() {
-        SQLiteDatabase db = database.getReadableDatabase();
-
         List<CartItem> cartItems = getAllCartItems();
 
         boolean passed = true;
@@ -1213,6 +1226,26 @@ public class DatabaseManager {
         }
 
         return passed;
+    }
+
+    private void deleteWishListItemThatWereInCart() {
+        List<CartItem> cartItems = getAllCartItems();
+        List<Item> wishListItemList = getAllWishListItemsFromActiveUser();
+
+        for (int counterCart = 0; counterCart < cartItems.size(); counterCart++) {
+
+            CartItem cartItemTemp = cartItems.get(counterCart);
+            for (int counterWishlist = 0; counterWishlist < wishListItemList.size(); counterWishlist++) {
+                Item wishListItemTemp = wishListItemList.get(counterWishlist);
+
+                if (cartItemTemp.getItemType() == wishListItemTemp.getItemType() &&
+                        cartItemTemp.getItemId() == wishListItemTemp.getItemId()) {
+                    deleteWishlist(wishListItemTemp.getItemId(), wishListItemTemp.getItemType());
+                }
+            }
+
+        }
+
     }
 
 

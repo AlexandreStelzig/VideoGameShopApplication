@@ -7,7 +7,8 @@
     android:background="@drawable/custom_border"
     android:clickable="true"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:layout_marginBottom="10dp">
 
 
     <LinearLayout
@@ -45,6 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
         <TextView
             android:id="@+id/custom_layout_order_status"
             android:layout_width="0dp"
@@ -68,7 +70,6 @@
             android:textColor="@color/red"
             android:textSize="@dimen/text_normal" />
 
-
     </LinearLayout>
 
     <View
@@ -78,13 +79,11 @@
         android:background="@color/colorDivider" />
 
     <ListView
-        android:id="@+id/custom_layout_order_listview"
+        android:id="@+id/custom_layout_order_item_info_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="false">
-
-
-    </ListView>
+        android:clickable="false"
+        android:textColor="@color/primaryText"/>
 
 
 </LinearLayout>
