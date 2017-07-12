@@ -1614,5 +1614,38 @@ public class DatabaseManager {
         return nb;
     }
 
+    public List<Item> getXNumberItem(int nbItems, ItemVariables.TYPE itemType) {
 
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = null;
+        if (itemType == ItemVariables.TYPE.CONSOLE) {
+            cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE.TABLE_NAME + " LIMIT " + nbItems, null);
+            List<Item> consoles = new ArrayList<Item>();
+
+            if (cursor.moveToFirst()) {
+                while (cursor.isAfterLast() == false) {
+                    consoles.add(fetchConsoleFromCursor(cursor));
+                    cursor.moveToNext();
+                }
+            }
+
+            cursor.close();
+            return consoles;
+        } else {
+            cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_VIDEO_GAME.TABLE_NAME + " LIMIT " + nbItems, null);
+            List<Item> games = new ArrayList<Item>();
+
+            if (cursor.moveToFirst()) {
+                while (cursor.isAfterLast() == false) {
+                    games.add(fetchVideoGameFromCursor(cursor));
+                    cursor.moveToNext();
+                }
+            }
+
+            cursor.close();
+            return games;
+        }
+
+
+    }
 }

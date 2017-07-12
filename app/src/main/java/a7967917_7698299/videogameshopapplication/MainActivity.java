@@ -425,6 +425,10 @@ public class MainActivity extends AppCompatActivity
                     // sign out
                     currentFragment = homeFragment;
                     databaseManager.setCurrentActiveUser(-1);
+
+                    if(homeFragment.isVisible())
+                        homeFragment.setHomeSignInComponents();
+
                     title = "Home";
                 }
                 break;
