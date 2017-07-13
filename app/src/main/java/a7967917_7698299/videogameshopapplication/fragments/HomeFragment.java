@@ -268,7 +268,7 @@ public class HomeFragment extends Fragment {
                                 // using this method for caching
                                 recommendedImageCache[position] = output;
                             }
-                        }).execute(recommendedImageList.get(position));
+                        }, getContext()).execute(recommendedImageList.get(position));
                     else
                         imageView.setImageBitmap(recommendedImageCache[position]);
 
@@ -313,7 +313,7 @@ public class HomeFragment extends Fragment {
                                 // using this method for caching
                                 consoleImageCache[position] = output;
                             }
-                        }).execute(consoleImageList.get(position));
+                        }, getContext()).execute(consoleImageList.get(position));
                     else
                         imageView.setImageBitmap(consoleImageCache[position]);
 
@@ -356,7 +356,7 @@ public class HomeFragment extends Fragment {
                                 // using this method for caching
                                 gameImageCache[position] = output;
                             }
-                        }).execute(gameImageList.get(position));
+                        }, getContext()).execute(gameImageList.get(position));
                     else
                         imageView.setImageBitmap(gameImageCache[position]);
 

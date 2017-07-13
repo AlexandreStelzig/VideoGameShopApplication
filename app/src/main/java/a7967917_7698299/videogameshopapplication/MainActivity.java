@@ -187,23 +187,30 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
 
+        MenuItem cartItem = menu.findItem(R.id.action_cart);
+        if(signInFragment.isVisible() || signUpFragment.isVisible()){
+            cartItem.setVisible(false);
+        }else{
+            cartItem.setVisible(true);
+        }
+
         if (databaseManager.getCurrentActiveUser() != null) {
             int nbItemsInCart = databaseManager.getNbItemsInCart();
 
             if (nbItemsInCart == 0)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_0);
+                cartItem.setIcon(R.mipmap.ic_cart_0);
             else if (nbItemsInCart == 1)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_1);
+                cartItem.setIcon(R.mipmap.ic_cart_1);
             else if (nbItemsInCart == 2)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_2);
+                cartItem.setIcon(R.mipmap.ic_cart_2);
             else if (nbItemsInCart == 3)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_3);
+                cartItem.setIcon(R.mipmap.ic_cart_3);
             else if (nbItemsInCart == 4)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_4);
+                cartItem.setIcon(R.mipmap.ic_cart_4);
             else
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_5plus);
+                cartItem.setIcon(R.mipmap.ic_cart_5plus);
         } else {
-            menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_0);
+            cartItem.setIcon(R.mipmap.ic_cart_0);
         }
 
         return true;
@@ -416,6 +423,7 @@ public class MainActivity extends AppCompatActivity
                 if (databaseManager.getCurrentActiveUser() == null) {
                     // sign in
                     currentFragment = signInFragment;
+
                     title = "Sign in";
                 } else {
                     // sign out
@@ -426,6 +434,7 @@ public class MainActivity extends AppCompatActivity
                         homeFragment.setHomeSignInComponents();
 
                     title = "Home";
+                    currentFragmentTag = R.id.nav_home;
                 }
                 break;
             case R.layout.fragment_address_list:
@@ -489,6 +498,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             viewIsAtHome = false;
         }
+
+        invalidateOptionsMenu();
 
     }
 

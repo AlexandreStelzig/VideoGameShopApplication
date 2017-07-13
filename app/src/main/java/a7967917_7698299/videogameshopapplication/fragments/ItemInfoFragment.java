@@ -8,6 +8,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +31,7 @@ import a7967917_7698299.videogameshopapplication.helper.Helper;
 import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
+import a7967917_7698299.videogameshopapplication.model.ItemTrailer;
 import a7967917_7698299.videogameshopapplication.model.VideoGame;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
@@ -51,6 +56,9 @@ public class ItemInfoFragment extends Fragment {
     private Button addCartButton;
     private ProgressBar progressBar;
     private CarouselView carouselView;
+
+    private LinearLayout trailerLayout;
+    private WebView trailerWebView;
 
 
     // carousel
@@ -95,6 +103,9 @@ public class ItemInfoFragment extends Fragment {
         wishlistButton = (Button) view.findViewById(R.id.fragment_item_info_add_wishlist_button);
         progressBar = (ProgressBar) view.findViewById(R.id.carouselProgressBar);
         carouselView = (CarouselView) view.findViewById(R.id.carouselView);
+        trailerLayout = (LinearLayout) view.findViewById(R.id.fragment_item_info_trailer_layout);
+        trailerWebView = (WebView) view.findViewById(R.id.fragment_item_info_trailer_webview);
+
 
         if (itemType == ItemVariables.TYPE.CONSOLE) {
             item = databaseManager.getConsoleById(itemId);
@@ -106,9 +117,48 @@ public class ItemInfoFragment extends Fragment {
         initHeader();
         initCarousel();
         initBody();
+        initTrailer();
 
         return view;
     }
+
+    // not the best player but good enough
+    private void initTrailer() {
+
+
+        if (itemType == ItemVariables.TYPE.GAME) {
+            ItemTrailer trailer = databaseManager.getTrailerFromGameId(itemId);
+
+            if (trailer == null || trailer.getTrailerURL().isEmpty()) {
+                trailerLayout.setVisibility(View.GONE);
+            } else {
+                trailerLayout.setVisibility(View.VISIBLE);
+
+
+                int width = getContext().getResources().getDisplayMetrics().widthPixels;
+                int height = (int) (width * 9 / 16);
+
+                String frameVideo = "<html><body>Video From YouTube<br><iframe width=\"" + width + "\" height=\"" + height + "\" src=\""+trailer.getTrailerURL()+"\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
+
+
+                WebSettings webSettings = trailerWebView.getSettings();
+                webSettings.setJavaScriptEnabled(true);
+                webSettings.setBuiltInZoomControls(true);
+
+                trailerWebView.setWebChromeClient(new WebChromeClient());
+                trailerWebView.setWebViewClient(new WebViewClient());
+                trailerWebView.getSettings().setLoadWithOverviewMode(true);
+                trailerWebView.getSettings().setUseWideViewPort(true);
+
+                trailerWebView.loadData(frameVideo, "text/html", "utf-8");
+            }
+        } else {
+            trailerLayout.setVisibility(View.GONE);
+        }
+
+
+    }
+
 
     private void initBody() {
 
@@ -241,7 +291,7 @@ public class ItemInfoFragment extends Fragment {
                                 // using this method for caching
                                 imageCache[position] = output;
                             }
-                        }).execute(imageListURL.get(position));
+                        }, getContext()).execute(imageListURL.get(position));
                     else
                         imageView.setImageBitmap(imageCache[position]);
 

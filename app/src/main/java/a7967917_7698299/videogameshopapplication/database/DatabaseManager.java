@@ -18,6 +18,7 @@ import a7967917_7698299.videogameshopapplication.model.Console;
 import a7967917_7698299.videogameshopapplication.model.ConsoleVideoGame;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
+import a7967917_7698299.videogameshopapplication.model.ItemTrailer;
 import a7967917_7698299.videogameshopapplication.model.Order;
 import a7967917_7698299.videogameshopapplication.model.OrderItem;
 import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
@@ -199,6 +200,25 @@ public class DatabaseManager {
 
         cursor.close();
         return imageList;
+    }
+
+    public ItemTrailer getTrailerFromGameId(long gameId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_TRAILER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_TRAILER.COLUMN_GAME_ID + "=" + gameId, null);
+
+
+        ItemTrailer trailer = null;
+
+        if (cursor.moveToFirst()) {
+
+            trailer = (fetchTrailerGameFromCursor(cursor));
+            cursor.moveToNext();
+
+        }
+
+        cursor.close();
+        return trailer;
     }
 
 
@@ -890,6 +910,30 @@ public class DatabaseManager {
     }
 
 
+    public long createTrailerGame(String trailerURL, long gameId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        values.put(DatabaseVariables.TABLE_TRAILER.COLUMN_TRAILER_URL, trailerURL);
+        values.put(DatabaseVariables.TABLE_TRAILER.COLUMN_GAME_ID, gameId);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_TRAILER.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding console " + trailerURL);
+        else {
+            Log.d("DatabaseManager", "added " + trailerURL);
+        }
+        return newRowId;
+
+    }
+
+
     public long createConsoleVideoGame(ItemVariables.CONSOLES consoleType, long gameId) {
 
         SQLiteDatabase db = database.getWritableDatabase();
@@ -1363,6 +1407,18 @@ public class DatabaseManager {
         return new ItemImage(ItemVariables.TYPE.GAME, itemId, imageURL, gameId);
     }
 
+    private ItemTrailer fetchTrailerGameFromCursor(Cursor cursor) {
+
+        long trailerID = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_TRAILER.COLUMN_TRAILER_ID));
+        long gameId = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_TRAILER.COLUMN_GAME_ID));
+        String imageURL = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_TRAILER.COLUMN_TRAILER_URL));
+
+        return new ItemTrailer(trailerID, imageURL, gameId);
+    }
+
     private Order fetchOrderFromCursor(Cursor cursor) {
 
         long orderId = cursor.getInt(cursor
@@ -1655,7 +1711,7 @@ public class DatabaseManager {
         itemList.addAll(getAllGames());
 
         List<Item> randomList = new ArrayList<>();
-        for(int i = 0; i < nbItems; i++){
+        for (int i = 0; i < nbItems; i++) {
 
             int range = (itemList.size());
 

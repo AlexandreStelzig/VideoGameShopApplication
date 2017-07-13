@@ -1,5 +1,6 @@
 package a7967917_7698299.videogameshopapplication.helper;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -7,6 +8,8 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.InputStream;
+
+import a7967917_7698299.videogameshopapplication.R;
 
 /**
  * Created by alex on 7/7/2017.
@@ -22,10 +25,12 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     public AsyncResponse delegate = null;
 
     ImageView imageView;
+    Context context;
 
-    public ImageLoader(ImageView imageView, AsyncResponse delegate) {
+    public ImageLoader(ImageView imageView, AsyncResponse delegate, Context context) {
         this.imageView = imageView;
         this.delegate = delegate;
+        this.context = context;
     }
 
     protected Bitmap doInBackground(String... urls) {
@@ -36,16 +41,8 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             mIcon11 = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
-            e.printStackTrace();
-
-            try {
-                InputStream in = new java.net.URL("http://used.agwest.com/images/default-image-agwest-thumb.jpg").openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e2) {
-                Log.e("Error", e2.getMessage());
-                e2.printStackTrace();
-            }
-
+            mIcon11 = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.no_image);
         }
         return mIcon11;
     }

@@ -38,6 +38,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_IMAGE_CONSOLE);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_IMAGE_GAME);
         db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_APPLICATION);
+        db.execSQL(DatabaseVariables.SQL_CREATE_TABLE_TRAILER_GAME);
 
     }
 
@@ -61,6 +62,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_IMAGE_CONSOLE);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_IMAGE_GAME);
         db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_APPLICATION);
+        db.execSQL(DatabaseVariables.SQL_DELETE_TABLE_TRAILER);
         onCreate(db);
     }
 

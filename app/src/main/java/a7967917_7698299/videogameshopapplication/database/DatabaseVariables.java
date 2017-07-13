@@ -197,6 +197,14 @@ public final class DatabaseVariables {
             + " FOREIGN KEY " + "(" + TABLE_APPLICATION.COLUMN_CURRENT_USER + ")"
             + " REFERENCES " + TABLE_USER.TABLE_NAME + "(" + TABLE_USER.COLUMN_USER_ID + ")" + " );";
 
+    public static final String SQL_CREATE_TABLE_TRAILER_GAME = "CREATE TABLE "
+            + TABLE_TRAILER.TABLE_NAME + " ("
+            + TABLE_TRAILER.COLUMN_TRAILER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TABLE_TRAILER.COLUMN_TRAILER_URL + " TEXT,"
+            + TABLE_TRAILER.COLUMN_GAME_ID + " INTEGER,"
+            + " FOREIGN KEY " + "(" + TABLE_TRAILER.COLUMN_GAME_ID + ")"
+            + " REFERENCES " + TABLE_VIDEO_GAME.TABLE_NAME + "(" + TABLE_VIDEO_GAME.COLUMN_GAME_ID + ")" + " );";
+
 
     public static final String SQL_DELETE_TABLE_ADDRESS = "DROP TABLE IF EXISTS " + TABLE_ADDRESS.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_CART = "DROP TABLE IF EXISTS " + TABLE_CART.TABLE_NAME;
@@ -216,6 +224,7 @@ public final class DatabaseVariables {
     public static final String SQL_DELETE_TABLE_IMAGE_CONSOLE = "DROP TABLE IF EXISTS " + TABLE_IMAGE_CONSOLE.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_IMAGE_GAME = "DROP TABLE IF EXISTS " + TABLE_IMAGE_GAME.TABLE_NAME;
     public static final String SQL_DELETE_TABLE_APPLICATION = "DROP TABLE IF EXISTS " + TABLE_APPLICATION.TABLE_NAME;
+    public static final String SQL_DELETE_TABLE_TRAILER = "DROP TABLE IF EXISTS " + TABLE_TRAILER.TABLE_NAME;
 
 
     public static abstract class TABLE_ADDRESS implements BaseColumns {
@@ -377,6 +386,13 @@ public final class DatabaseVariables {
         public static final String TABLE_NAME = "application";
         public static final String COLUMN_APPLICATION_ID = "app_id";
         public static final String COLUMN_CURRENT_USER = "user_id";
+    }
+
+    public static abstract class TABLE_TRAILER implements BaseColumns{
+        public static final String TABLE_NAME = "trailer";
+        public static final String COLUMN_TRAILER_ID = "trailer_id";
+        public static final String COLUMN_TRAILER_URL = "trailer_url";
+        public static final String COLUMN_GAME_ID = "game_id";
     }
 
 }
