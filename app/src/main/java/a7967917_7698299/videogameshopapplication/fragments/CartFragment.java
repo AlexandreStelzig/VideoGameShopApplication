@@ -343,7 +343,7 @@ public class CartFragment extends Fragment {
                         // using this method for caching
                         cachedImages[position] = output;
                     }
-                }).execute(imagesURLList.get(position));
+                }, getContext()).execute(imagesURLList.get(position));
             else
                 holder.imageView.setImageBitmap(cachedImages[position]);
 

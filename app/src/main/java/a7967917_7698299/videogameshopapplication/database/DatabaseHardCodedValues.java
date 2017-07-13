@@ -123,12 +123,16 @@ public class DatabaseHardCodedValues {
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, " https://upload.wikimedia.org/wikipedia/en/0/0e/BreathoftheWildFinalCover.jpg", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, " https://static-ca.ebgames.ca/images/products/727843/7scrmax2.jpg", itemId);
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.SWITCH, itemId);
+        databaseManager.createTrailerGame("https://www.youtube.com/embed/zw47_q9wbBE", itemId);
 
         // FIFA
         itemId = databaseManager.createVideoGame("FIFA 17", 39.99, "FIFA 17 is a sports video game in the FIFA series developed and published by Electronic Arts, which released in September 2016. This is the first FIFA game in the series to use the Frostbite game engine. Marco Reus serves as the cover athlete on the game",
                 5, "EA Sports", "September 27, 2016", VideoGameVariables.ESRB.EVERYONE.toString(), 23, VideoGameVariables.CATEGORY.SPORTS.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
-        databaseManager.createItemImage(ItemVariables.TYPE.GAME, " https://upload.wikimedia.org/wikipedia/en/0/08/FIFA_17_cover.jpeg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://upload.wikimedia.org/wikipedia/en/0/08/FIFA_17_cover.jpeg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://media.contentapi.ea.com/content/www-easports/en_US/fifa/news/2016/fifa-17-pre-order-offers/_jcr_content/headerImages/image.img.jpg", itemId);
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.PS4, itemId);
+        databaseManager.createTrailerGame("https://www.youtube.com/embed/P9LHzVEPodg", itemId);
+
 
         // FIRE EMBLEM
         itemId = databaseManager.createVideoGame("Fire Emblem Awakening", 39.99, "Awakening uses a turn-based tactical role-playing battle system. The terrain is displayed on the top screen of the 3DS, while unit information is displayed on the bottom screen. Before each battle, the player selects a limited number of characters from their roster for use in battle. The player can either control each unit manually or activate an auto-battle option. Character movement is dictated by a tile-based movement system. During combat, player-controlled sprite characters and enemy units controlled by the game's artificial intelligence (AI) each get one turn where they position their units. An additional turn is added when unaffiliated AI-controlled units are in the field. Playable characters positioned next to each other in the field will support one-another, granting buffs, and performing actions such as blocking attacks. Two characters can also pair up as a single mobile unit, enabling both units to attack at once. As the relationship between characters strengthens, they gain greater bonuses to their strength and effectiveness when paired up in battle. During combat, the perspective switched to a 3D scene between combatants. Optional camera angles, including a first-person view through the eyes of playable characters, can be activated using the 3DS stylus.",
@@ -201,6 +205,19 @@ public class DatabaseHardCodedValues {
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv12d.jpg;maxHeight=550;maxWidth=642", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv13d.jpg;maxHeight=550;maxWidth=642", itemId);
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.SWITCH, itemId);
+
+        // GTA
+        itemId = databaseManager.createVideoGame("GTA 5", 59.99, "When a young street hustler, a retired bank robber and a terrifying psychopath find themselves entangled with some of the most frightening and deranged elements of the criminal underworld, the U.S. government and the entertainment industry, they must pull off a series of dangerous heists to survive in a ruthless city in which they can trust nobody, least of all each other.",
+                3, "Rockstar Games", "September 17, 2013", VideoGameVariables.ESRB.MATURE_17PLUS.toString(), 50, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.ALL.toString(), 1);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/header.jpg?t=1497989696", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/ss_e929649b2b98ad76795d92d8489470bc5dbffddb.600x338.jpg?t=1497989696", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/ss_e080b9646300458e7e6fde55ad68c8fd3650371c.600x338.jpg?t=1497989696", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/ss_3ce5439cfdd04d1c53487f7057d45360839c0205.600x338.jpg?t=1497989696", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/ss_bb5725e2200df97b28908bccb9e8268780489506.600x338.jpg?t=1497989696", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/ss_ea299fb00e9789ce97bc6c690d9f99180bab03ab.600x338.jpg?t=1497989696", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://cdn.edgecast.steamstatic.com/steam/apps/271590/ss_d1f60c9aae855a810bcdabebf43a1e03e9600ac0.600x338.jpg?t=1497989696", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.XBOXONE, itemId);
+        databaseManager.createTrailerGame("https://www.youtube.com/embed/VjZ5tgjPVfU", itemId);
     }
 
 

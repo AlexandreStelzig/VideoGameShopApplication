@@ -187,23 +187,30 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
 
+        MenuItem cartItem = menu.findItem(R.id.action_cart);
+        if(signInFragment.isVisible() || signUpFragment.isVisible()){
+            cartItem.setVisible(false);
+        }else{
+            cartItem.setVisible(true);
+        }
+
         if (databaseManager.getCurrentActiveUser() != null) {
             int nbItemsInCart = databaseManager.getNbItemsInCart();
 
             if (nbItemsInCart == 0)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_0);
+                cartItem.setIcon(R.mipmap.ic_cart_0);
             else if (nbItemsInCart == 1)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_1);
+                cartItem.setIcon(R.mipmap.ic_cart_1);
             else if (nbItemsInCart == 2)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_2);
+                cartItem.setIcon(R.mipmap.ic_cart_2);
             else if (nbItemsInCart == 3)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_3);
+                cartItem.setIcon(R.mipmap.ic_cart_3);
             else if (nbItemsInCart == 4)
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_4);
+                cartItem.setIcon(R.mipmap.ic_cart_4);
             else
-                menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_5plus);
+                cartItem.setIcon(R.mipmap.ic_cart_5plus);
         } else {
-            menu.findItem(R.id.action_cart).setIcon(R.mipmap.ic_cart_0);
+            cartItem.setIcon(R.mipmap.ic_cart_0);
         }
 
         return true;
@@ -291,63 +298,63 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_switch:
                 currentFragment = resultsFragment;
                 title = "Results";
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.SWITCH);
+                setFilterByConsole(ItemVariables.CONSOLES.SWITCH);
                 break;
             case R.id.nav_3ds:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.THREE_DS);
+                setFilterByConsole(ItemVariables.CONSOLES.THREE_DS);
                 title = "Results";
                 break;
             case R.id.nav_ps4:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.PS4);
+                setFilterByConsole(ItemVariables.CONSOLES.PS4);
                 title = "Results";
                 break;
             case R.id.nav_xbox:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.XBOXONE);
+                setFilterByConsole(ItemVariables.CONSOLES.XBOXONE);
                 title = "Results";
                 break;
             // games by category
             case R.id.nav_game_action:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.ACTION);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.ACTION);
                 title = "Results";
                 break;
             case R.id.nav_game_adventure:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.ADVENTURE);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.ADVENTURE);
                 title = "Results";
                 break;
             case R.id.nav_game_rpg:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.RPG);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.RPG);
                 title = "Results";
                 break;
             case R.id.nav_game_sport:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.SPORTS);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.SPORTS);
                 title = "Results";
                 break;
             // games by console
             case R.id.nav_game_switch:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.SWITCH);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.SWITCH);
                 title = "Results";
                 break;
             case R.id.nav_game_3ds:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.THREE_DS);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.THREE_DS);
                 title = "Results";
                 break;
             case R.id.nav_game_ps4:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.PS4);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.PS4);
                 title = "Results";
                 break;
             case R.id.nav_game_xbox:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.XBOXONE);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.XBOXONE);
                 title = "Results";
                 break;
 
@@ -416,12 +423,18 @@ public class MainActivity extends AppCompatActivity
                 if (databaseManager.getCurrentActiveUser() == null) {
                     // sign in
                     currentFragment = signInFragment;
+
                     title = "Sign in";
                 } else {
                     // sign out
                     currentFragment = homeFragment;
                     databaseManager.setCurrentActiveUser(-1);
+
+                    if(homeFragment.isVisible())
+                        homeFragment.setHomeSignInComponents();
+
                     title = "Home";
+                    currentFragmentTag = R.id.nav_home;
                 }
                 break;
             case R.layout.fragment_address_list:
@@ -485,6 +498,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             viewIsAtHome = false;
         }
+
+        invalidateOptionsMenu();
 
     }
 
@@ -618,6 +633,18 @@ public class MainActivity extends AppCompatActivity
 
     public void setSearchQuery(String query) {
         resultsFragment.setSearchViewQuery(query);
+    }
+
+    public void setFilterGamesByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+        resultsFragment.setFilterGamesByConsole(consoleToFilterBy);
+    }
+
+    public void setFilterByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+        resultsFragment.setFilterByConsole(consoleToFilterBy);
+    }
+
+    public void setFilterGamesByCategory(VideoGameVariables.CATEGORY categoryToFilterBy) {
+        resultsFragment.setFilterGamesByCategory(categoryToFilterBy);
     }
 
     public void setItemIdToOpenAtInfoLaunch(long itemId, ItemVariables.TYPE itemType) {

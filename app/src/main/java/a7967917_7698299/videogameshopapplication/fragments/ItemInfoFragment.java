@@ -8,17 +8,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ViewListener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +28,10 @@ import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
+import a7967917_7698299.videogameshopapplication.model.ItemTrailer;
 import a7967917_7698299.videogameshopapplication.model.VideoGame;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
@@ -50,10 +54,17 @@ public class ItemInfoFragment extends Fragment {
     private LinearLayout gameLayout;
     private Button wishlistButton;
     private Button addCartButton;
+    private ProgressBar progressBar;
+    private CarouselView carouselView;
+
+    private LinearLayout trailerLayout;
+    private WebView trailerWebView;
 
 
     // carousel
-    private List<Bitmap> imageList;
+    private List<String> imageListURL;
+    private Bitmap[] imageCache;
+
 
     // database
     private DatabaseManager databaseManager;
@@ -90,6 +101,11 @@ public class ItemInfoFragment extends Fragment {
         gameLayout = (LinearLayout) view.findViewById(R.id.fragment_item_game_info_layout);
         addCartButton = (Button) view.findViewById(R.id.fragment_item_info_add_cart_button);
         wishlistButton = (Button) view.findViewById(R.id.fragment_item_info_add_wishlist_button);
+        progressBar = (ProgressBar) view.findViewById(R.id.carouselProgressBar);
+        carouselView = (CarouselView) view.findViewById(R.id.carouselView);
+        trailerLayout = (LinearLayout) view.findViewById(R.id.fragment_item_info_trailer_layout);
+        trailerWebView = (WebView) view.findViewById(R.id.fragment_item_info_trailer_webview);
+
 
         if (itemType == ItemVariables.TYPE.CONSOLE) {
             item = databaseManager.getConsoleById(itemId);
@@ -101,9 +117,48 @@ public class ItemInfoFragment extends Fragment {
         initHeader();
         initCarousel();
         initBody();
+        initTrailer();
 
         return view;
     }
+
+    // not the best player but good enough
+    private void initTrailer() {
+
+
+        if (itemType == ItemVariables.TYPE.GAME) {
+            ItemTrailer trailer = databaseManager.getTrailerFromGameId(itemId);
+
+            if (trailer == null || trailer.getTrailerURL().isEmpty()) {
+                trailerLayout.setVisibility(View.GONE);
+            } else {
+                trailerLayout.setVisibility(View.VISIBLE);
+
+
+                int width = getContext().getResources().getDisplayMetrics().widthPixels;
+                int height = (int) (width * 9 / 16);
+
+                String frameVideo = "<html><body>Video From YouTube<br><iframe width=\"" + width + "\" height=\"" + height + "\" src=\""+trailer.getTrailerURL()+"\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
+
+
+                WebSettings webSettings = trailerWebView.getSettings();
+                webSettings.setJavaScriptEnabled(true);
+                webSettings.setBuiltInZoomControls(true);
+
+                trailerWebView.setWebChromeClient(new WebChromeClient());
+                trailerWebView.setWebViewClient(new WebViewClient());
+                trailerWebView.getSettings().setLoadWithOverviewMode(true);
+                trailerWebView.getSettings().setUseWideViewPort(true);
+
+                trailerWebView.loadData(frameVideo, "text/html", "utf-8");
+            }
+        } else {
+            trailerLayout.setVisibility(View.GONE);
+        }
+
+
+    }
+
 
     private void initBody() {
 
@@ -182,6 +237,9 @@ public class ItemInfoFragment extends Fragment {
 
     private void initCarousel() {
 
+        progressBar.setVisibility(View.VISIBLE);
+        carouselView.setVisibility(View.GONE);
+
         new LoadData().execute("");
 
     }
@@ -197,29 +255,15 @@ public class ItemInfoFragment extends Fragment {
             else
                 itemImages = databaseManager.getImagesFromGameId(itemId, false);
 
-            imageList = new ArrayList<>();
-            try {
-                String url = ("http://used.agwest.com/images/default-image-agwest-thumb.jpg");
-                InputStream in = new java.net.URL(url).openStream();
-                Bitmap unavailableImage = BitmapFactory.decodeStream(in);
+            imageListURL = new ArrayList<>();
 
 
-                if (itemImages.isEmpty()) {
-                    imageList.add(unavailableImage);
-                } else {
-                    for (int i = 0; i < itemImages.size(); i++) {
-                        url = (itemImages.get(i).getImageURL());
-                        in = new java.net.URL(url).openStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(in);
-                        imageList.add(bitmap);
-                    }
-                }
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (int i = 0; i < itemImages.size(); i++) {
+                imageListURL.add(itemImages.get(i).getImageURL());
             }
+
+
+            imageCache = new Bitmap[imageListURL.size()];
 
             return null;
         }
@@ -229,24 +273,36 @@ public class ItemInfoFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            CarouselView carouselView;
-
-            carouselView = (CarouselView) view.findViewById(R.id.carouselView);
-
             carouselView.setViewListener(new ViewListener() {
                 @Override
-                public View setViewForPosition(int position) {
+                public View setViewForPosition(final int position) {
                     View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
                     //set view attributes here
                     ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
 
-                    imageView.setImageBitmap(imageList.get(position));
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                            R.drawable.loading));
+
+
+                    if (position < imageListURL.size() && imageCache[position] == null)
+                        new ImageLoader(imageView, new ImageLoader.AsyncResponse() {
+                            @Override
+                            public void processFinish(Bitmap output) {
+                                // using this method for caching
+                                imageCache[position] = output;
+                            }
+                        }, getContext()).execute(imageListURL.get(position));
+                    else
+                        imageView.setImageBitmap(imageCache[position]);
 
                     return customView;
                 }
             });
 
-            carouselView.setPageCount(imageList.size());
+            carouselView.setPageCount(imageListURL.size());
+
+            progressBar.setVisibility(View.GONE);
+            carouselView.setVisibility(View.VISIBLE);
 
 
         }

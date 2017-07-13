@@ -18,6 +18,7 @@ import a7967917_7698299.videogameshopapplication.model.Console;
 import a7967917_7698299.videogameshopapplication.model.ConsoleVideoGame;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
+import a7967917_7698299.videogameshopapplication.model.ItemTrailer;
 import a7967917_7698299.videogameshopapplication.model.Order;
 import a7967917_7698299.videogameshopapplication.model.OrderItem;
 import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
@@ -70,12 +71,12 @@ public class DatabaseManager {
 
     ////////////// GET METHODS //////////////
 
-    public List<Console> getAllConsoles() {
+    public List<Item> getAllConsoles() {
         SQLiteDatabase db = database.getReadableDatabase();
 
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE.TABLE_NAME, null);
-        List<Console> consoles = new ArrayList<Console>();
+        List<Item> consoles = new ArrayList<Item>();
 
         if (cursor.moveToFirst()) {
             while (cursor.isAfterLast() == false) {
@@ -88,12 +89,12 @@ public class DatabaseManager {
         return consoles;
     }
 
-    public List<VideoGame> getAllGames() {
+    public List<Item> getAllGames() {
         SQLiteDatabase db = database.getReadableDatabase();
 
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_VIDEO_GAME.TABLE_NAME, null);
-        List<VideoGame> games = new ArrayList<VideoGame>();
+        List<Item> games = new ArrayList<Item>();
 
         if (cursor.moveToFirst()) {
             while (cursor.isAfterLast() == false) {
@@ -136,8 +137,8 @@ public class DatabaseManager {
 
     public List<Item> getAllItems() {
 
-        List<Console> consoleList = getAllConsoles();
-        List<VideoGame> gameList = getAllGames();
+        List<Item> consoleList = getAllConsoles();
+        List<Item> gameList = getAllGames();
 
         List<Item> itemList = new ArrayList<>();
 
@@ -199,6 +200,25 @@ public class DatabaseManager {
 
         cursor.close();
         return imageList;
+    }
+
+    public ItemTrailer getTrailerFromGameId(long gameId) {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_TRAILER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_TRAILER.COLUMN_GAME_ID + "=" + gameId, null);
+
+
+        ItemTrailer trailer = null;
+
+        if (cursor.moveToFirst()) {
+
+            trailer = (fetchTrailerGameFromCursor(cursor));
+            cursor.moveToNext();
+
+        }
+
+        cursor.close();
+        return trailer;
     }
 
 
@@ -337,17 +357,17 @@ public class DatabaseManager {
         query = query.toLowerCase();
         List<Item> items = new ArrayList<>();
         // ugly stuff but it works
-        List<VideoGame> videoGames = getAllGames();
-        List<Console> consoles = getAllConsoles();
+        List<Item> videoGames = getAllGames();
+        List<Item> consoles = getAllConsoles();
 
         for (int i = 0; i < videoGames.size(); i++) {
-            VideoGame videoGameTemp = videoGames.get(i);
+            VideoGame videoGameTemp = (VideoGame) videoGames.get(i);
             if (videoGameTemp.getName().toLowerCase().contains(query))
                 items.add(videoGameTemp);
         }
 
         for (int i = 0; i < consoles.size(); i++) {
-            Console consoleTemp = consoles.get(i);
+            Console consoleTemp = (Console) consoles.get(i);
             if (consoleTemp.getName().toLowerCase().contains(query))
                 items.add(consoleTemp);
         }
@@ -890,6 +910,30 @@ public class DatabaseManager {
     }
 
 
+    public long createTrailerGame(String trailerURL, long gameId) {
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        values.put(DatabaseVariables.TABLE_TRAILER.COLUMN_TRAILER_URL, trailerURL);
+        values.put(DatabaseVariables.TABLE_TRAILER.COLUMN_GAME_ID, gameId);
+
+        long newRowId = -1;
+        newRowId = db.insert(
+                DatabaseVariables.TABLE_TRAILER.TABLE_NAME,
+                null,
+                values);
+
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding console " + trailerURL);
+        else {
+            Log.d("DatabaseManager", "added " + trailerURL);
+        }
+        return newRowId;
+
+    }
+
+
     public long createConsoleVideoGame(ItemVariables.CONSOLES consoleType, long gameId) {
 
         SQLiteDatabase db = database.getWritableDatabase();
@@ -1363,6 +1407,18 @@ public class DatabaseManager {
         return new ItemImage(ItemVariables.TYPE.GAME, itemId, imageURL, gameId);
     }
 
+    private ItemTrailer fetchTrailerGameFromCursor(Cursor cursor) {
+
+        long trailerID = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_TRAILER.COLUMN_TRAILER_ID));
+        long gameId = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_TRAILER.COLUMN_GAME_ID));
+        String imageURL = cursor.getString(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_TRAILER.COLUMN_TRAILER_URL));
+
+        return new ItemTrailer(trailerID, imageURL, gameId);
+    }
+
     private Order fetchOrderFromCursor(Cursor cursor) {
 
         long orderId = cursor.getInt(cursor
@@ -1614,5 +1670,59 @@ public class DatabaseManager {
         return nb;
     }
 
+    public List<Item> getXNumberItem(int nbItems, ItemVariables.TYPE itemType) {
+
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = null;
+        if (itemType == ItemVariables.TYPE.CONSOLE) {
+            cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_CONSOLE.TABLE_NAME + " LIMIT " + nbItems, null);
+            List<Item> consoles = new ArrayList<Item>();
+
+            if (cursor.moveToFirst()) {
+                while (cursor.isAfterLast() == false) {
+                    consoles.add(fetchConsoleFromCursor(cursor));
+                    cursor.moveToNext();
+                }
+            }
+
+            cursor.close();
+            return consoles;
+        } else {
+            cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_VIDEO_GAME.TABLE_NAME + " LIMIT " + nbItems, null);
+            List<Item> games = new ArrayList<Item>();
+
+            if (cursor.moveToFirst()) {
+                while (cursor.isAfterLast() == false) {
+                    games.add(fetchVideoGameFromCursor(cursor));
+                    cursor.moveToNext();
+                }
+            }
+
+            cursor.close();
+            return games;
+        }
+    }
+
+    // not efficient but works
+    public List<Item> getXNumberItemRandom(int nbItems) {
+
+        List<Item> itemList = new ArrayList<>();
+        itemList.addAll(getAllConsoles());
+        itemList.addAll(getAllGames());
+
+        List<Item> randomList = new ArrayList<>();
+        for (int i = 0; i < nbItems; i++) {
+
+            int range = (itemList.size());
+
+            int position = (int) (Math.random() * range);
+
+            randomList.add(itemList.get(position));
+            itemList.remove(position);
+
+        }
+
+        return randomList;
+    }
 
 }

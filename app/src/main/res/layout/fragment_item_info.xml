@@ -2,12 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:clickable="true"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:orientation="horizontal">
 
         <TextView
@@ -69,17 +70,34 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.synnapps.carouselview.CarouselView
-                android:id="@+id/carouselView"
-                app:autoPlay="false"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                app:fillColor="#FFFFFFFF"
-                app:pageColor="#00000000"
-                app:radius="6dp"
-                app:slideInterval="6000"
-                app:strokeColor="#FF777777"
-                app:strokeWidth="1dp" />
+                android:orientation="vertical">
+
+
+                <com.synnapps.carouselview.CarouselView
+                    android:id="@+id/carouselView"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    app:autoPlay="false"
+                    app:fillColor="#FFFFFFFF"
+                    app:pageColor="#00000000"
+                    app:radius="6dp"
+                    app:slideInterval="6000"
+                    app:strokeColor="#FF777777"
+                    app:strokeWidth="1dp" />
+
+                <ProgressBar
+                    android:id="@+id/carouselProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -186,12 +204,37 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/colorDivider" />
+
+
+            <LinearLayout
+                android:id="@+id/fragment_item_info_trailer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="5dp">
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorDivider" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Description"
+                    android:textColor="@color/primaryText"
+                    android:textSize="@dimen/text_normal"
+                    android:textStyle="bold" />
+
+                <WebView
+                    android:id="@+id/fragment_item_info_trailer_webview"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"/>
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
