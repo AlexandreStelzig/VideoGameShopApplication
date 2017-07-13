@@ -15,10 +15,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageClickListener;
+import com.synnapps.carouselview.ImageListener;
 import com.synnapps.carouselview.ViewListener;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,18 +52,25 @@ public class HomeFragment extends Fragment {
     private View searchViewRoot;
     private SearchView searchView;
 
-    private List<Item> consoleList;
-    private List<Item> gameList;
+    private List<Item> consoleList = new ArrayList<>();
+    private List<Item> gameList = new ArrayList<>();
+    private List<Item> recommendedList = new ArrayList<>();
 
     private DatabaseManager databaseManager;
 
     private CarouselView recommendedCarouselView;
     private CarouselView consoleCarouselView;
     private CarouselView gameCarouselView;
+    private ProgressBar recommendedCarouselProgressBar;
+    private ProgressBar consoleCarouselProgressBar;
+    private ProgressBar gameCarouselProgressBar;
+
     private Button signInButton;
 
-    private List<Bitmap> gameImageList;
-    private List<Bitmap> consoleImageList;
+    private List<Bitmap> gameImageList = new ArrayList<>();
+    private List<Bitmap> consoleImageList = new ArrayList<>();
+    private List<Bitmap> recommendedImageList = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,14 +88,69 @@ public class HomeFragment extends Fragment {
         consoleCarouselView = (CarouselView) view.findViewById(R.id.fragment_home_console_carousel);
         gameCarouselView = (CarouselView) view.findViewById(R.id.fragment_home_game_carousel);
 
-        gameImageList = new ArrayList<>();
-        consoleImageList = new ArrayList<>();
+        recommendedCarouselProgressBar = (ProgressBar) view.findViewById(R.id.fragment_home_recommended_carousel_progressbar);
+        consoleCarouselProgressBar = (ProgressBar) view.findViewById(R.id.fragment_home_console_carousel_progressbar);
+        gameCarouselProgressBar = (ProgressBar) view.findViewById(R.id.fragment_home_game_carousel_progressbar);
+
 
         setHomeSignInComponents();
         initSearchView();
-        new LoadData().execute("");
+        initHyperLinks();
+
+
+        populateInfo();
 
         return view;
+    }
+
+    private void populateInfo() {
+        recommendedCarouselProgressBar.setVisibility(View.VISIBLE);
+        consoleCarouselProgressBar.setVisibility(View.VISIBLE);
+        gameCarouselProgressBar.setVisibility(View.VISIBLE);
+
+        recommendedCarouselProgressBar.setRotation((float) (Math.random() * 360));
+        consoleCarouselProgressBar.setRotation((float) (Math.random() * 360));
+        gameCarouselProgressBar.setRotation((float) (Math.random() * 360));
+
+        recommendedCarouselView.setVisibility(View.GONE);
+        consoleCarouselView.setVisibility(View.GONE);
+        gameCarouselView.setVisibility(View.GONE);
+
+
+        new LoadData().execute("");
+
+    }
+
+    private void initHyperLinks() {
+
+        TextView shopAll = (TextView) view.findViewById(R.id.fragment_home_hyperlink_shop);
+        TextView shopConsoles = (TextView) view.findViewById(R.id.fragment_home_hyperlink_shop_consoles);
+        TextView shopGames = (TextView) view.findViewById(R.id.fragment_home_hyperlink_shop_games);
+
+        shopAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).setSearchQuery("");
+                ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
+            }
+        });
+
+        shopConsoles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).setFilterByConsole(null);
+                ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
+            }
+        });
+
+        shopGames.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).setFilterGamesByCategory(null);
+                ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
+            }
+        });
+
     }
 
     public void setHomeSignInComponents() {
@@ -139,47 +208,69 @@ public class HomeFragment extends Fragment {
         protected String doInBackground(String... params) {
 
 
-            consoleList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.CONSOLE);
-            gameList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.GAME);
+            if (consoleImageList.isEmpty() || gameImageList.isEmpty()) {
+                gameList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.GAME);
+                consoleList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.CONSOLE);
+                recommendedList = databaseManager.getXNumberItemRandom(5);
+
+                try {
+                    String url = ("http://used.agwest.com/images/default-image-agwest-thumb.jpg");
+                    InputStream in = new java.net.URL(url).openStream();
+                    Bitmap unavailableImage = BitmapFactory.decodeStream(in);
 
 
-            try {
-                String url = ("http://used.agwest.com/images/default-image-agwest-thumb.jpg");
-                InputStream in = new java.net.URL(url).openStream();
-                Bitmap unavailableImage = BitmapFactory.decodeStream(in);
-
-
-                for (int gameCounter = 0; gameCounter < gameList.size(); gameCounter++) {
-                    String urlGame = databaseManager.getImagesFromGameId(gameList.get(gameCounter).getItemId(), false).get(0).getImageURL();
-                    if (urlGame.isEmpty()) {
-                        gameImageList.add(unavailableImage);
-                    } else {
-                        url = (urlGame);
-                        in = new java.net.URL(url).openStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(in);
-                        gameImageList.add(bitmap);
+                    for (int gameCounter = 0; gameCounter < gameList.size(); gameCounter++) {
+                        String urlGame = databaseManager.getImagesFromGameId(gameList.get(gameCounter).getItemId(), true).get(0).getImageURL();
+                        if (urlGame.isEmpty()) {
+                            gameImageList.add(unavailableImage);
+                        } else {
+                            url = (urlGame);
+                            in = new java.net.URL(url).openStream();
+                            Bitmap bitmap = BitmapFactory.decodeStream(in);
+                            gameImageList.add(bitmap);
+                        }
                     }
+
+                    for (int consoleCounter = 0; consoleCounter < consoleList.size(); consoleCounter++) {
+                        String urlConsole = databaseManager.getImagesFromConsoleId(consoleList.get(consoleCounter).getItemId(), true).get(0).getImageURL();
+                        if (urlConsole.isEmpty()) {
+                            consoleImageList.add(unavailableImage);
+                        } else {
+                            url = (urlConsole);
+                            in = new java.net.URL(url).openStream();
+                            Bitmap bitmap = BitmapFactory.decodeStream(in);
+                            consoleImageList.add(bitmap);
+                        }
+                    }
+
+
+                    for (int recommendedCounter = 0; recommendedCounter < recommendedList.size(); recommendedCounter++) {
+
+                        String urlConsole = "";
+                        if (recommendedList.get(recommendedCounter).getItemType() == ItemVariables.TYPE.CONSOLE) {
+                            urlConsole = databaseManager.getImagesFromConsoleId(recommendedList.get(recommendedCounter).getItemId(), true).get(0).getImageURL();
+                        } else {
+                            urlConsole = databaseManager.getImagesFromGameId(recommendedList.get(recommendedCounter).getItemId(), true).get(0).getImageURL();
+                        }
+
+                        if (urlConsole.isEmpty()) {
+                            recommendedImageList.add(unavailableImage);
+                        } else {
+                            url = (urlConsole);
+                            in = new java.net.URL(url).openStream();
+                            Bitmap bitmap = BitmapFactory.decodeStream(in);
+                            recommendedImageList.add(bitmap);
+                        }
+                    }
+
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
-                for (int consoleCounter = 0; consoleCounter < consoleList.size(); consoleCounter++) {
-                    String urlConsole = databaseManager.getImagesFromConsoleId(consoleList.get(consoleCounter).getItemId(), false).get(0).getImageURL();
-                    if (urlConsole.isEmpty()) {
-                        consoleImageList.add(unavailableImage);
-                    } else {
-                        url = (urlConsole);
-                        in = new java.net.URL(url).openStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(in);
-                        consoleImageList.add(bitmap);
-                    }
-                }
-
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
             return null;
         }
 
@@ -191,37 +282,111 @@ public class HomeFragment extends Fragment {
 
             gameCarouselView.setViewListener(new ViewListener() {
                 @Override
-                public View setViewForPosition(int position) {
+                public View setViewForPosition(final int position) {
                     View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
                     //set view attributes here
                     ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
+                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
+                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
+
+                    price.setVisibility(View.VISIBLE);
+                    price.setText(gameList.get(position).getPrice() + "$");
+
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(gameList.get(position).getName());
 
                     imageView.setImageBitmap(gameImageList.get(position));
 
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(gameList.get(position).getItemId(), ItemVariables.TYPE.GAME);
+                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
+                        }
+                    });
+
+
                     return customView;
                 }
+
             });
 
             gameCarouselView.setPageCount(gameImageList.size());
 
-
             consoleCarouselView.setViewListener(new ViewListener() {
                 @Override
-                public View setViewForPosition(int position) {
+                public View setViewForPosition(final int position) {
                     View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
                     //set view attributes here
                     ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
+                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
+                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
+
+                    price.setVisibility(View.VISIBLE);
+                    price.setText(consoleList.get(position).getPrice() + "$");
+
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(consoleList.get(position).getName());
 
                     imageView.setImageBitmap(consoleImageList.get(position));
 
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(consoleList.get(position).getItemId(), ItemVariables.TYPE.CONSOLE);
+                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
+                        }
+                    });
                     return customView;
                 }
             });
 
             consoleCarouselView.setPageCount(consoleImageList.size());
 
-        }
-    }
 
+            recommendedCarouselView.setViewListener(new ViewListener() {
+                @Override
+                public View setViewForPosition(final int position) {
+                    View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
+                    //set view attributes here
+                    ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
+                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
+                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
+
+                    price.setVisibility(View.VISIBLE);
+                    price.setText(recommendedList.get(position).getPrice() + "$");
+
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(recommendedList.get(position).getName());
+
+                    imageView.setImageBitmap(recommendedImageList.get(position));
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(recommendedList.get(position).getItemId(), recommendedList.get(position).getItemType());
+                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
+                        }
+                    });
+                    return customView;
+                }
+            });
+
+            recommendedCarouselView.setPageCount(recommendedList.size());
+
+
+            // set visible
+            recommendedCarouselProgressBar.setVisibility(View.GONE);
+            consoleCarouselProgressBar.setVisibility(View.GONE);
+            gameCarouselProgressBar.setVisibility(View.GONE);
+
+            recommendedCarouselView.setVisibility(View.VISIBLE);
+            consoleCarouselView.setVisibility(View.VISIBLE);
+            gameCarouselView.setVisibility(View.VISIBLE);
+        }
+
+
+    }
 
 }

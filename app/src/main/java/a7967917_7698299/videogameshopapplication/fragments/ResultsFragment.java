@@ -66,10 +66,15 @@ public class ResultsFragment extends Fragment {
     private boolean loading = false;
 
     // search filters / queries
-    private ItemVariables.CONSOLES filterByConsole = null;
-    private ItemVariables.CONSOLES filterGamesByConsole = null;
-    private VideoGameVariables.CATEGORY filterGamesByCategory = null;
+    private ItemVariables.CONSOLES consoleToFilter = null;
+    private ItemVariables.CONSOLES gameByConsoleToFilter = null;
+    private VideoGameVariables.CATEGORY gameByCategoryFilter = null;
     private String searchViewQuery = null;
+
+    private boolean filterByConsole;
+    private boolean filterGamesByConsole;
+    private boolean filterGamesByCategory;
+    private boolean filterBySearchViewQuery;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,7 +113,6 @@ public class ResultsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-//        searchView.setQuery("", false);
         searchView.clearFocus();
         searchViewRoot.requestFocus();
     }
@@ -172,12 +176,25 @@ public class ResultsFragment extends Fragment {
             text += "RESULTS";
 
 
-        if (filterByConsole != null) {
-            text += ": " + Helper.convertConsoleToString(filterByConsole) + " consoles";
-        } else if (filterGamesByConsole != null) {
-            text += ": " + Helper.convertConsoleToString(filterGamesByConsole) + " games";
-        } else if (filterGamesByCategory != null) {
-            text += ": " + filterGamesByCategory;
+        if (filterByConsole) {
+            if(consoleToFilter == null){
+                text += ": ALL CONSOLES";
+            }else{
+                text += ": " + consoleToFilter.toString() + " consoles";
+            }
+        } else if (filterGamesByConsole) {
+            if(gameByConsoleToFilter == null){
+                text += ": ALL GAMES";
+            }else{
+                text += ": " + gameByConsoleToFilter.toString() + " games";
+            }
+
+        } else if (filterGamesByCategory) {
+            if(gameByCategoryFilter == null){
+                text += ": ALL GAMES";
+            }else{
+                text += ": " + gameByCategoryFilter.toString();
+            }
         } else {
             if (searchViewQuery.equals(""))
                 text += ": ALL";
@@ -189,32 +206,44 @@ public class ResultsFragment extends Fragment {
         nbResultsTextView.setText(text);
     }
 
+    public void setFilterByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
 
-    public void setFilterGamesByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
-        filterByConsole = null;
-        filterGamesByConsole = consoleToFilterBy;
-        filterGamesByCategory = null;
-        searchViewQuery = "";
+
+        filterByConsole = true;
+        filterGamesByConsole = false;
+        filterGamesByCategory = false;
+        filterBySearchViewQuery = false;
+
+        consoleToFilter = consoleToFilterBy;
     }
 
-    public void setFilterByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
-        filterByConsole = consoleToFilterBy;
-        filterGamesByConsole = null;
-        filterGamesByCategory = null;
-        searchViewQuery = "";
+    public void setFilterGamesByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+
+        filterByConsole = false;
+        filterGamesByConsole = true;
+        filterGamesByCategory = false;
+        filterBySearchViewQuery = false;
+
+        gameByConsoleToFilter = consoleToFilterBy;;
     }
 
     public void setFilterGamesByCategory(VideoGameVariables.CATEGORY categoryToFilterBy) {
-        filterByConsole = null;
-        filterGamesByConsole = null;
-        filterGamesByCategory = categoryToFilterBy;
-        searchViewQuery = "";
+
+
+        filterByConsole = false;
+        filterGamesByConsole = false;
+        filterGamesByCategory = true;
+        filterBySearchViewQuery = false;
+
+        gameByCategoryFilter = categoryToFilterBy;
     }
 
     public void setSearchViewQuery(String query) {
-        filterByConsole = null;
-        filterGamesByConsole = null;
-        filterGamesByCategory = null;
+        filterByConsole = false;
+        filterGamesByConsole = false;
+        filterGamesByCategory = false;
+        filterBySearchViewQuery = true;
+
         searchViewQuery = query;
     }
 
@@ -352,14 +381,29 @@ public class ResultsFragment extends Fragment {
             loading = true;
             imagesURLList.clear();
 
-            if (filterByConsole != null) {
-                itemList = databaseManager.getConsolesByType(filterByConsole);
-            } else if (filterGamesByConsole != null) {
-                itemList = databaseManager.getGamesFromConsoleType(filterGamesByConsole);
-            } else if (filterGamesByCategory != null) {
-                itemList = databaseManager.getGamesByCategory(filterGamesByCategory);
+            if (filterByConsole) {
+
+                if(consoleToFilter == null){
+                    itemList = databaseManager.getAllConsoles();
+                }else{
+                    itemList = databaseManager.getConsolesByType(consoleToFilter);
+                }
+
+            } else if (filterGamesByConsole) {
+                if(gameByConsoleToFilter == null){
+                    itemList = databaseManager.getAllGames();
+                }else{
+                    itemList = databaseManager.getGamesFromConsoleType(gameByConsoleToFilter);
+                }
+
+            } else if (filterGamesByCategory) {
+                if(gameByCategoryFilter == null){
+                    itemList = databaseManager.getAllGames();
+                }else{
+                    itemList = databaseManager.getGamesByCategory(gameByCategoryFilter);
+                }
             } else {
-                if (searchViewQuery == "")
+                if (searchViewQuery.isEmpty())
                     itemList = databaseManager.getAllItems();
                 else
                     itemList = databaseManager.getItemsByQuery(searchViewQuery);
@@ -401,6 +445,8 @@ public class ResultsFragment extends Fragment {
             customListAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
 
+            if(!filterBySearchViewQuery)
+                searchView.setQuery("", false);
 
             if (itemList.isEmpty()) {
                 listView.setVisibility(View.GONE);

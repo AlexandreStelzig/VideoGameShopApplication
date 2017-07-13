@@ -291,63 +291,63 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_switch:
                 currentFragment = resultsFragment;
                 title = "Results";
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.SWITCH);
+                setFilterByConsole(ItemVariables.CONSOLES.SWITCH);
                 break;
             case R.id.nav_3ds:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.THREE_DS);
+                setFilterByConsole(ItemVariables.CONSOLES.THREE_DS);
                 title = "Results";
                 break;
             case R.id.nav_ps4:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.PS4);
+                setFilterByConsole(ItemVariables.CONSOLES.PS4);
                 title = "Results";
                 break;
             case R.id.nav_xbox:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterByConsole(ItemVariables.CONSOLES.XBOXONE);
+                setFilterByConsole(ItemVariables.CONSOLES.XBOXONE);
                 title = "Results";
                 break;
             // games by category
             case R.id.nav_game_action:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.ACTION);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.ACTION);
                 title = "Results";
                 break;
             case R.id.nav_game_adventure:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.ADVENTURE);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.ADVENTURE);
                 title = "Results";
                 break;
             case R.id.nav_game_rpg:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.RPG);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.RPG);
                 title = "Results";
                 break;
             case R.id.nav_game_sport:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByCategory(VideoGameVariables.CATEGORY.SPORTS);
+                setFilterGamesByCategory(VideoGameVariables.CATEGORY.SPORTS);
                 title = "Results";
                 break;
             // games by console
             case R.id.nav_game_switch:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.SWITCH);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.SWITCH);
                 title = "Results";
                 break;
             case R.id.nav_game_3ds:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.THREE_DS);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.THREE_DS);
                 title = "Results";
                 break;
             case R.id.nav_game_ps4:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.PS4);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.PS4);
                 title = "Results";
                 break;
             case R.id.nav_game_xbox:
                 currentFragment = resultsFragment;
-                resultsFragment.setFilterGamesByConsole(ItemVariables.CONSOLES.XBOXONE);
+                setFilterGamesByConsole(ItemVariables.CONSOLES.XBOXONE);
                 title = "Results";
                 break;
 
@@ -622,6 +622,18 @@ public class MainActivity extends AppCompatActivity
 
     public void setSearchQuery(String query) {
         resultsFragment.setSearchViewQuery(query);
+    }
+
+    public void setFilterGamesByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+        resultsFragment.setFilterGamesByConsole(consoleToFilterBy);
+    }
+
+    public void setFilterByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
+        resultsFragment.setFilterByConsole(consoleToFilterBy);
+    }
+
+    public void setFilterGamesByCategory(VideoGameVariables.CATEGORY categoryToFilterBy) {
+        resultsFragment.setFilterGamesByCategory(categoryToFilterBy);
     }
 
     public void setItemIdToOpenAtInfoLaunch(long itemId, ItemVariables.TYPE itemType) {
