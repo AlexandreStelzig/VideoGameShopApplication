@@ -13,16 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +27,6 @@ import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
 import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
-import a7967917_7698299.videogameshopapplication.model.Console;
 import a7967917_7698299.videogameshopapplication.model.Item;
 import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.model.VideoGame;
@@ -177,22 +172,22 @@ public class ResultsFragment extends Fragment {
 
 
         if (filterByConsole) {
-            if(consoleToFilter == null){
+            if (consoleToFilter == null) {
                 text += ": ALL CONSOLES";
-            }else{
+            } else {
                 text += ": " + consoleToFilter.toString() + " consoles";
             }
         } else if (filterGamesByConsole) {
-            if(gameByConsoleToFilter == null){
+            if (gameByConsoleToFilter == null) {
                 text += ": ALL GAMES";
-            }else{
+            } else {
                 text += ": " + gameByConsoleToFilter.toString() + " games";
             }
 
         } else if (filterGamesByCategory) {
-            if(gameByCategoryFilter == null){
+            if (gameByCategoryFilter == null) {
                 text += ": ALL GAMES";
-            }else{
+            } else {
                 text += ": " + gameByCategoryFilter.toString();
             }
         } else {
@@ -224,7 +219,8 @@ public class ResultsFragment extends Fragment {
         filterGamesByCategory = false;
         filterBySearchViewQuery = false;
 
-        gameByConsoleToFilter = consoleToFilterBy;;
+        gameByConsoleToFilter = consoleToFilterBy;
+        ;
     }
 
     public void setFilterGamesByCategory(VideoGameVariables.CATEGORY categoryToFilterBy) {
@@ -345,10 +341,9 @@ public class ResultsFragment extends Fragment {
 
             }
 
-            holder.imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
-                    R.drawable.loading));
-
-            if (position < imagesURLList.size() && cachedImages[position] == null)
+            if (position < imagesURLList.size() && cachedImages[position] == null) {
+                holder.imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                        R.drawable.loading));
                 new ImageLoader(holder.imageView, new ImageLoader.AsyncResponse() {
                     @Override
                     public void processFinish(Bitmap output) {
@@ -356,7 +351,7 @@ public class ResultsFragment extends Fragment {
                         cachedImages[position] = output;
                     }
                 }).execute(imagesURLList.get(position));
-            else
+            } else
                 holder.imageView.setImageBitmap(cachedImages[position]);
 
             rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
@@ -386,23 +381,23 @@ public class ResultsFragment extends Fragment {
 
             if (filterByConsole) {
 
-                if(consoleToFilter == null){
+                if (consoleToFilter == null) {
                     itemList = databaseManager.getAllConsoles();
-                }else{
+                } else {
                     itemList = databaseManager.getConsolesByType(consoleToFilter);
                 }
 
             } else if (filterGamesByConsole) {
-                if(gameByConsoleToFilter == null){
+                if (gameByConsoleToFilter == null) {
                     itemList = databaseManager.getAllGames();
-                }else{
+                } else {
                     itemList = databaseManager.getGamesFromConsoleType(gameByConsoleToFilter);
                 }
 
             } else if (filterGamesByCategory) {
-                if(gameByCategoryFilter == null){
+                if (gameByCategoryFilter == null) {
                     itemList = databaseManager.getAllGames();
-                }else{
+                } else {
                     itemList = databaseManager.getGamesByCategory(gameByCategoryFilter);
                 }
             } else {
@@ -448,7 +443,7 @@ public class ResultsFragment extends Fragment {
             customListAdapter.notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
 
-            if(!filterBySearchViewQuery)
+            if (!filterBySearchViewQuery)
                 searchView.setQuery("", false);
 
             if (itemList.isEmpty()) {
@@ -463,7 +458,6 @@ public class ResultsFragment extends Fragment {
             cachedImages = new Bitmap[itemList.size()];
 
             setNumberOfResults();
-
 
 
             loading = false;

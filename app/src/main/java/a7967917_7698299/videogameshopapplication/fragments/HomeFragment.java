@@ -204,9 +204,9 @@ public class HomeFragment extends Fragment {
 
 
             if (consoleImageList.isEmpty() || gameImageList.isEmpty() || recommendedImageList.isEmpty()) {
-                gameList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.GAME);
-                consoleList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.CONSOLE);
-                recommendedList = databaseManager.getXNumberItemRandom(5);
+                gameList = databaseManager.getXNumberItem(3, ItemVariables.TYPE.GAME);
+                consoleList = databaseManager.getXNumberItem(3, ItemVariables.TYPE.CONSOLE);
+                recommendedList = databaseManager.getXNumberItemRandom(3);
 
 
                 for (int gameCounter = 0; gameCounter < gameList.size(); gameCounter++) {
