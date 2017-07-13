@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -69,17 +70,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.synnapps.carouselview.CarouselView
-                android:id="@+id/carouselView"
-                app:autoPlay="false"
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                app:fillColor="#FFFFFFFF"
-                app:pageColor="#00000000"
-                app:radius="6dp"
-                app:slideInterval="6000"
-                app:strokeColor="#FF777777"
-                app:strokeWidth="1dp" />
+                android:orientation="vertical">
+
+
+                <com.synnapps.carouselview.CarouselView
+                    android:id="@+id/carouselView"
+                    app:autoPlay="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    app:fillColor="#FFFFFFFF"
+                    app:pageColor="#00000000"
+                    app:radius="6dp"
+                    app:slideInterval="6000"
+                    app:strokeColor="#FF777777"
+                    app:strokeWidth="1dp" />
+
+                <ProgressBar
+                    android:id="@+id/carouselProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"

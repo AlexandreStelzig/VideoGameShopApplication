@@ -345,6 +345,9 @@ public class ResultsFragment extends Fragment {
 
             }
 
+            holder.imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                    R.drawable.loading));
+
             if (position < imagesURLList.size() && cachedImages[position] == null)
                 new ImageLoader(holder.imageView, new ImageLoader.AsyncResponse() {
                     @Override

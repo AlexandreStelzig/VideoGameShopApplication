@@ -5,39 +5,27 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageClickListener;
-import com.synnapps.carouselview.ImageListener;
 import com.synnapps.carouselview.ViewListener;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
+import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
 import a7967917_7698299.videogameshopapplication.model.Item;
-import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 
 /**
@@ -67,9 +55,13 @@ public class HomeFragment extends Fragment {
 
     private Button signInButton;
 
-    private List<Bitmap> gameImageList = new ArrayList<>();
-    private List<Bitmap> consoleImageList = new ArrayList<>();
-    private List<Bitmap> recommendedImageList = new ArrayList<>();
+    private List<String> gameImageList = new ArrayList<>();
+    private List<String> consoleImageList = new ArrayList<>();
+    private List<String> recommendedImageList = new ArrayList<>();
+
+    private Bitmap[] gameImageCache;
+    private Bitmap[] consoleImageCache;
+    private Bitmap[] recommendedImageCache;
 
 
     @Override
@@ -208,69 +200,41 @@ public class HomeFragment extends Fragment {
         protected String doInBackground(String... params) {
 
 
-            if (consoleImageList.isEmpty() || gameImageList.isEmpty()) {
+
+
+
+            if (consoleImageList.isEmpty() || gameImageList.isEmpty() || recommendedImageList.isEmpty()) {
                 gameList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.GAME);
                 consoleList = databaseManager.getXNumberItem(5, ItemVariables.TYPE.CONSOLE);
                 recommendedList = databaseManager.getXNumberItemRandom(5);
 
-                try {
-                    String url = ("http://used.agwest.com/images/default-image-agwest-thumb.jpg");
-                    InputStream in = new java.net.URL(url).openStream();
-                    Bitmap unavailableImage = BitmapFactory.decodeStream(in);
 
-
-                    for (int gameCounter = 0; gameCounter < gameList.size(); gameCounter++) {
-                        String urlGame = databaseManager.getImagesFromGameId(gameList.get(gameCounter).getItemId(), true).get(0).getImageURL();
-                        if (urlGame.isEmpty()) {
-                            gameImageList.add(unavailableImage);
-                        } else {
-                            url = (urlGame);
-                            in = new java.net.URL(url).openStream();
-                            Bitmap bitmap = BitmapFactory.decodeStream(in);
-                            gameImageList.add(bitmap);
-                        }
-                    }
-
-                    for (int consoleCounter = 0; consoleCounter < consoleList.size(); consoleCounter++) {
-                        String urlConsole = databaseManager.getImagesFromConsoleId(consoleList.get(consoleCounter).getItemId(), true).get(0).getImageURL();
-                        if (urlConsole.isEmpty()) {
-                            consoleImageList.add(unavailableImage);
-                        } else {
-                            url = (urlConsole);
-                            in = new java.net.URL(url).openStream();
-                            Bitmap bitmap = BitmapFactory.decodeStream(in);
-                            consoleImageList.add(bitmap);
-                        }
-                    }
-
-
-                    for (int recommendedCounter = 0; recommendedCounter < recommendedList.size(); recommendedCounter++) {
-
-                        String urlConsole = "";
-                        if (recommendedList.get(recommendedCounter).getItemType() == ItemVariables.TYPE.CONSOLE) {
-                            urlConsole = databaseManager.getImagesFromConsoleId(recommendedList.get(recommendedCounter).getItemId(), true).get(0).getImageURL();
-                        } else {
-                            urlConsole = databaseManager.getImagesFromGameId(recommendedList.get(recommendedCounter).getItemId(), true).get(0).getImageURL();
-                        }
-
-                        if (urlConsole.isEmpty()) {
-                            recommendedImageList.add(unavailableImage);
-                        } else {
-                            url = (urlConsole);
-                            in = new java.net.URL(url).openStream();
-                            Bitmap bitmap = BitmapFactory.decodeStream(in);
-                            recommendedImageList.add(bitmap);
-                        }
-                    }
-
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (int gameCounter = 0; gameCounter < gameList.size(); gameCounter++) {
+                    gameImageList.add(databaseManager.getImagesFromGameId(gameList.get(gameCounter).getItemId(), true).get(0).getImageURL());
                 }
 
+                for (int consoleCounter = 0; consoleCounter < consoleList.size(); consoleCounter++) {
+                    consoleImageList.add(databaseManager.getImagesFromConsoleId(consoleList.get(consoleCounter).getItemId(), true).get(0).getImageURL());
+                }
+
+
+                for (int recommendedCounter = 0; recommendedCounter < recommendedList.size(); recommendedCounter++) {
+
+                    if (recommendedList.get(recommendedCounter).getItemType() == ItemVariables.TYPE.CONSOLE) {
+                        recommendedImageList.add(databaseManager.getImagesFromConsoleId(recommendedList.get(recommendedCounter).getItemId(), true).get(0).getImageURL());
+                    } else {
+                        recommendedImageList.add(databaseManager.getImagesFromGameId(recommendedList.get(recommendedCounter).getItemId(), true).get(0).getImageURL());
+                    }
+
+                }
+
+                gameImageCache = new Bitmap[gameImageList.size()];
+                consoleImageCache = new Bitmap[consoleImageList.size()];
+                recommendedImageCache = new Bitmap[recommendedImageList.size()];
+
             }
+
+
             return null;
         }
 
@@ -279,6 +243,92 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
+            recommendedCarouselView.setViewListener(new ViewListener() {
+                @Override
+                public View setViewForPosition(final int position) {
+                    View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
+                    //set view attributes here
+                    ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
+                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
+                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
+
+                    price.setVisibility(View.VISIBLE);
+                    price.setText(recommendedList.get(position).getPrice() + "$");
+
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(recommendedList.get(position).getName());
+
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                            R.drawable.loading));
+
+                    if (position < recommendedImageList.size() && recommendedImageCache[position] == null)
+                        new ImageLoader(imageView, new ImageLoader.AsyncResponse() {
+                            @Override
+                            public void processFinish(Bitmap output) {
+                                // using this method for caching
+                                recommendedImageCache[position] = output;
+                            }
+                        }).execute(recommendedImageList.get(position));
+                    else
+                        imageView.setImageBitmap(recommendedImageCache[position]);
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(recommendedList.get(position).getItemId(), recommendedList.get(position).getItemType());
+                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
+                        }
+                    });
+                    return customView;
+                }
+            });
+
+            recommendedCarouselView.setPageCount(recommendedList.size());
+
+
+
+            consoleCarouselView.setViewListener(new ViewListener() {
+                @Override
+                public View setViewForPosition(final int position) {
+                    View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
+                    //set view attributes here
+                    ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
+                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
+                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
+
+                    price.setVisibility(View.VISIBLE);
+                    price.setText(consoleList.get(position).getPrice() + "$");
+
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(consoleList.get(position).getName());
+
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                            R.drawable.loading));
+
+                    if (position < consoleImageList.size() && consoleImageCache[position] == null)
+                        new ImageLoader(imageView, new ImageLoader.AsyncResponse() {
+                            @Override
+                            public void processFinish(Bitmap output) {
+                                // using this method for caching
+                                consoleImageCache[position] = output;
+                            }
+                        }).execute(consoleImageList.get(position));
+                    else
+                        imageView.setImageBitmap(consoleImageCache[position]);
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(consoleList.get(position).getItemId(), ItemVariables.TYPE.CONSOLE);
+                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
+                        }
+                    });
+                    return customView;
+                }
+            });
+
+            consoleCarouselView.setPageCount(consoleImageList.size());
 
             gameCarouselView.setViewListener(new ViewListener() {
                 @Override
@@ -295,7 +345,21 @@ public class HomeFragment extends Fragment {
                     textView.setVisibility(View.VISIBLE);
                     textView.setText(gameList.get(position).getName());
 
-                    imageView.setImageBitmap(gameImageList.get(position));
+                    imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                            R.drawable.loading));
+
+
+                    if (position < gameImageList.size() && gameImageCache[position] == null)
+                        new ImageLoader(imageView, new ImageLoader.AsyncResponse() {
+                            @Override
+                            public void processFinish(Bitmap output) {
+                                // using this method for caching
+                                gameImageCache[position] = output;
+                            }
+                        }).execute(gameImageList.get(position));
+                    else
+                        imageView.setImageBitmap(gameImageCache[position]);
+
 
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -313,67 +377,6 @@ public class HomeFragment extends Fragment {
 
             gameCarouselView.setPageCount(gameImageList.size());
 
-            consoleCarouselView.setViewListener(new ViewListener() {
-                @Override
-                public View setViewForPosition(final int position) {
-                    View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
-                    //set view attributes here
-                    ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
-                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
-                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
-
-                    price.setVisibility(View.VISIBLE);
-                    price.setText(consoleList.get(position).getPrice() + "$");
-
-                    textView.setVisibility(View.VISIBLE);
-                    textView.setText(consoleList.get(position).getName());
-
-                    imageView.setImageBitmap(consoleImageList.get(position));
-
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(consoleList.get(position).getItemId(), ItemVariables.TYPE.CONSOLE);
-                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
-                        }
-                    });
-                    return customView;
-                }
-            });
-
-            consoleCarouselView.setPageCount(consoleImageList.size());
-
-
-            recommendedCarouselView.setViewListener(new ViewListener() {
-                @Override
-                public View setViewForPosition(final int position) {
-                    View customView = getActivity().getLayoutInflater().inflate(R.layout.custom_layout_carousel, null);
-                    //set view attributes here
-                    ImageView imageView = (ImageView) customView.findViewById(R.id.custom_layout_carousel_image);
-                    TextView textView = (TextView) customView.findViewById(R.id.custom_layout_carousel_title);
-                    TextView price = (TextView) customView.findViewById(R.id.custom_layout_carousel_price);
-
-                    price.setVisibility(View.VISIBLE);
-                    price.setText(recommendedList.get(position).getPrice() + "$");
-
-                    textView.setVisibility(View.VISIBLE);
-                    textView.setText(recommendedList.get(position).getName());
-
-                    imageView.setImageBitmap(recommendedImageList.get(position));
-
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(recommendedList.get(position).getItemId(), recommendedList.get(position).getItemType());
-                            ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
-                        }
-                    });
-                    return customView;
-                }
-            });
-
-            recommendedCarouselView.setPageCount(recommendedList.size());
 
 
             // set visible
