@@ -28,5 +28,9 @@ public final class ItemVariables {
         XBOXONE
     }
 
+    // Pourcentage taxe rate
+    public static final double TAX_RATE = 13.16;
+    public static final double FLAT_SHIPPING_RATE = 10;
+    public static final double EXTRA_SHIPPING_RATE = 10;
 
 }

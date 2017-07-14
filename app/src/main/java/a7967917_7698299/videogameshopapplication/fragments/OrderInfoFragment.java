@@ -129,10 +129,7 @@ public class OrderInfoFragment extends Fragment {
         orderIdTextView.setText("Order ID: " + order.getOrderId());
         orderStatusTextView.setText("Status: " + order.getStatus());
         dateOrderedTextView.setText("Date Ordered: " + order.getDateOrdered());
-        subtotalTextView.setText("0000$");
-        shippingTextView.setText("0000$");
-        taxesTextView.setText("0000$");
-        totalTextView.setText("0000$");
+
         shipNameTextView.setText(order.getDeliverTo());
         shipAddressTextView.setText( order.getStreet());
         shipCityStateTextView.setText(order.getCity() +", "+ order.getState());
@@ -140,6 +137,32 @@ public class OrderInfoFragment extends Fragment {
         paymentNameTextView.setText(order.getNameOnCard());
         paymentCardNumberTextView.setText("Card Number: " + order.getCardNumber());
 
+    }
+
+    private void setPrice(){
+
+        double subtotal = 0;
+
+        for(int i = 0; i < itemList.size(); i++){
+            subtotal += itemList.get(i).getPrice() * orderItems.get(i).getAmount();
+        }
+
+        subtotalTextView.setText(String.format("%.2f$", subtotal));
+
+        double shippingRate = ItemVariables.FLAT_SHIPPING_RATE;
+
+        if( order.isExtraShipping())
+            shippingRate += ItemVariables.EXTRA_SHIPPING_RATE;
+
+        shippingTextView.setText(String.format("%.2f$", shippingRate));
+
+        double taxes = subtotal * ItemVariables.TAX_RATE / 100;
+
+        taxesTextView.setText(String.format("%.2f$", taxes));
+
+        double total = subtotal + shippingRate + taxes;
+
+        totalTextView.setText(String.format("%.2f$", total));
     }
 
     private void initListView() {
@@ -338,6 +361,8 @@ public class OrderInfoFragment extends Fragment {
             cachedImages = new Bitmap[itemList.size()];
 
             Helper.setListViewHeightBasedOnChildren(listView);
+
+            setPrice();
 
             loading = false;
 

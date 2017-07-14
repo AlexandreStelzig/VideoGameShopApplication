@@ -1,6 +1,8 @@
 package a7967917_7698299.videogameshopapplication.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -26,8 +29,10 @@ import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 import a7967917_7698299.videogameshopapplication.helper.Helper;
+import a7967917_7698299.videogameshopapplication.helper.ImageLoader;
 import a7967917_7698299.videogameshopapplication.model.Console;
 import a7967917_7698299.videogameshopapplication.model.Item;
+import a7967917_7698299.videogameshopapplication.model.ItemImage;
 import a7967917_7698299.videogameshopapplication.model.Order;
 import a7967917_7698299.videogameshopapplication.model.OrderItem;
 import a7967917_7698299.videogameshopapplication.model.VideoGame;
@@ -53,6 +58,10 @@ public class OrderListFragment extends Fragment {
     // items
     private List<Order> orders;
     private CustomListAdapter customListAdapter;
+
+    private List<List<OrderItem>> orderItemsList = new ArrayList<>();
+    private List<List<String>> itemsURList = new ArrayList<>();
+    private List<Bitmap[]> bitmapCache = new ArrayList<>();
 
     boolean loading = false;
 
@@ -91,16 +100,16 @@ public class OrderListFragment extends Fragment {
         populateListView();
     }
 
-//    private void setNumberOfResults() {
-//        int nbResults = itemList.size();
-//        String text = nbResults + " ";
-//        if (nbResults == 1)
-//            text += "WISHLIST ITEM";
-//        else
-//            text += "WISHLIST ITEMS";
-//
-//        nbResultsTextView.setText(text);
-//    }
+    private void setNumberOfResults() {
+        int nbResults = orders.size();
+        String text = nbResults + " ";
+        if (nbResults == 1)
+            text += "ORDER";
+        else
+            text += "ORDERS";
+
+        nbResultsTextView.setText(text);
+    }
 
 
     private void populateListView() {
@@ -165,7 +174,7 @@ public class OrderListFragment extends Fragment {
 
 
             final Order rowOrder = orders.get(position);
-            List<OrderItem> orderItems = databaseManager.getOrderItemsFromOrderId(rowOrder.getOrderId());
+            List<OrderItem> orderItems = orderItemsList.get(position);
             List<Item> items = new ArrayList<>();
 
             for (int i = 0; i < orderItems.size(); i++) {
@@ -177,15 +186,24 @@ public class OrderListFragment extends Fragment {
                 }
             }
 
-            holder.id.setText("Order Id: " + rowOrder.getOrderId());
+            holder.id.setText("ORDER ID: " + rowOrder.getOrderId());
             holder.dateOrdered.setText("Date Ordered: " + rowOrder.getDateOrdered());
             holder.status.setText("Status: " + rowOrder.getStatus());
 
 
-            double total = 0;
+            double subtotal = 0;
             for (int i = 0; i < orderItems.size(); i++) {
-                total += orderItems.get(i).getAmount() * items.get(i).getPrice();
+                subtotal += orderItems.get(i).getAmount() * items.get(i).getPrice();
             }
+
+            double shippingRate = ItemVariables.FLAT_SHIPPING_RATE;
+
+            if (rowOrder.isExtraShipping())
+                shippingRate += ItemVariables.EXTRA_SHIPPING_RATE;
+
+            double taxes = subtotal * ItemVariables.TAX_RATE / 100;
+
+            double total = subtotal + shippingRate + taxes;
 
             holder.price.setText("Total: " + String.format("%.2f$", total));
 
@@ -198,7 +216,7 @@ public class OrderListFragment extends Fragment {
                 }
             });
 
-            CustomItemListAdapter customItemListAdapter = new CustomItemListAdapter(getContext(), items, rowOrder.getOrderId());
+            CustomItemListAdapter customItemListAdapter = new CustomItemListAdapter(getContext(), items, rowOrder.getOrderId(), orderItems, itemsURList.get(position), position);
             holder.itemInfo.setAdapter(customItemListAdapter);
 
             Helper.setListViewHeightBasedOnChildren(holder.itemInfo);
@@ -218,13 +236,19 @@ public class OrderListFragment extends Fragment {
 
             private List<Item> itemInOrderList;
             private long orderId;
+            private List<OrderItem> orderItems;
+            private List<String> urlList;
+            private int parentPosition;
 
-            public CustomItemListAdapter(Context context, List<Item> itemInOrderList, long orderId) {
+            public CustomItemListAdapter(Context context, List<Item> itemInOrderList, long orderId, List<OrderItem> orderItems, List<String> urlList, int parentPosition) {
                 // TODO Auto-generated constructor stub
                 super();
                 this.context = context;
+                this.orderItems = orderItems;
+                this.urlList = urlList;
                 this.orderId = orderId;
                 this.itemInOrderList = itemInOrderList;
+                this.parentPosition = parentPosition;
                 inflater = (LayoutInflater) context.
                         getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -251,6 +275,7 @@ public class OrderListFragment extends Fragment {
             public class HolderItem {
                 TextView name;
                 TextView price;
+                ImageView imageView;
             }
 
             @Override
@@ -262,9 +287,26 @@ public class OrderListFragment extends Fragment {
 
                 holder.name = (TextView) rowView.findViewById(R.id.custom_layout_order_item_name);
                 holder.price = (TextView) rowView.findViewById(R.id.custom_layout_order_item_price);
+                holder.imageView = (ImageView) rowView.findViewById(R.id.custom_layout_order_item_image);
+
 
                 holder.name.setText(itemInOrderList.get(position).getName());
-                holder.price.setText(itemInOrderList.get(position).getPrice() + "");
+                holder.price.setText(String.format("%.2f$", itemInOrderList.get(position).getPrice()) + " x" + orderItems.get(position).getAmount());
+
+
+                Bitmap bitmapTemp = bitmapCache.get(parentPosition)[position];
+                if (position < urlList.size() && bitmapTemp == null) {
+                    holder.imageView.setImageBitmap(BitmapFactory.decodeResource(getContext().getResources(),
+                            R.drawable.loading));
+                    new ImageLoader(holder.imageView, new ImageLoader.AsyncResponse() {
+                        @Override
+                        public void processFinish(Bitmap output) {
+                            // using this method for caching
+                            bitmapCache.get(parentPosition)[position] = output;
+                        }
+                    }, getContext()).execute(urlList.get(position));
+                } else
+                    holder.imageView.setImageBitmap(bitmapTemp);
 
                 rowView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -288,8 +330,55 @@ public class OrderListFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             loading = true;
+            orderItemsList.clear();
+            orders.clear();
+            bitmapCache.clear();
+            itemsURList.clear();
+
 
             orders = databaseManager.getAllOrdersFromActiveUser();
+
+
+            for (int orderItemCounter = 0; orderItemCounter < orders.size(); orderItemCounter++) {
+                List<OrderItem> orderItemsTemp = databaseManager.getOrderItemsFromOrderId(orders.get(orderItemCounter).getOrderId());
+                orderItemsList.add(orderItemsTemp);
+            }
+
+            for (int urlCounter = 0; urlCounter < orders.size(); urlCounter++) {
+                List<OrderItem> orderItemsTemp = orderItemsList.get(urlCounter);
+
+                if (!orderItemsTemp.isEmpty()) {
+
+                    List<ItemImage> itemImages = new ArrayList<>();
+                    List<String> urlList = new ArrayList<>();
+                    for (int counter = 0; counter < orderItemsTemp.size(); counter++) {
+                        itemImages.clear();
+                        OrderItem itemTemp = orderItemsTemp.get(counter);
+
+                        if (itemTemp.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                            itemImages = databaseManager.getImagesFromConsoleId(itemTemp.getItemId(), true);
+                        } else {
+                            itemImages = databaseManager.getImagesFromGameId(itemTemp.getItemId(), true);
+                        }
+
+
+                        String url = "";
+
+                        if (itemImages.isEmpty()) {
+                            url = "";
+                        } else {
+                            url = itemImages.get(0).getImageURL();
+                        }
+
+                        urlList.add(url);
+                    }
+
+                    bitmapCache.add(new Bitmap[urlList.size()]);
+                    itemsURList.add(urlList);
+                }
+
+
+            }
 
             return null;
         }
@@ -312,7 +401,7 @@ public class OrderListFragment extends Fragment {
             }
 
 
-//            setNumberOfResults();
+            setNumberOfResults();
 
             loading = false;
 

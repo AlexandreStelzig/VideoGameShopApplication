@@ -121,6 +121,7 @@ public final class DatabaseVariables {
             + TABLE_ORDER.COLUMN_STATE + " TEXT,"
             + TABLE_ORDER.COLUMN_STATUS + " TEXT,"
             + TABLE_ORDER.COLUMN_STREET + " TEXT,"
+            + TABLE_ORDER.COLUMN_EXTRA_SHIPPING + " BOOLEAN,"
             + " FOREIGN KEY " + "(" + TABLE_ORDER.COLUMN_USER_ID + ")"
             + " REFERENCES " + TABLE_USER.TABLE_NAME + "(" + TABLE_USER.COLUMN_USER_ID + ")" + " );";
 
@@ -297,6 +298,8 @@ public final class DatabaseVariables {
         public static final String COLUMN_STATE = "state";
         public static final String COLUMN_CITY = "city";
         public static final String COLUMN_POSTAL_CODE = "postal_code";
+
+        public static final String COLUMN_EXTRA_SHIPPING = "extra_shipping";
     }
 
     public static abstract class TABLE_ORDER_ITEM_GAME implements BaseColumns {

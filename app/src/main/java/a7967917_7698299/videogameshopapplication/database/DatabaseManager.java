@@ -1070,7 +1070,7 @@ public class DatabaseManager {
         return newRowId;
     }
 
-    public long createOrderFromItemsInCart(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+    public long createOrderFromItemsInCart(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShipping) {
 
 
         SQLiteDatabase db = database.getWritableDatabase();
@@ -1090,6 +1090,7 @@ public class DatabaseManager {
         values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STATUS, status.toString());
         values.put(DatabaseVariables.TABLE_ORDER.COLUMN_STREET, street);
         values.put(DatabaseVariables.TABLE_ORDER.COLUMN_USER_ID, getCurrentActiveUser().getUserId());
+        values.put(DatabaseVariables.TABLE_ORDER.COLUMN_EXTRA_SHIPPING, extraShipping);
 
         long newRowId = -1;
         newRowId = db.insert(
@@ -1451,14 +1452,16 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_POSTAL_CODE));
         String deliverTo = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_DELIVER_TO));
+        boolean extraShipping = cursor.getInt(cursor
+                .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_EXTRA_SHIPPING)) > 0;
 
 
         OrderVariables.STATUS convertedStatus = Helper.convertStringToStatus(status);
 
-        return new Order(orderId, userId, dateOrdered, deliverTo,
-                dateArriving, convertedStatus, cardNumber, nameOnCard,
+        return new Order(orderId, userId, dateOrdered,
+                dateArriving, convertedStatus, deliverTo,cardNumber, nameOnCard,
                 expirationMonth, expirationYear, street, country, state,
-                city, postalCode);
+                city, postalCode,extraShipping);
     }
 
 

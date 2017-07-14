@@ -37,7 +37,7 @@ public class HelpFragment extends Fragment{
         ((Button) view.findViewById(R.id.test)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).createOrderFromCartItems("test","test","test", OrderVariables.STATUS.DELIVERED, 1234, "test",  2,2,"test","test","test","test","test" );
+                ((MainActivity)getActivity()).createOrderFromCartItems("test","test","test", OrderVariables.STATUS.DELIVERED, 1234, "test",  2,2,"test","test","test","test","test", true );
             }
         });
 
