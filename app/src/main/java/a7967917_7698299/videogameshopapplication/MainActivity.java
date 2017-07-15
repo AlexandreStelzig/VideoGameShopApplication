@@ -169,8 +169,10 @@ public class MainActivity extends AppCompatActivity
         } else {
 
             if (previousFragmentTag != -1 && previousFragmentTag != currentFragmentTag) {
+                resultsFragment.setRefreshData(false);
                 displayFragment(previousFragmentTag);
                 previousFragmentTag = -1;
+//                resultsFragment.setRefreshData(true);
             }
             // return the view to home
             else if (!viewIsAtHome) {

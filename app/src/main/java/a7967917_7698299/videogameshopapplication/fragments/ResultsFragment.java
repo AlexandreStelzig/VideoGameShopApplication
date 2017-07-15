@@ -75,7 +75,7 @@ public class ResultsFragment extends Fragment {
     private ItemVariables.CONSOLES consoleToFilter = null;
     private ItemVariables.CONSOLES gameByConsoleToFilter = null;
     private VideoGameVariables.CATEGORY gameByCategoryFilter = null;
-    private String searchViewQuery = null;
+    private String searchViewQuery = "";
 
     private boolean filterByConsole;
     private boolean filterGamesByConsole;
@@ -83,10 +83,11 @@ public class ResultsFragment extends Fragment {
     private boolean filterBySearchViewQuery;
 
     private int sortSelected = 0;
-    private int consoleSelected = 0;
-    private int categorySelected = 0;
+    private int consoleSelected = -1;
+    private int categorySelected = -1;
 
     private boolean refreshData = true;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,8 +114,10 @@ public class ResultsFragment extends Fragment {
         // init search
         searchViewRoot = (View) view.findViewById(R.id.search_view_root);
         searchView = (SearchView) view.findViewById(R.id.search_view_results);
-        initSearchView();
 
+
+
+        initSearchView();
         initListView();
         setupPopupWindows();
 
@@ -445,7 +448,7 @@ public class ResultsFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
 
-                if(s.isEmpty() && !searchViewQuery.isEmpty()){
+                if(searchViewQuery != null && s.isEmpty() && !searchViewQuery.isEmpty()){
                     setSearchViewQuery("");
                     ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
                     Toast.makeText(getContext(), "TEST", Toast.LENGTH_SHORT).show();
@@ -936,5 +939,7 @@ public class ResultsFragment extends Fragment {
         }
     }
 
-
+    public void setRefreshData(boolean refreshData) {
+        this.refreshData = refreshData;
+    }
 }
