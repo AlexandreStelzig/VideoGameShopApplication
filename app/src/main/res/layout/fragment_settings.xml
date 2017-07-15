@@ -1,14 +1,128 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_help_scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:clickable="true">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="SETTINGS"
-        android:textSize="28sp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/language"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical"
+                android:text="Country"
+                android:textColor="@color/primaryText"
+                android:textSize="@dimen/text_normal" />
+
+            <Spinner
+                android:id="@+id/fragment_settings_country_spinner"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.2"
+                android:gravity="center_vertical" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical"
+                android:text="Application Language"
+                android:textColor="@color/primaryText"
+                android:textSize="@dimen/text_normal" />
+
+            <Spinner
+                android:id="@+id/fragment_settings_country_language_spinner"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.2"
+                android:gravity="center_vertical" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/results_page"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical"
+                android:text="@string/number_of_results_per_page"
+                android:textColor="@color/primaryText"
+                android:textSize="@dimen/text_normal" />
+
+            <TextView
+                android:id="@+id/fragment_settings_country_nbResults_textview"
+                android:layout_width="0dp"
+                android:clickable="true"
+                android:layout_height="match_parent"
+                android:layout_weight="1.2"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/primaryText"
+                android:textSize="@dimen/text_normal"
+                android:drawableEnd="@drawable/ic_edit_black_24dp" />
+
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="*None of the settings function actually work for this project"
+            android:textColor="@color/primaryText"
+            android:textSize="12sp" />
+
+
+
+    </LinearLayout>
+</ScrollView>
