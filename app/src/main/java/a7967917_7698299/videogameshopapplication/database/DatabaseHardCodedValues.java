@@ -42,6 +42,8 @@ public class DatabaseHardCodedValues {
     }
 
 
+    // date formats are MONTH DAY, YEAR
+
     private void initConsoles() {
 
         // SWITCH
@@ -145,7 +147,7 @@ public class DatabaseHardCodedValues {
 
         // THE DIVISION
         itemId = databaseManager.createVideoGame("Tom Clancy's The Division", 39.99, "Tom Clancy’s The Division™ is a ground-breaking RPG experience that brings the genre into a modern military setting for the first time. In the wake of a devastating pandemic that sweeps through New York City, basic services fail one by one, and without access to food or water, the city quickly descends into chaos. As an agent of The Division, you’ll specialize, modify, and level up your gear, weapons, and skills to take back New York on your own terms.",
-                5, "Ubisoft", "8 March 2016", VideoGameVariables.ESRB.MATURE_17PLUS.toString(), 40, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.NA.toString(), 1);
+                5, "Ubisoft", "March 8, 2016", VideoGameVariables.ESRB.MATURE_17PLUS.toString(), 40, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.NA.toString(), 1);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/3max.jpg", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/5scrmax1.jpg", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://static-ca.ebgames.ca/images/products/714639/7scrmax2.jpg", itemId);
@@ -199,7 +201,7 @@ public class DatabaseHardCodedValues {
 
         // Splatoon 2
         itemId = databaseManager.createVideoGame("Splatoon 2", 59.99, "Coat a virtual world with ink when you play this Nintendo Switch Splatoon 2 game, which lets you battle for turf online or keep the action local. Stick to single-player mode for solo fun or challenge your friends in multi-player mode. Vibrant colors and innovative weapons make this Nintendo Switch Splatoon 2 game an engaging choice for kids and adults.",
-                5, "Nintendo", "July 21, 2017", VideoGameVariables.ESRB.EVERYONE.toString(), 35, VideoGameVariables.CATEGORY.ADVENTURE.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
+                5, "Nintendo", "July 21, 2017", VideoGameVariables.ESRB.EVERYONE.toString(), 35, VideoGameVariables.CATEGORY.ACTION.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523_sd.jpg;maxHeight=550;maxWidth=642", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv11d.jpg;maxHeight=550;maxWidth=642", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/5721/5721523cv12d.jpg;maxHeight=550;maxWidth=642", itemId);

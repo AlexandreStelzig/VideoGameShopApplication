@@ -2,6 +2,7 @@ package a7967917_7698299.videogameshopapplication.manager;
 
 import java.text.Collator;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,12 +21,21 @@ public class SortingManager {
     public enum SortingStates {
         NAME_AZ,
         NAME_ZA,
-        DATE_RELEASE_NEW_OLD,
-        DATE_RELEASE_OLD_NEW
+        PRICE_LOW_HIGH,
+        PRICE_HIGH_LOW,
+//        DATE_RELEASE_NEW_OLD,
+//        DATE_RELEASE_OLD_NEW
     }
 
     private  SortingStates currentState;
 
+    public SortingStates getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(SortingStates currentState) {
+        this.currentState = currentState;
+    }
 
     private static SortingManager instance;
 
@@ -52,16 +62,62 @@ public class SortingManager {
             case NAME_ZA:
                 sortedItemList = sortItemListByNameZA(items);
                 break;
-            case DATE_RELEASE_NEW_OLD:
-                sortedItemList = sortItemListNewOld(items);
+//            case DATE_RELEASE_NEW_OLD:
+//                sortedItemList = sortItemListNewOld(items);
+//                break;
+//            case DATE_RELEASE_OLD_NEW:
+//                sortedItemList = sortItemListOldNew(items);
+//                break;
+            case PRICE_HIGH_LOW:
+                sortedItemList = sortItemListByPriceHL(items);
                 break;
-            case DATE_RELEASE_OLD_NEW:
-                sortedItemList = sortItemListOldNew(items);
+            case PRICE_LOW_HIGH:
+                sortedItemList = sortItemListByPriceLH(items);
                 break;
+
         }
 
 
         return sortedItemList;
+    }
+
+    private List<Item> sortItemListByPriceLH(List<Item> items) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+
+                Collator usCollator = Collator.getInstance(Locale.US);
+                usCollator.setStrength(Collator.PRIMARY);
+
+                double price1 = item1.getPrice();
+                double price2 = item2.getPrice();
+
+
+                return (int) (price2 - price1);
+            }
+
+        });
+
+        return items;
+    }
+
+    private List<Item> sortItemListByPriceHL(List<Item> items) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+
+                Collator usCollator = Collator.getInstance(Locale.US);
+                usCollator.setStrength(Collator.PRIMARY);
+
+                double price1 = item1.getPrice();
+                double price2 = item2.getPrice();
+
+
+                return (int) (price1 - price2);
+            }
+
+        });
+        return  items;
     }
 
     private List<Item> sortItemListByNameAZ(List<Item> items) {
@@ -100,6 +156,40 @@ public class SortingManager {
     }
 
     private List<Item> sortItemListNewOld(List<Item> items) {
+
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+
+                Collator usCollator = Collator.getInstance(Locale.US);
+                usCollator.setStrength(Collator.PRIMARY);
+
+                String lowerCase1 = item1.getDatePublished().toLowerCase();
+                String lowerCase2 = item2.getDatePublished().toLowerCase();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+
+                String o1String = Normalizer.normalize(lowerCase1, Normalizer.Form.NFD);
+                String o2String = Normalizer.normalize(lowerCase2, Normalizer.Form.NFD);
+
+                // take out the numbers
+                String o1StringPart = o1String.replaceAll("\\d", "");
+                String o2StringPart = o2String.replaceAll("\\d", "");
+
+                if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
+                    return extractInt(o1String) - extractInt(o2String);
+                }
+                return o1String.compareTo(o2String);
+
+            }
+
+            int extractInt(String s) {
+                String num = s.replaceAll("\\D", "");
+                // return 0 if no digits found
+                return num.isEmpty() ? 0 : Integer.parseInt(num);
+            }
+        });
+
         return  items;
     }
 
