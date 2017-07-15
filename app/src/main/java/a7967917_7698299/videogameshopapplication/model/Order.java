@@ -31,12 +31,15 @@ public class Order {
     private String city;
     private String postalCode;
 
-    public Order(long orderId, long userId, String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+    private boolean isExtraShipping;
+
+    public Order(long orderId, long userId, String dateOrdered, String dateArriving, OrderVariables.STATUS status, String deliverTo, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean isExtraShipping) {
         this.orderId = orderId;
         this.userId = userId;
         this.dateOrdered = dateOrdered;
         this.dateArriving = dateArriving;
         this.status = status;
+        this.deliverTo = deliverTo;
         this.cardNumber = cardNumber;
         this.nameOnCard = nameOnCard;
         this.expirationMonth = expirationMonth;
@@ -46,7 +49,15 @@ public class Order {
         this.state = state;
         this.city = city;
         this.postalCode = postalCode;
-        this.deliverTo = deliverTo;
+        this.isExtraShipping = isExtraShipping;
+    }
+
+    public boolean isExtraShipping() {
+        return isExtraShipping;
+    }
+
+    public void setExtraShipping(boolean extraShipping) {
+        isExtraShipping = extraShipping;
     }
 
     public String getDeliverTo() {

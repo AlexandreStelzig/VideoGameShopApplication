@@ -4,86 +4,95 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/custom_border"
-    android:clickable="true"
-    android:orientation="vertical"
-    android:padding="5dp"
-    android:layout_marginBottom="10dp">
-
+    android:clickable="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/custom_layout_order_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="ORDER ID"
-            android:textColor="@color/primaryText"
-            android:textSize="@dimen/text_normal" />
-
-        <TextView
-            android:id="@+id/custom_layout_order_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="2"
-            android:text="Date Ordered"
-            android:textColor="@color/primaryText"
-            android:textSize="@dimen/text_normal" />
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <TextView
-            android:id="@+id/custom_layout_order_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="ORDER STATUS"
-            android:textColor="@color/primaryText"
-            android:textSize="@dimen/text_normal" />
-
-        <TextView
-            android:id="@+id/custom_layout_order_price"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="2"
-            android:text="TOTAL PRICE"
-            android:textColor="@color/red"
-            android:textSize="@dimen/text_normal" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="2dp"
-        android:background="@color/colorDivider" />
-
-    <ListView
-        android:id="@+id/custom_layout_order_item_info_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="false"
-        android:textColor="@color/primaryText"/>
+        android:background="@drawable/custom_border"
 
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/custom_layout_order_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="ORDER ID"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_normal"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/custom_layout_order_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="2"
+                android:text="Date Ordered"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_normal" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="5dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp">
+
+
+            <TextView
+                android:id="@+id/custom_layout_order_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="ORDER STATUS"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_normal" />
+
+            <TextView
+                android:id="@+id/custom_layout_order_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="2"
+                android:text="TOTAL PRICE"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_normal" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimary" />
+
+        <ListView
+            android:id="@+id/custom_layout_order_item_info_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:textColor="@color/primaryText" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -51,6 +52,7 @@
             android:background="@color/colorDivider" />
 
         <Button
+            android:id="@+id/fragment_results_filter_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -62,6 +64,12 @@
             android:textColor="@color/primaryText"
             android:textSize="@dimen/text_small" />
 
+        <!--<Spinner-->
+            <!--android:id="@+id/fragment_results_filter_spinner"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"/>-->
+
 
         <View
             android:layout_width="1dp"
@@ -70,6 +78,7 @@
             android:background="@color/colorDivider" />
 
         <Button
+            android:id="@+id/fragment_results_sort_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

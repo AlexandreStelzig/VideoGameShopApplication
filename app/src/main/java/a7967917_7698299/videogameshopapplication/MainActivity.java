@@ -169,8 +169,10 @@ public class MainActivity extends AppCompatActivity
         } else {
 
             if (previousFragmentTag != -1 && previousFragmentTag != currentFragmentTag) {
+                resultsFragment.setRefreshData(false);
                 displayFragment(previousFragmentTag);
                 previousFragmentTag = -1;
+//                resultsFragment.setRefreshData(true);
             }
             // return the view to home
             else if (!viewIsAtHome) {
@@ -608,9 +610,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode) {
+    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShpping) {
         if (isUserConnectedWithMessage()) {
-            databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode);
+            databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode, extraShpping);
             Toast.makeText(this, "Order Created", Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
         } else {
