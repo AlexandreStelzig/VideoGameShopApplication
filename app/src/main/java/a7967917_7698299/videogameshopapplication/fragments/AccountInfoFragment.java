@@ -11,7 +11,7 @@ import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
 
 /**
- * Created by alex on 2017-06-24.
+ * @author Alexandre Stelzig, Mathieu Perron
  */
 
 public class AccountInfoFragment extends Fragment {

@@ -38,6 +38,8 @@ import a7967917_7698299.videogameshopapplication.fragments.SettingsFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SignInFragment;
 import a7967917_7698299.videogameshopapplication.fragments.SignUpFragment;
 import a7967917_7698299.videogameshopapplication.fragments.WishlistFragment;
+import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
+import a7967917_7698299.videogameshopapplication.model.UserAddress;
 import a7967917_7698299.videogameshopapplication.variables.ItemVariables;
 import a7967917_7698299.videogameshopapplication.variables.OrderVariables;
 import a7967917_7698299.videogameshopapplication.variables.VideoGameVariables;
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity
     // logic variables
     private boolean viewIsAtHome;
     private boolean showingMainDrawerMenu;
+    private PaymentInformation editingPayment = null;
+    private UserAddress editingAddress = null;
 
     // fragments
     private AccountFragment accountFragment;
@@ -660,5 +664,21 @@ public class MainActivity extends AppCompatActivity
     public void continueShoppingClicked(View view) {
         setSearchQuery("");
         displayFragment(R.id.search_view_results);
+    }
+
+    public UserAddress getEditingAddress(){
+        return editingAddress;
+    }
+
+    public void setEditingAddress(UserAddress address){
+        editingAddress = address;
+    }
+
+    public PaymentInformation getEditingPayment(){
+        return editingPayment;
+    }
+
+    public void setEditingPayment(PaymentInformation paymentInformation){
+        editingPayment = paymentInformation;
     }
 }

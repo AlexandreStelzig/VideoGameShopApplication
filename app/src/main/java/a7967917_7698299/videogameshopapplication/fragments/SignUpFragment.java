@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
+import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
 
 /**
  * @author Alexandre Stelzig, Mathieu Perron
@@ -21,7 +23,7 @@ public class SignUpFragment extends Fragment{
 
 
     private View view;
-
+    DatabaseManager databaseManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class SignUpFragment extends Fragment{
                 signUp();
             }
         });
-
+        databaseManager = DatabaseManager.getInstance();
         return view;
     }
 
@@ -66,9 +68,9 @@ public class SignUpFragment extends Fragment{
             return;
         }
 
-
-        //TODO: add account to DB and set as user.
-
+        Toast.makeText(getContext(), "Account created!", Toast.LENGTH_SHORT);
+        long userId = databaseManager.createUser(editEmail.getText().toString(), editPassword.getText().toString(),editFirstName.getText().toString(), editLastName.getText().toString());
+        databaseManager.setCurrentActiveUser(userId);
         ((MainActivity)getActivity()).displayFragment(R.id.nav_home);
     }
 }

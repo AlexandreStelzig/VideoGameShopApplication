@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
+import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
+import a7967917_7698299.videogameshopapplication.model.User;
 
 /**
  * @author Alexandre Stelzig, Mathieu Perron
@@ -23,7 +25,7 @@ public class SignInFragment extends Fragment{
 
 
     private View view;
-
+    private DatabaseManager databaseManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,10 +50,12 @@ public class SignInFragment extends Fragment{
                 Toast.makeText(getActivity().getApplicationContext(), "Sorry, this feature is not yet implemented.", Toast.LENGTH_SHORT).show();
             }
         });
+        databaseManager = DatabaseManager.getInstance();
         return view;
     }
 
     public void signIn() {
+
         EditText editEmail = (EditText)getView().findViewById(R.id.editEmailSignIn);
         if(TextUtils.isEmpty(editEmail.getText())){
             editEmail.setError("E-mail field is empty!");
@@ -69,8 +73,12 @@ public class SignInFragment extends Fragment{
         String email = editEmail.getText().toString();
         String password = ((EditText)getView().findViewById(R.id.editPasswordSignIn)).getText().toString();
 
-        //TODO: Set up validation
-
+        User u = databaseManager.getUserByEmail(email);
+        if(u.equals(null)||!u.getPassword().equals(password)){
+            Toast.makeText(getContext(), "Invalid email or password.", Toast.LENGTH_SHORT);
+            return;
+        }
+        databaseManager.setCurrentActiveUser(u.getUserId());
         ((MainActivity) getActivity()).displayFragment(R.id.nav_home);
 
     }

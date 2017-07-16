@@ -27,25 +27,14 @@
             android:text="Postal code:"
             android:textSize="20sp"
             android:textColor="@color/black"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:id="@+id/editPostal1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLength="3"
-                android:text="K1K"/>
 
             <EditText
-                android:id="@+id/editPostal2"
+                android:id="@+id/editPostal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="3"
-                android:text="1K1"/>
-        </LinearLayout>
+                android:maxLength="6"
+                android:text="K1K1K1"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
