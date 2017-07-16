@@ -1,17 +1,120 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:id="@+id/fragment_help_scrollview"
+    android:clickable="true">
 
-    <Button
-        android:id="@+id/test"
-        android:gravity="center"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableRight="@drawable/ic_navigate_next_blue_grey_200_24dp"
-        android:padding="10dp"
-        android:text="Create order" />
+        android:orientation="vertical"
+        android:padding="5dp">
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/table_of_contents"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/fragment_help_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/dividerColor"/>
+
+        <TextView
+            android:id="@+id/fragment_help_about_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/about"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/about_text"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_normal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+
+        <TextView
+            android:id="@+id/fragment_help_shpping_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shopping_and_order"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/textPlaceHolder"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_normal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+
+        <TextView
+            android:id="@+id/fragment_help_orders_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/viewing_orders"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/textPlaceHolder"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_normal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+
+        <TextView
+            android:id="@+id/fragment_help_account_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/account_and_settings"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/textPlaceHolder"
+            android:textColor="@color/primaryText"
+            android:textSize="@dimen/text_normal" />
+
+
+        <!--<Button-->
+        <!--android:id="@+id/test"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:drawableRight="@drawable/ic_navigate_next_blue_grey_200_24dp"-->
+        <!--android:padding="10dp"-->
+        <!--android:text="Create order" />-->
+    </LinearLayout>
+</ScrollView>
