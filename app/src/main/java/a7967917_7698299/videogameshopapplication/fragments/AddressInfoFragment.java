@@ -53,7 +53,7 @@ public class AddressInfoFragment extends Fragment {
             editPostal.setText(editingAddress.getPostalCode());
             editCity.setText(editingAddress.getCity());
             provinceSpinner.setSelection(((ArrayAdapter) provinceSpinner.getAdapter()).getPosition(editingAddress.getState()));
-            ((MainActivity) getActivity()).setEditingAddress(null);
+
         } else {
             editStreet.getText().clear();
             editPostal.getText().clear();
@@ -135,5 +135,6 @@ public class AddressInfoFragment extends Fragment {
             editPostal.getText().clear();
             editCity.getText().clear();
         }
+
     }
 }

@@ -66,6 +66,7 @@ public class AddressListFragment extends Fragment{
         addAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((MainActivity) getActivity()).setEditingAddress(null);
                 ((MainActivity)getActivity()).displayFragment(R.layout.fragment_address_info);
             }
         });
@@ -126,6 +127,14 @@ public class AddressListFragment extends Fragment{
                     ((MainActivity)getActivity()).displayFragment(R.layout.fragment_address_info);
                 }
             });
+
+
+            holder.street.setText("Street: " + userAddress.getStreet());
+            holder.postalCode.setText("Postal Code: " + userAddress.getPostalCode());
+            holder.city.setText("City: " + userAddress.getCity());
+            holder.province.setText("State/Province: " + userAddress.getState());
+            holder.country.setText("Country: " + userAddress.getCountry());
+
 
             return rowView;
 

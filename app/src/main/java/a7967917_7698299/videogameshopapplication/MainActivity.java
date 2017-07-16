@@ -616,7 +616,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShpping) {
+    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShpping) {
         if (isUserConnectedWithMessage()) {
             databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode, extraShpping);
             Toast.makeText(this, "Order Created", Toast.LENGTH_SHORT).show();

@@ -1172,7 +1172,7 @@ public class DatabaseManager {
         return newRowId;
     }
 
-    public long createOrderFromItemsInCart(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShipping) {
+    public long createOrderFromItemsInCart(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShipping) {
 
 
         SQLiteDatabase db = database.getWritableDatabase();
@@ -1346,7 +1346,7 @@ public class DatabaseManager {
         db.update(DatabaseVariables.TABLE_ADDRESS.TABLE_NAME, values, DatabaseVariables.TABLE_ADDRESS.COLUMN_ADDRESS_ID + "=" + addressId, null);
     }
 
-    public void updatePaymentInformation(long paymentId, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, long userId){
+    public void updatePaymentInformation(long paymentId, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, long userId){
         SQLiteDatabase db = database.getReadableDatabase();
         ContentValues values = new ContentValues();
 
@@ -1643,7 +1643,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_PAYMENT_ID));
         long userId = cursor.getInt(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_USER_ID));
-        int cardNumber = cursor.getInt(cursor
+        long cardNumber = cursor.getLong(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_CARD_NUMBER));
         String nameOnCard = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_NAME_ON_CARD));

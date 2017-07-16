@@ -30,8 +30,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No payment methods are associated to this account."
-                />
+                android:text="No payment methods are associated to this account." />
 
         </LinearLayout>
 
@@ -40,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/addPaymentButton"
-        android:src="@drawable/ic_add_black_24dp"
+        android:src="@drawable/ic_add_white_24dp"
         android:layout_gravity="right"
         android:clickable="true"
         android:layout_margin="20dp"

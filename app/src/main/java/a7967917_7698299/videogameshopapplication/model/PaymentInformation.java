@@ -8,12 +8,12 @@ public class PaymentInformation {
 
     private long paymentId;
     private long userId;
-    private int cardNumber;
+    private long cardNumber;
     private String nameOnCard;
     private int expirationMonth;
     private int expirationYear;
 
-    public PaymentInformation(long paymentId, long userId, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear) {
+    public PaymentInformation(long paymentId, long userId, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear) {
         this.paymentId = paymentId;
         this.userId = userId;
         this.cardNumber = cardNumber;
@@ -38,7 +38,7 @@ public class PaymentInformation {
         this.userId = userId;
     }
 
-    public int getCardNumber() {
+    public long getCardNumber() {
         return cardNumber;
     }
 

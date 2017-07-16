@@ -58,6 +58,7 @@ public class PaymentListFragment extends Fragment {
         addAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((MainActivity) getActivity()).setEditingPayment(null);
                 ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_info);
             }
         });
@@ -120,6 +121,20 @@ public class PaymentListFragment extends Fragment {
                     ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_info);
                 }
             });
+
+            holder.name.setText("Name on card: " + paymentInformation.getNameOnCard());
+            holder.number.setText("Card ending with: " + paymentInformation.getCardNumber() % 10000);
+
+
+            String stringExpiryMonth = Integer.toString(paymentInformation.getExpirationMonth());
+            if (stringExpiryMonth.length() == 1)
+                stringExpiryMonth = "0" + stringExpiryMonth;
+
+            String stringExpiryYear = Integer.toString(paymentInformation.getExpirationYear());
+            if (stringExpiryYear.length() == 1)
+                stringExpiryYear = "0" + stringExpiryYear;
+
+            holder.expiry.setText("Expires: " + stringExpiryMonth + "-" + stringExpiryYear);
 
             return rowView;
 

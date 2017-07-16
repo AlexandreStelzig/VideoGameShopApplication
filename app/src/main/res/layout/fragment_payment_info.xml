@@ -27,8 +27,8 @@
                 android:id="@+id/editPaymentName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
                 android:inputType="text"
+                android:maxLines="1"
                 android:text="Placeholder" />
 
             <TextView
@@ -43,8 +43,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:nextFocusForward="@+id/editExpiryMonth"
                 android:maxLength="16"
+                android:nextFocusDown="@+id/editExpiryMonth"
                 android:text="0000000000000000" />
 
             <TextView
@@ -65,7 +65,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:maxLength="2"
-                    android:nextFocusForward="@+id/editExpiryYear"
+                    android:minWidth="30dp"
+                    android:nextFocusDown="@+id/editExpiryYear"
                     android:text="01" />
 
                 <TextView
@@ -81,6 +82,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:maxLength="2"
+                    android:minWidth="30dp"
                     android:text="01" />
 
             </LinearLayout>

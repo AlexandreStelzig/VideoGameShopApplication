@@ -19,7 +19,7 @@
             android:id="@+id/paymentCardName"
             android:text="Name on card"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_normal"
             android:layout_gravity="left"
             />
         <TextView
@@ -28,7 +28,7 @@
             android:id="@+id/paymentCardNumber"
             android:text="Card ending in: 3456"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_normal"
             android:layout_gravity="left"/>
         <TextView
             android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
             android:id="@+id/paymentExpiry"
             android:text="01-00"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_normal"
             android:layout_gravity="left"/>
 
 
