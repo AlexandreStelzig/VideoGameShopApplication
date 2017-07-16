@@ -14,15 +14,34 @@
         <ListView
             android:id="@+id/paymentListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             >
 
         </ListView>
-        <ImageButton
+
+        <LinearLayout
+            android:id="@+id/noPaymentLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No payment methods are associated to this account."
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/addPaymentButton"
+        android:src="@drawable/ic_add_black_24dp"
+        android:layout_gravity="right"
+        android:clickable="true"
+        />
 </LinearLayout>

@@ -1,15 +1,26 @@
 package a7967917_7698299.videogameshopapplication.fragments;
 
+import android.icu.text.DateFormat;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
+import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
+import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
 
 /**
- * Created by alex on 2017-06-24.
+ * @author Alexandre Stelzig, Mathieu Perron
  */
 
 public class PaymentInfoFragment extends Fragment {
@@ -23,6 +34,83 @@ public class PaymentInfoFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_payment_info, container, false);
         setHasOptionsMenu(true);
+        final DatabaseManager databaseManager = DatabaseManager.getInstance();
+        final EditText editName = (EditText) view.findViewById(R.id.editPaymentName);
+        final EditText editCard = (EditText) view.findViewById(R.id.editCardNumber);
+        final EditText editExpiryMonth = (EditText) view.findViewById(R.id.editExpiryMonth);
+        final EditText editExpiryYear = (EditText) view.findViewById(R.id.editExpiryYear);
+        Button save = (Button) view.findViewById(R.id.paymentInfoSave);
+        Button cancel = (Button) view.findViewById(R.id.paymentInfoCancel);
+        final PaymentInformation editingPayment = ((MainActivity)getActivity()).getEditingPayment();
+        if(editingPayment != null){
+            editName.setText(editingPayment.getNameOnCard());
+            editCard.setText(editingPayment.getCardNumber());
+            editExpiryMonth.setText(editingPayment.getExpirationMonth());
+            editExpiryYear.setText(editingPayment.getExpirationYear());
+            ((MainActivity)getActivity()).setEditingPayment(null);
+        }
+        else{
+            editName.setText("");
+            editCard.setText("");
+            editExpiryMonth.setText("");
+            editExpiryYear.setText("");
+        }
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View view) {
+                String name = editName.getText().toString();
+                if(name.equals("")){
+                    editName.setError("Name on card is empty.");
+                    return;
+                }
+                String number = editCard.getText().toString();
+                if(number.equals("")){
+                    editCard.setError("Card number is empty.");
+                    return;
+                }
+                if(number.length() < 16){
+                    editCard.setError("Card number must be 16 digits long.");
+                    return;
+                }
+                String expiryMonth = editExpiryMonth.getText().toString();
+                if(expiryMonth.length() < 2){
+                    editExpiryMonth.setError("Expiry month needs to be 2 digits long.");
+                    return;
+                }
+                if(Integer.parseInt(expiryMonth) < 1){
+                    editExpiryMonth.setError("Expiry month cannot be lower than 01.");
+                }
+                if(Integer.parseInt(expiryMonth) > 12){
+                    editExpiryMonth.setError("Expiry month cannot be higher than 12.");
+                }
+                String expiryYear = editExpiryYear.getText().toString();
+                if(expiryYear.length() < 2){
+                    editExpiryYear.setError("Expiry year needs to be 2 digits long.");
+                    return;
+                }
+                if(editingPayment != null){
+                    databaseManager.updatePaymentInformation(editingPayment.getPaymentId(), Integer.parseInt(number), name, Integer.parseInt(expiryMonth),
+                            Integer.parseInt(expiryYear), databaseManager.getCurrentActiveUser().getUserId());
+                    Toast.makeText(getContext(), "Payment method updated.", Toast.LENGTH_SHORT);
+                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+                }
+                else{
+                    databaseManager.createPaymentInformation(Integer.parseInt(number), name, Integer.parseInt(expiryMonth),
+                            Integer.parseInt(expiryYear), databaseManager.getCurrentActiveUser().getUserId());
+                    Toast.makeText(getContext(), "New payment method added to account.", Toast.LENGTH_SHORT);
+                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+                }
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+            }
+        });
 
         return view;
     }

@@ -20,6 +20,7 @@
             android:id="@+id/editPaymentName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:text="Placeholder"/>
         <TextView
             android:layout_width="wrap_content"
