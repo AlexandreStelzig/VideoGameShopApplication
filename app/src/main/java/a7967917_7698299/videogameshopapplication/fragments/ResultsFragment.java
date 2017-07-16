@@ -314,6 +314,7 @@ public class ResultsFragment extends Fragment {
 
                 return mTextView;
             }
+            
         });
         filterListPopupWindow.setAnchorView(filterButton);
         filterListPopupWindow.setWidth((400));
@@ -449,9 +450,8 @@ public class ResultsFragment extends Fragment {
             public boolean onQueryTextChange(String s) {
 
                 if(searchViewQuery != null && s.isEmpty() && !searchViewQuery.isEmpty()){
-                    setSearchViewQuery("");
-                    ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
-                    Toast.makeText(getContext(), "TEST", Toast.LENGTH_SHORT).show();
+//                    setSearchViewQuery("");
+//                    ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
                 }
 
 
@@ -915,6 +915,8 @@ public class ResultsFragment extends Fragment {
 
             if (!filterBySearchViewQuery && !refreshData)
                 searchView.setQuery("", false);
+            if(!refreshData)
+                searchView.setQuery(searchViewQuery, false);
 
             if (itemList.isEmpty()) {
                 listView.setVisibility(View.GONE);
