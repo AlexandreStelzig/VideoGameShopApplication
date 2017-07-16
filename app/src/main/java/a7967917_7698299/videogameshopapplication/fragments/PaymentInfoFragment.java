@@ -46,9 +46,9 @@ public class PaymentInfoFragment extends Fragment {
         final PaymentInformation editingPayment = ((MainActivity) getActivity()).getEditingPayment();
         if (editingPayment != null) {
             editName.setText(editingPayment.getNameOnCard());
-            editCard.setText(editingPayment.getCardNumber());
-            editExpiryMonth.setText(editingPayment.getExpirationMonth());
-            editExpiryYear.setText(editingPayment.getExpirationYear());
+            editCard.setText(Integer.toString(editingPayment.getCardNumber()));
+            editExpiryMonth.setText(Integer.toString(editingPayment.getExpirationMonth()));
+            editExpiryYear.setText(Integer.toString(editingPayment.getExpirationYear()));
             ((MainActivity) getActivity()).setEditingPayment(null);
         } else {
             editName.setText("");
