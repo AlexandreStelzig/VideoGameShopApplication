@@ -5,11 +5,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import a7967917_7698299.videogameshopapplication.MainActivity;
 import a7967917_7698299.videogameshopapplication.R;
+import a7967917_7698299.videogameshopapplication.database.DatabaseManager;
+import a7967917_7698299.videogameshopapplication.model.UserAddress;
 
 /**
- * Created by alex on 2017-06-24.
+ * @author Alexandre Stelzig, Mathieu Perron
  */
 
 public class AddressInfoFragment extends Fragment{
@@ -23,6 +34,80 @@ public class AddressInfoFragment extends Fragment{
 
         view = inflater.inflate(R.layout.fragment_address_info, container, false);
         setHasOptionsMenu(true);
+        final DatabaseManager databaseManager = DatabaseManager.getInstance();
+        final EditText editStreet = (EditText) view.findViewById(R.id.editStreet);
+        final EditText editPostal = (EditText) view.findViewById(R.id.editPostal);
+        final EditText editCity = (EditText) view.findViewById(R.id.editCity);
+        final Spinner provinceSpinner = (Spinner) view.findViewById(R.id.provinceSpinner);
+        final Button save = (Button) view.findViewById(R.id.addressInfoSave);
+        final Button cancel = (Button) view.findViewById(R.id.addressInfoCancel);
+        final UserAddress editingAddress = ((MainActivity)getActivity()).getEditingAddress();
+        if(editingAddress != null){
+            editStreet.setText(editingAddress.getStreet());
+            editPostal.setText(editingAddress.getPostalCode());
+            editCity.setText(editingAddress.getCity());
+            provinceSpinner.setSelection(((ArrayAdapter)provinceSpinner.getAdapter()).getPosition(editingAddress.getState()));
+            ((MainActivity)getActivity()).setEditingAddress(null);
+        }
+        else{
+            editStreet.setText("");
+            editPostal.setText("");
+            editCity.setText("");
+        }
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String street = editStreet.getText().toString();
+                if(street.equals("")){
+                    editStreet.setError("No street name and number was given.");
+                    return;
+                }
+                String postal = editPostal.getText().toString();
+                postal = postal.toUpperCase();
+                if(postal.length() != 6){
+                    editPostal.setError("The postal code must be 6 characters long.");
+                    return;
+                }
+                Pattern postalCodePattern = Pattern.compile("[A-Z][0-9][A-Z][0-9][A-Z][0-9]");
+                Matcher postalCodeMatcher = postalCodePattern.matcher(postal);
+                if(!postalCodeMatcher.matches()){
+                    editPostal.setError("A postal code must be 6 characters long and alternate between letters and numbers. Ex: K1K1K1");
+                    return;
+                }
+                String city = editCity.getText().toString();
+                if(city.equals("")){
+                    editCity.setError("No city name was given.");
+                    return;
+                }
+                String province = provinceSpinner.getSelectedItem().toString();
+                if(editingAddress!=null){
+                    databaseManager.updateAddress(editingAddress.getAddressId(), street, "Canada", province, city, postal,
+                            databaseManager.getCurrentActiveUser().getUserId());
+                    editStreet.setText("");
+                    editPostal.setText("");
+                    editCity.setText("");
+                    Toast.makeText(getContext(), "Address updated.", Toast.LENGTH_SHORT);
+                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+                }
+                else{
+                    databaseManager.createAddress(street, "Canada", province, city, postal, databaseManager.getCurrentActiveUser().getUserId());
+                    editStreet.setText("");
+                    editPostal.setText("");
+                    editCity.setText("");
+                    Toast.makeText(getContext(), "New address added to account.", Toast.LENGTH_SHORT);
+                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+                }
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+            }
+        });
 
         return view;
     }

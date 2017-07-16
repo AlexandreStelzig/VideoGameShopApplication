@@ -440,6 +440,21 @@ public class DatabaseManager {
         return user;
     }
 
+    public User getUserByEmail(String email){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_USER.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_USER.COLUMN_EMAIL + "=" + email, null);
+
+        User user = null;
+
+        if (cursor.moveToFirst()) {
+            user = fetchUserFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return user;
+    }
+
     private WishList getWishlistByUserId(long userId) {
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_WISHLIST.TABLE_NAME + " WHERE "
@@ -616,6 +631,51 @@ public class DatabaseManager {
     }
 
 
+    public List<UserAddress> getAllAddressesFromActiveUser() {
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ADDRESS.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ADDRESS.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId(), null);
+        List<UserAddress> addressList = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            while(cursor.isAfterLast() == false) {
+                addressList.add(fetchAddressFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return addressList;
+    }
+
+    public List<PaymentInformation> getAllPaymentMethodsFromActiveUser(){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ADDRESS.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId(), null);
+        List<PaymentInformation> paymentList = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            while(cursor.isAfterLast() == false) {
+                paymentList.add(fetchPaymentInformationFromCursor(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return paymentList;
+    }
+
+    public UserAddress getAddressById(long addressId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ADDRESS.TABLE_NAME + " WHERE "
+                + DatabaseVariables.TABLE_ADDRESS.COLUMN_ADDRESS_ID + "=" + addressId, null);
+
+        UserAddress address = null;
+        if (cursor.moveToFirst()) {
+            address = fetchAddressFromCursor(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return address;
+
+    }
+
     public List<Order> getAllOrdersFromActiveUser() {
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ORDER.TABLE_NAME + " WHERE "
@@ -788,6 +848,48 @@ public class DatabaseManager {
         return newRowId;
 
     }
+
+    public long createAddress(String street, String country, String province, String city, String postalCode, long userId){
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_STREET, street);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_COUNTRY, country);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_STATE, province);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_CITY, city);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_POSTAL_CODE, postalCode);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_USER_ID, userId);
+
+        long newRowId = -1;
+        newRowId = db.insert(DatabaseVariables.TABLE_ADDRESS.TABLE_NAME, null, values);
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding address " + postalCode);
+        else {
+            Log.d("DatabaseManager", "added " + postalCode);
+        }
+        return newRowId;
+    }
+
+    public long createPaymentInformation(int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, long userId){
+        SQLiteDatabase db = database.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_CARD_NUMBER, cardNumber);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_NAME_ON_CARD, nameOnCard);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_EXPIRATION_MONTH, expirationMonth);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_EXPIRATION_YEAR, expirationYear);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_USER_ID, userId);
+
+        long newRowId = -1;
+        newRowId = db.insert(DatabaseVariables.TABLE_PAYMENT_INFORMATION.TABLE_NAME, null, values);
+        if (newRowId == -1)
+            Log.d("DatabaseManager", "Error while adding credit card ending with " + cardNumber%10000);
+        else {
+            Log.d("DatabaseManager", "added credit card ending with " + cardNumber%10000);
+        }
+        return newRowId;
+    }
+
 
     public long createUser(String email, String password, String firstName, String lastName) {
 
@@ -1229,6 +1331,49 @@ public class DatabaseManager {
 
     }
 
+
+    public void updateAddress(long addressId, String street, String country, String province, String city, String postalCode, long userId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_STREET, street);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_COUNTRY, country);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_STATE, province);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_CITY, city);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_POSTAL_CODE, postalCode);
+        values.put(DatabaseVariables.TABLE_ADDRESS.COLUMN_USER_ID, userId);
+        db.update(DatabaseVariables.TABLE_ADDRESS.TABLE_NAME, values, DatabaseVariables.TABLE_ADDRESS.COLUMN_ADDRESS_ID + "=" + addressId, null);
+    }
+
+    public void updatePaymentInformation(long paymentId, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, long userId){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_CARD_NUMBER, cardNumber);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_NAME_ON_CARD, nameOnCard);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_EXPIRATION_MONTH, expirationMonth);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_EXPIRATION_YEAR, expirationYear);
+        values.put(DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_USER_ID, userId);
+
+        db.update(DatabaseVariables.TABLE_PAYMENT_INFORMATION.TABLE_NAME, values, DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_PAYMENT_ID + "=" + paymentId, null);
+    }
+
+    public void updateCurrentUser(String email, String password, String firstName, String lastName){
+        long userId = getCurrentActiveUser().getUserId();
+        updateUserById(userId, email, password, firstName, lastName);
+    }
+
+    public void updateUserById(long userId, String email, String password, String firstName, String lastName){
+        SQLiteDatabase db = database.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_EMAIL, email);
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_PASSWORD, password);
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_FIRST_NAME, firstName);
+        values.put(DatabaseVariables.TABLE_USER.COLUMN_LAST_NAME, lastName);
+        db.update(DatabaseVariables.TABLE_USER.TABLE_NAME, values, DatabaseVariables.TABLE_USER.COLUMN_USER_ID + "=" + userId, null);
+    }
 
     ////////////// DELETE METHODS //////////////
 
