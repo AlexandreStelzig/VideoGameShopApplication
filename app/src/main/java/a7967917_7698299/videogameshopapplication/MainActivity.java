@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     private boolean showingMainDrawerMenu;
     private PaymentInformation editingPayment = null;
     private UserAddress editingAddress = null;
+    private boolean returnCheckout = false;
 
     // fragments
     private AccountFragment accountFragment;
@@ -714,4 +715,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public boolean isReturnCheckout() {
+        return returnCheckout;
+    }
+
+    public void setReturnCheckout(boolean returnCheckout) {
+        this.returnCheckout = returnCheckout;
+    }
 }

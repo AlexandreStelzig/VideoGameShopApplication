@@ -41,6 +41,8 @@ public class PaymentInfoFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_payment_info, container, false);
         setHasOptionsMenu(true);
+        final boolean returnCheckout = ((MainActivity)getActivity()).isReturnCheckout();
+        ((MainActivity)getActivity()).setReturnCheckout(false);
         final DatabaseManager databaseManager = DatabaseManager.getInstance();
         editName = (EditText) view.findViewById(R.id.editPaymentName);
         editCard = (EditText) view.findViewById(R.id.editCardNumber);
@@ -117,12 +119,21 @@ public class PaymentInfoFragment extends Fragment {
                     databaseManager.updatePaymentInformation(editingPayment.getPaymentId(), Long.parseLong(number), name, Integer.parseInt(expiryMonth),
                             Integer.parseInt(expiryYear), databaseManager.getCurrentActiveUser().getUserId());
                     Toast.makeText(getContext(), "Payment method updated.", Toast.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+
+                    if(returnCheckout){
+                        ((MainActivity)getActivity()).displayFragment(R.layout.fragment_checkout);
+                    } else {
+                        ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                    }
                 } else {
                     databaseManager.createPaymentInformation(Long.parseLong(number), name, Integer.parseInt(expiryMonth),
                             Integer.parseInt(expiryYear), databaseManager.getCurrentActiveUser().getUserId());
                     Toast.makeText(getContext(), "New payment method added to account.", Toast.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                    if(returnCheckout){
+                        ((MainActivity)getActivity()).displayFragment(R.layout.fragment_checkout);
+                    } else {
+                        ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                    }
                 }
 
                 View current = getActivity().getCurrentFocus();
@@ -137,7 +148,11 @@ public class PaymentInfoFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                if(returnCheckout){
+                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_checkout);
+                } else {
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                }
                 View current = getActivity().getCurrentFocus();
                 if (current != null) {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

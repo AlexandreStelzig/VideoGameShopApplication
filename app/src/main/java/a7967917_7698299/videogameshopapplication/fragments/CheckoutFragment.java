@@ -86,7 +86,7 @@ public class CheckoutFragment extends Fragment{
         totalTextView = (TextView) view.findViewById(R.id.textCheckoutTotal);
         itemList = new ArrayList<>();
         cartItemList = new ArrayList<>();
-       // cartItemList = databaseManager.getAllCartItems();
+        cartItemList = databaseManager.getAllCartItems();
         itemList = databaseManager.getCurrentActiveUserItemsInCart();
         paymentMethods = databaseManager.getAllPaymentMethodsFromActiveUser();
         shippingAddresses = databaseManager.getAllAddressesFromActiveUser();
@@ -154,8 +154,26 @@ public class CheckoutFragment extends Fragment{
             }
         });
 
+        TextView newAddress = (TextView)view.findViewById(R.id.textNewAddress);
+        TextView newPayment = (TextView) view.findViewById(R.id.textNewPayment);
+        newAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).setReturnCheckout(true);
+                ((MainActivity)getActivity()).displayFragment(R.layout.fragment_address_info);
+            }
+        });
+
+        newPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).setReturnCheckout(true);
+                ((MainActivity)getActivity()).displayFragment(R.layout.fragment_payment_info);
+            }
+        });
+
         initListView();
-        //changeTotalText();
+        changeTotalText();
 
         return view;
     }

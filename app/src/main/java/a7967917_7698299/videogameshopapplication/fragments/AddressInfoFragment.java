@@ -39,6 +39,8 @@ public class AddressInfoFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_address_info, container, false);
         setHasOptionsMenu(true);
+        final boolean returnCheckout = ((MainActivity)getActivity()).isReturnCheckout();
+        ((MainActivity)getActivity()).setReturnCheckout(false);
         final DatabaseManager databaseManager = DatabaseManager.getInstance();
         editStreet = (EditText) view.findViewById(R.id.editStreet);
         editPostal = (EditText) view.findViewById(R.id.editPostal);
@@ -93,14 +95,22 @@ public class AddressInfoFragment extends Fragment {
                     editPostal.setText("");
                     editCity.setText("");
                     Toast.makeText(getContext(), "Address updated.", Toast.LENGTH_SHORT);
-                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_address_list);
+                    if(returnCheckout){
+                        ((MainActivity)getActivity()).displayFragment(R.layout.fragment_checkout);
+                    } else {
+                        ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                    }
                 } else {
                     databaseManager.createAddress(street, "Canada", province, city, postal, databaseManager.getCurrentActiveUser().getUserId());
                     editStreet.setText("");
                     editPostal.setText("");
                     editCity.setText("");
                     Toast.makeText(getContext(), "New address added to account.", Toast.LENGTH_SHORT);
-                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_address_list);
+                    if(returnCheckout){
+                        ((MainActivity)getActivity()).displayFragment(R.layout.fragment_checkout);
+                    } else {
+                        ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                    }
                 }
 
             }
@@ -109,7 +119,11 @@ public class AddressInfoFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) getActivity()).displayFragment(R.layout.fragment_address_list);
+                if(returnCheckout){
+                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_checkout);
+                } else {
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_list);
+                }
                 editStreet.setText("");
                 editPostal.setText("");
                 editCity.setText("");
