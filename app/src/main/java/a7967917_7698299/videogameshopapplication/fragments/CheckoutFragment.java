@@ -81,7 +81,7 @@ public class CheckoutFragment extends Fragment{
 
         view = inflater.inflate(R.layout.fragment_checkout, container, false);
         setHasOptionsMenu(true);
-
+        databaseManager = DatabaseManager.getInstance();
         listView = (ListView) view.findViewById(R.id.orderListCheckout);
         totalTextView = (TextView) view.findViewById(R.id.textCheckoutTotal);
         itemList = new ArrayList<>();
@@ -145,7 +145,7 @@ public class CheckoutFragment extends Fragment{
         });
 
         initListView();
-        changeTotalText();
+        //changeTotalText();
 
         return view;
     }
@@ -271,90 +271,12 @@ public class CheckoutFragment extends Fragment{
 
             final CheckoutFragment.CustomListAdapter.Holder holder = new CheckoutFragment.CustomListAdapter.Holder();
             final View rowView;
-            rowView = inflater.inflate(R.layout.custom_layout_item_listview, null);
+            rowView = inflater.inflate(R.layout.custom_layout_checkout_item_listview, null);
 
-            holder.title = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_title);
-            holder.consolePublisher = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_console_publisher);
-            holder.esrb = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_esrb);
-            holder.release = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_release);
-            holder.price = (TextView) rowView.findViewById(R.id.custom_layout_item_listview_price);
-            holder.amount = (TextView) rowView.findViewById(R.id.custom_layout_item_amount_edittext);
+            holder.title = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_title);
+            holder.price = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_price);
 
             final Item rowItem = itemList.get(position);
-
-            ((Button) rowView.findViewById(R.id.custom_layout_item_add_cart)).setVisibility(View.GONE);
-
-
-            ((Button) rowView.findViewById(R.id.custom_layout_item_close_button)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    databaseManager.deleteCartItem(rowItem.getItemId(), rowItem.getItemType());
-
-
-                    itemList.remove(position);
-                    cartItemList.remove(position);
-
-                    customListAdapter.notifyDataSetChanged();
-
-                    if (itemList.isEmpty()) {
-                        listView.setVisibility(View.GONE);
-                    } else {
-                        listView.setVisibility(View.VISIBLE);
-                    }
-
-                    getActivity().invalidateOptionsMenu();
-                    changeTotalText();
-                }
-            });
-
-
-            // amount
-            holder.amount.setText("x" + cartItemList.get(position).getAmount() + "");
-            holder.amount.setPaintFlags(holder.amount.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
-            holder.amount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    positionSelected = position;
-                    amountDialog();
-                }
-            });
-
-            holder.title.setText(rowItem.getName());
-            holder.release.setText("Published " + rowItem.getDatePublished());
-            holder.price.setText(Double.toString(rowItem.getPrice()) + "$");
-
-
-            if (rowItem.getItemType() == ItemVariables.TYPE.CONSOLE) {
-                holder.esrb.setVisibility(View.GONE);
-                holder.consolePublisher.setText("Console by " + rowItem.getPublisher());
-
-            } else {
-                List<ItemVariables.CONSOLES> consolesList = databaseManager.getConsolesFromGameId(rowItem.getItemId());
-
-                String console = "";
-                if (consolesList.size() == 1) {
-                    console = Helper.convertConsoleToString(consolesList.get(0));
-                } else if (consolesList.size() == 0) {
-                    console = "No consoles";
-                } else {
-                    console = "2+ Consoles";
-                }
-
-                holder.consolePublisher.setText(console + " by " + rowItem.getPublisher());
-                holder.esrb.setText("ESRB: " + Helper.convertESRBToString(((VideoGame) rowItem).getesrbRating()));
-
-            }
-
-            rowView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_normal));
-
-            rowView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ((MainActivity) getActivity()).setItemIdToOpenAtInfoLaunch(rowItem.getItemId(), rowItem.getItemType());
-                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_item_info);
-                }
-            });
 
 
             return rowView;
@@ -373,7 +295,7 @@ public class CheckoutFragment extends Fragment{
         double tax = subtotal*0.13;
         double total = extraShipping ? subtotal+tax+25 : subtotal+tax;
         totalTextView.setText("Subtotal: " + String.format("%.2f$", subtotal)
-                + "\nTax: " + String.format("%.2f$", tax));
+                + "\nTax: " + String.format("%.2f$", tax) + "\nTotal: " + String.format("%.2f$", total));
     }
 
 }
