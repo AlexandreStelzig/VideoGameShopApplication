@@ -88,12 +88,14 @@ public class CheckoutFragment extends Fragment{
         cartItemList = new ArrayList<>();
        // cartItemList = databaseManager.getAllCartItems();
         itemList = databaseManager.getCurrentActiveUserItemsInCart();
-        paymentMethods = new ArrayList<>();
-        shippingAddresses = new ArrayList<>();
+        paymentMethods = databaseManager.getAllPaymentMethodsFromActiveUser();
+        shippingAddresses = databaseManager.getAllAddressesFromActiveUser();
         confirmButton = (Button) view.findViewById(R.id.confirmCheckoutButton);
         cancelButton = (Button) view.findViewById(R.id.cancelCheckoutButton);
         radioAddress = (RadioGroup) view.findViewById(R.id.radioAddress);
         radioPayment = (RadioGroup) view.findViewById(R.id.radioPayment);
+        setPayment();
+        setShipping();
         RadioGroup shipping = (RadioGroup) view.findViewById(R.id.radioShipping);
         shipping.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -113,9 +115,17 @@ public class CheckoutFragment extends Fragment{
                     return;
                 }
                 int radioId = radioPayment.getCheckedRadioButtonId();
+                if(radioId == -1){
+                    Toast.makeText(getActivity().getApplicationContext(), "No payment method was selected. Please select one or make a new one.", Toast.LENGTH_SHORT);
+                    return;
+                }
                 RadioButton selected = (RadioButton) view.findViewById(radioId);
                 UserAddress selectedAddress = (UserAddress) selected.getTag();
                 radioId = radioAddress.getCheckedRadioButtonId();
+                if(radioId == -1){
+                    Toast.makeText(getActivity().getApplicationContext(), "No shipping address was selected. Please select one or make a new one.", Toast.LENGTH_SHORT);
+                    return;
+                }
                 selected = (RadioButton) view.findViewById(radioId);
                 PaymentInformation selectedPayment = (PaymentInformation) selected.getTag();
                 Calendar c = Calendar.getInstance();
@@ -150,80 +160,32 @@ public class CheckoutFragment extends Fragment{
         return view;
     }
 
+    private void setShipping() {
+        for(int i = 0; i < shippingAddresses.size(); i++){
+            RadioButton rButton = new RadioButton(getContext());
+            rButton.setId(i);
+            rButton.setText("Postal code: " + shippingAddresses.get(i).getPostalCode());
+            rButton.setTag(shippingAddresses.get(i));
+            radioAddress.addView(rButton);
+        }
+    }
+
+    private void setPayment() {
+        for(int i = 0; i < paymentMethods.size(); i++){
+            RadioButton rButton = new RadioButton(getContext());
+            rButton.setId(i);
+            rButton.setText("Card ending with: " + paymentMethods.get(i).getCardNumber() % 10000);
+            rButton.setTag(paymentMethods.get(i));
+            radioPayment.addView(rButton);
+        }
+    }
+
     private void initListView(){
 
         customListAdapter = new CustomListAdapter(getContext());
         listView.setAdapter(customListAdapter);
     }
 
-
-    private void amountDialog() {
-
-        amountHolder = cartItemList.get(positionSelected).getAmount();
-
-        final View dialogView = View.inflate(getContext(), R.layout.custom_layout_amount_dialog, null);
-
-        final TextView textView = (TextView) dialogView.findViewById(R.id.custom_layout_amount_textview);
-        textView.setText(amountHolder + "");
-
-        final Button minusButton = (Button) dialogView.findViewById(R.id.custom_layout_amount_minus);
-
-        final Button addButton = (Button) dialogView.findViewById(R.id.custom_layout_amount_add);
-
-        final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
-        alertDialog.setMessage(itemList.get(positionSelected).getPrice() + "$ each");
-        alertDialog.setTitle(itemList.get(positionSelected).getName() + " Amount");
-
-        alertDialog.setView(dialogView);
-
-
-        if (amountHolder == 1)
-            minusButton.setEnabled(false);
-
-        minusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (amountHolder > 1)
-                    amountHolder--;
-                if (amountHolder == 1)
-                    minusButton.setEnabled(false);
-                textView.setText(amountHolder + "");
-                alertDialog.setMessage(itemList.get(positionSelected).getPrice() + "$ each");
-            }
-        });
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                amountHolder++;
-                minusButton.setEnabled(true);
-                textView.setText(amountHolder + "");
-                alertDialog.setMessage("Total: " + amountHolder * itemList.get(positionSelected).getPrice() + "$");
-            }
-        });
-
-
-        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-                databaseManager.updateCartAmount(itemList.get(positionSelected).getItemType(), cartItemList.get(positionSelected).getItemId(), amountHolder);
-
-                cartItemList.get(positionSelected).setAmount(amountHolder);
-                customListAdapter.notifyDataSetChanged();
-                changeTotalText();
-                ((MainActivity) getActivity()).invalidateOptionsMenu();
-            }
-        });
-
-        // Setting cancel Button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                //do nothing
-            }
-        });
-        // Showing Alert Message
-        alertDialog.show();
-    }
 
     private class CustomListAdapter extends BaseAdapter {
         Context context;
