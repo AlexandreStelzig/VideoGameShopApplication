@@ -1,5 +1,6 @@
 package a7967917_7698299.videogameshopapplication.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -7,6 +8,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -75,11 +77,20 @@ public class SignInFragment extends Fragment{
 
         User u = databaseManager.getUserByEmail(email);
         if(u.equals(null)||!u.getPassword().equals(password)){
-            Toast.makeText(getContext(), "Invalid email or password.", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Invalid email or password.", Toast.LENGTH_SHORT).show();
             return;
         }
+        Toast.makeText(getContext(), "Successful Sign in", Toast.LENGTH_SHORT).show();
         databaseManager.setCurrentActiveUser(u.getUserId());
         ((MainActivity) getActivity()).displayFragment(R.id.nav_home);
+        ((MainActivity) getActivity()).resetMainDrawerMenu();
+
+        View current = getActivity().getCurrentFocus();
+        if (current != null){
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
 
     }
 

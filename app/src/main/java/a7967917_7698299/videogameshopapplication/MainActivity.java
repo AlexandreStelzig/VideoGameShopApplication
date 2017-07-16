@@ -177,7 +177,9 @@ public class MainActivity extends AppCompatActivity
             if (previousFragmentTag != -1 && previousFragmentTag != currentFragmentTag) {
                 resultsFragment.setRefreshData(false);
                 displayFragment(previousFragmentTag);
-                previousFragmentTag = -1;
+
+                if(!currentFragment.equals(paymentListFragment) && !currentFragment.equals(addressListFragment) && !currentFragment.equals(accountInfoFragment))
+                    previousFragmentTag = -1;
 //                resultsFragment.setRefreshData(true);
             }
             // return the view to home
@@ -196,9 +198,9 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
 
         MenuItem cartItem = menu.findItem(R.id.action_cart);
-        if(signInFragment.isVisible() || signUpFragment.isVisible()){
+        if (signInFragment.isVisible() || signUpFragment.isVisible()) {
             cartItem.setVisible(false);
-        }else{
+        } else {
             cartItem.setVisible(true);
         }
 
@@ -464,6 +466,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.layout.fragment_account_info:
                 currentFragment = accountInfoFragment;
+                title = "Account Info";
                 break;
             default:
                 currentFragment = homeFragment;
@@ -480,9 +483,13 @@ public class MainActivity extends AppCompatActivity
         // animate the fragment navigation
         if (currentFragment != null) {
             if (!currentFragment.isVisible()) {
-                if (currentFragmentTag != R.id.nav_sign_in_out)
+                if (currentFragment.equals(paymentListFragment) || currentFragment.equals(addressListFragment) || currentFragment.equals(accountInfoFragment)) {
+                    previousFragmentTag = R.id.nav_account;
+                } else if (currentFragmentTag != R.id.nav_sign_in_out) {
                     previousFragmentTag = currentFragmentTag;
+                }
                 currentFragmentTag = itemId;
+
                 replaceFragmentWithAnimation(currentFragment, "" + currentFragmentTag);
             } else {
                 if (currentFragment.equals(resultsFragment)) {
@@ -661,31 +668,31 @@ public class MainActivity extends AppCompatActivity
         displayFragment(R.id.search_view_results);
     }
 
-    public UserAddress getEditingAddress(){
+    public UserAddress getEditingAddress() {
         return editingAddress;
     }
 
-    public void setEditingAddress(UserAddress address){
+    public void setEditingAddress(UserAddress address) {
         editingAddress = address;
     }
 
-    public PaymentInformation getEditingPayment(){
+    public PaymentInformation getEditingPayment() {
         return editingPayment;
     }
 
-    public void setEditingPayment(PaymentInformation paymentInformation){
+    public void setEditingPayment(PaymentInformation paymentInformation) {
         editingPayment = paymentInformation;
     }
 
-    private void showSignOutDialog(){
+    private void showSignOutDialog() {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){
+                switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         databaseManager.setCurrentActiveUser(-1);
 
-                        if(homeFragment.isVisible())
+                        if (homeFragment.isVisible())
                             homeFragment.setHomeSignInComponents();
                         displayFragment(R.id.nav_home);
                         resetMainDrawerMenu();

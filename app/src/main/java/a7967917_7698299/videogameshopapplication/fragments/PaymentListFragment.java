@@ -26,11 +26,12 @@ import a7967917_7698299.videogameshopapplication.model.PaymentInformation;
  * @author Alexandre Stelzig, Mathieu Perron
  */
 
-public class PaymentListFragment extends Fragment{
+public class PaymentListFragment extends Fragment {
 
 
     private View view;
     DatabaseManager databaseManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,13 +46,23 @@ public class PaymentListFragment extends Fragment{
         databaseManager = DatabaseManager.getInstance();
         List<PaymentInformation> paymentInformations = new ArrayList<>();
         paymentInformations = databaseManager.getAllPaymentMethodsFromActiveUser();
-        if(paymentInformations.isEmpty()){
+        if (paymentInformations.isEmpty()) {
             noPayment.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             listView.setVisibility(View.VISIBLE);
             CustomListAdapter customListAdapter = new CustomListAdapter(getContext(), paymentInformations);
+            listView.setAdapter(customListAdapter);
         }
+
+        android.support.design.widget.FloatingActionButton addAddress = (android.support.design.widget.FloatingActionButton) view.findViewById(R.id.addPaymentButton);
+        addAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_info);
+            }
+        });
+
+
         return view;
     }
 
@@ -61,22 +72,28 @@ public class PaymentListFragment extends Fragment{
 
         private LayoutInflater inflater;
 
-        private CustomListAdapter(Context context, List<PaymentInformation> paymentInfos){
+        private CustomListAdapter(Context context, List<PaymentInformation> paymentInfos) {
 
             super();
             this.context = context;
             this.allPayment = paymentInfos;
-            this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
-        public int getCount(){return allPayment.size();}
+        public int getCount() {
+            return allPayment.size();
+        }
 
         @Override
-        public PaymentInformation getItem(int position){return allPayment.get(position);}
+        public PaymentInformation getItem(int position) {
+            return allPayment.get(position);
+        }
 
         @Override
-        public long getItemId(int position){return position;}
+        public long getItemId(int position) {
+            return position;
+        }
 
 
         public class Holder {
@@ -86,7 +103,7 @@ public class PaymentListFragment extends Fragment{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(int position, View convertView, ViewGroup parent) {
             final CustomListAdapter.Holder holder = new CustomListAdapter.Holder();
             final View rowView;
             rowView = inflater.inflate(R.layout.custom_layout_payment_listview, null);
@@ -96,11 +113,11 @@ public class PaymentListFragment extends Fragment{
             holder.expiry = (TextView) rowView.findViewById(R.id.paymentExpiry);
 
             final PaymentInformation paymentInformation = allPayment.get(position);
-            ((Button)rowView.findViewById(R.id.buttonEditPayment)).setOnClickListener(new View.OnClickListener() {
+            ((Button) rowView.findViewById(R.id.buttonEditPayment)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity)getActivity()).setEditingPayment(paymentInformation);
-                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_payment_info);
+                    ((MainActivity) getActivity()).setEditingPayment(paymentInformation);
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_payment_info);
                 }
             });
 

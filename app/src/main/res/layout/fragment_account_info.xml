@@ -1,37 +1,40 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="top"
-            android:text="Email:"
-            android:textSize="20sp"
             android:maxLines="1"
-            android:textColor="@color/black"/>
+            android:text="Email:"
+            android:textColor="@color/primaryText"
+            android:textSize="20sp" />
+
         <EditText
             android:id="@+id/editEmailAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:maxLines="1"
-            android:text="Placeholder"/>
+            android:text="Placeholder"
+            android:textColor="@color/primaryText" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Password:"
             android:maxLines="1"
-            android:textSize="20sp"
-            android:textColor="@color/black"/>
+            android:text="Password:"
+            android:textColor="@color/primaryText"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/editPasswordAccount"
@@ -39,54 +42,60 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:text="PLACEHOLDER"/>
+            android:text="PLACEHOLDER"
+            android:textColor="@color/primaryText" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="First Name:"
-            android:textSize="20sp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/primaryText"
+            android:textSize="20sp" />
+
         <EditText
             android:id="@+id/editFirstNameAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:maxLines="1"
-            android:text="PLACEHOLDER"/>
+            android:text="PLACEHOLDER"
+            android:textColor="@color/primaryText" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Last Name:"
-            android:textSize="20sp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/primaryText"
+            android:textSize="20sp" />
+
         <EditText
             android:id="@+id/editLastNameAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:maxLines="1"
-            android:text="PLACEHOLDER"/>
+            android:text="PLACEHOLDER"
+            android:textColor="@color/primaryText" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/accountInfoSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Save" />
+
+            <Button
+                android:id="@+id/accountInfoCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel" />
+        </LinearLayout>
 
     </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/accountInfoSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:text="Save"/>
-
-        <Button
-            android:id="@+id/accountInfoCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel" />
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

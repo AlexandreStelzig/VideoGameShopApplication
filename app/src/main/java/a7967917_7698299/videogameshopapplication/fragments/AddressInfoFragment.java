@@ -23,10 +23,15 @@ import a7967917_7698299.videogameshopapplication.model.UserAddress;
  * @author Alexandre Stelzig, Mathieu Perron
  */
 
-public class AddressInfoFragment extends Fragment{
+public class AddressInfoFragment extends Fragment {
 
 
     private View view;
+
+    private EditText editStreet;
+    private EditText editPostal;
+    private EditText editCity;
+    private Spinner provinceSpinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,68 +40,67 @@ public class AddressInfoFragment extends Fragment{
         view = inflater.inflate(R.layout.fragment_address_info, container, false);
         setHasOptionsMenu(true);
         final DatabaseManager databaseManager = DatabaseManager.getInstance();
-        final EditText editStreet = (EditText) view.findViewById(R.id.editStreet);
-        final EditText editPostal = (EditText) view.findViewById(R.id.editPostal);
-        final EditText editCity = (EditText) view.findViewById(R.id.editCity);
-        final Spinner provinceSpinner = (Spinner) view.findViewById(R.id.provinceSpinner);
+        editStreet = (EditText) view.findViewById(R.id.editStreet);
+        editPostal = (EditText) view.findViewById(R.id.editPostal);
+        editCity = (EditText) view.findViewById(R.id.editCity);
+        provinceSpinner = (Spinner) view.findViewById(R.id.provinceSpinner);
         final Button save = (Button) view.findViewById(R.id.addressInfoSave);
         final Button cancel = (Button) view.findViewById(R.id.addressInfoCancel);
-        final UserAddress editingAddress = ((MainActivity)getActivity()).getEditingAddress();
-        if(editingAddress != null){
+        final UserAddress editingAddress = ((MainActivity) getActivity()).getEditingAddress();
+
+        if (editingAddress != null) {
             editStreet.setText(editingAddress.getStreet());
             editPostal.setText(editingAddress.getPostalCode());
             editCity.setText(editingAddress.getCity());
-            provinceSpinner.setSelection(((ArrayAdapter)provinceSpinner.getAdapter()).getPosition(editingAddress.getState()));
-            ((MainActivity)getActivity()).setEditingAddress(null);
-        }
-        else{
-            editStreet.setText("");
-            editPostal.setText("");
-            editCity.setText("");
+            provinceSpinner.setSelection(((ArrayAdapter) provinceSpinner.getAdapter()).getPosition(editingAddress.getState()));
+            ((MainActivity) getActivity()).setEditingAddress(null);
+        } else {
+            editStreet.getText().clear();
+            editPostal.getText().clear();
+            editCity.getText().clear();
         }
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String street = editStreet.getText().toString();
-                if(street.equals("")){
+                if (street.equals("")) {
                     editStreet.setError("No street name and number was given.");
                     return;
                 }
                 String postal = editPostal.getText().toString();
                 postal = postal.toUpperCase();
-                if(postal.length() != 6){
+                if (postal.length() != 6) {
                     editPostal.setError("The postal code must be 6 characters long.");
                     return;
                 }
                 Pattern postalCodePattern = Pattern.compile("[A-Z][0-9][A-Z][0-9][A-Z][0-9]");
                 Matcher postalCodeMatcher = postalCodePattern.matcher(postal);
-                if(!postalCodeMatcher.matches()){
+                if (!postalCodeMatcher.matches()) {
                     editPostal.setError("A postal code must be 6 characters long and alternate between letters and numbers. Ex: K1K1K1");
                     return;
                 }
                 String city = editCity.getText().toString();
-                if(city.equals("")){
+                if (city.equals("")) {
                     editCity.setError("No city name was given.");
                     return;
                 }
                 String province = provinceSpinner.getSelectedItem().toString();
-                if(editingAddress!=null){
+                if (editingAddress != null) {
                     databaseManager.updateAddress(editingAddress.getAddressId(), street, "Canada", province, city, postal,
                             databaseManager.getCurrentActiveUser().getUserId());
                     editStreet.setText("");
                     editPostal.setText("");
                     editCity.setText("");
                     Toast.makeText(getContext(), "Address updated.", Toast.LENGTH_SHORT);
-                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
-                }
-                else{
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_address_list);
+                } else {
                     databaseManager.createAddress(street, "Canada", province, city, postal, databaseManager.getCurrentActiveUser().getUserId());
                     editStreet.setText("");
                     editPostal.setText("");
                     editCity.setText("");
                     Toast.makeText(getContext(), "New address added to account.", Toast.LENGTH_SHORT);
-                    ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+                    ((MainActivity) getActivity()).displayFragment(R.layout.fragment_address_list);
                 }
 
             }
@@ -105,10 +109,31 @@ public class AddressInfoFragment extends Fragment{
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).displayFragment(R.layout.fragment_account);
+                ((MainActivity) getActivity()).displayFragment(R.layout.fragment_address_list);
+                editStreet.setText("");
+                editPostal.setText("");
+                editCity.setText("");
             }
         });
 
         return view;
+    }
+
+    // fix bug where data doesn't reset correctly
+    @Override
+    public void onResume() {
+        super.onResume();
+        final UserAddress editingAddress = ((MainActivity) getActivity()).getEditingAddress();
+        if (editingAddress != null) {
+            editStreet.setText(editingAddress.getStreet());
+            editPostal.setText(editingAddress.getPostalCode());
+            editCity.setText(editingAddress.getCity());
+            provinceSpinner.setSelection(((ArrayAdapter) provinceSpinner.getAdapter()).getPosition(editingAddress.getState()));
+            ((MainActivity) getActivity()).setEditingAddress(null);
+        } else {
+            editStreet.getText().clear();
+            editPostal.getText().clear();
+            editCity.getText().clear();
+        }
     }
 }

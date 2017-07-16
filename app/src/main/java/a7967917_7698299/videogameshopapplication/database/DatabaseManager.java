@@ -443,7 +443,7 @@ public class DatabaseManager {
     public User getUserByEmail(String email){
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_USER.TABLE_NAME + " WHERE "
-                + DatabaseVariables.TABLE_USER.COLUMN_EMAIL + "=" + email, null);
+                + DatabaseVariables.TABLE_USER.COLUMN_EMAIL + "='" + email + "'", null);
 
         User user = null;
 
@@ -870,7 +870,7 @@ public class DatabaseManager {
         return newRowId;
     }
 
-    public long createPaymentInformation(int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, long userId){
+    public long createPaymentInformation(long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, long userId){
         SQLiteDatabase db = database.getWritableDatabase();
         ContentValues values = new ContentValues();
 
