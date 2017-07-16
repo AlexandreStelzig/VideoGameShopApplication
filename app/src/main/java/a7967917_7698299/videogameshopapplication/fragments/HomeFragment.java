@@ -153,16 +153,16 @@ public class HomeFragment extends Fragment {
             signInButton.setVisibility(View.GONE);
             recommendedLayout.setVisibility(View.VISIBLE);
 
+        } else {
+            signInButton.setVisibility(View.VISIBLE);
+            recommendedLayout.setVisibility(View.GONE);
+
             signInButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     ((MainActivity) getActivity()).displayFragment(R.id.nav_sign_in_out);
                 }
             });
-
-        } else {
-            signInButton.setVisibility(View.VISIBLE);
-            recommendedLayout.setVisibility(View.GONE);
         }
     }
 

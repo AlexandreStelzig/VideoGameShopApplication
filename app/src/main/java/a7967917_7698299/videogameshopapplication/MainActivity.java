@@ -1,5 +1,7 @@
 package a7967917_7698299.videogameshopapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -433,14 +435,7 @@ public class MainActivity extends AppCompatActivity
                     title = "Sign in";
                 } else {
                     // sign out
-                    currentFragment = homeFragment;
-                    databaseManager.setCurrentActiveUser(-1);
-
-                    if(homeFragment.isVisible())
-                        homeFragment.setHomeSignInComponents();
-
-                    title = "Home";
-                    currentFragmentTag = R.id.nav_home;
+                    showSignOutDialog();
                 }
                 break;
             case R.layout.fragment_address_list:
@@ -681,4 +676,35 @@ public class MainActivity extends AppCompatActivity
     public void setEditingPayment(PaymentInformation paymentInformation){
         editingPayment = paymentInformation;
     }
+
+    private void showSignOutDialog(){
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        databaseManager.setCurrentActiveUser(-1);
+
+                        if(homeFragment.isVisible())
+                            homeFragment.setHomeSignInComponents();
+                        displayFragment(R.id.nav_home);
+                        resetMainDrawerMenu();
+                        viewIsAtHome = true;
+                        previousFragmentTag = currentFragmentTag = R.id.nav_home;
+                        currentFragment = homeFragment;
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to sign out?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+    }
+
+
 }
