@@ -314,7 +314,7 @@ public class ResultsFragment extends Fragment {
 
                 return mTextView;
             }
-            
+
         });
         filterListPopupWindow.setAnchorView(filterButton);
         filterListPopupWindow.setWidth((400));
