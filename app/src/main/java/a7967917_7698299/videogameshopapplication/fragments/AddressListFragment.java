@@ -59,6 +59,7 @@ public class AddressListFragment extends Fragment{
             listView.setVisibility(View.VISIBLE);
 
             CustomListAdapter customListAdapter = new CustomListAdapter(getContext(), addresses);
+            listView.setAdapter(customListAdapter);
         }
 
         android.support.design.widget.FloatingActionButton addAddress = (android.support.design.widget.FloatingActionButton)view.findViewById(R.id.addAddressButton);

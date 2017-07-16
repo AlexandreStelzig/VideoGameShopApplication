@@ -524,7 +524,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //
-    private void resetMainDrawerMenu() {
+    public void resetMainDrawerMenu() {
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.main_drawer_menu);
         showingMainDrawerMenu = true;

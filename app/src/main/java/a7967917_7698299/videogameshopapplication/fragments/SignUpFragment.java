@@ -72,5 +72,6 @@ public class SignUpFragment extends Fragment{
         long userId = databaseManager.createUser(editEmail.getText().toString(), editPassword.getText().toString(),editFirstName.getText().toString(), editLastName.getText().toString());
         databaseManager.setCurrentActiveUser(userId);
         ((MainActivity)getActivity()).displayFragment(R.id.nav_home);
+        ((MainActivity) getActivity()).resetMainDrawerMenu();
     }
 }

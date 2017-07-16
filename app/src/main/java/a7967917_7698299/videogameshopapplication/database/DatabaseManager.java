@@ -648,7 +648,7 @@ public class DatabaseManager {
 
     public List<PaymentInformation> getAllPaymentMethodsFromActiveUser(){
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_ADDRESS.TABLE_NAME + " WHERE "
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseVariables.TABLE_PAYMENT_INFORMATION.TABLE_NAME + " WHERE "
                 + DatabaseVariables.TABLE_PAYMENT_INFORMATION.COLUMN_USER_ID + "=" + getCurrentActiveUser().getUserId(), null);
         List<PaymentInformation> paymentList = new ArrayList<>();
         if(cursor.moveToFirst()){
