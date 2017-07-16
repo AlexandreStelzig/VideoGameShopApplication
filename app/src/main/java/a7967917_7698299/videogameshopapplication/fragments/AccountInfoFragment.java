@@ -33,6 +33,8 @@ public class AccountInfoFragment extends Fragment {
     EditText editFirstName;
     EditText editLastName;
 
+    private DatabaseManager databaseManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,7 +48,7 @@ public class AccountInfoFragment extends Fragment {
         editLastName = (EditText) view.findViewById(R.id.editLastNameAccount);
         Button save = (Button) view.findViewById(R.id.accountInfoSave);
         Button cancel = (Button) view.findViewById(R.id.accountInfoCancel);
-        final DatabaseManager databaseManager = DatabaseManager.getInstance();
+        databaseManager = DatabaseManager.getInstance();
 
 
         final User u = databaseManager.getCurrentActiveUser();
@@ -116,5 +118,15 @@ public class AccountInfoFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final User u = databaseManager.getCurrentActiveUser();
+        editEmail.setText(u.getEmail());
+        editFirstName.setText(u.getFirstName());
+        editLastName.setText(u.getLastName());
+        editPassword.setText(u.getPassword());
+    }
 
 }

@@ -76,7 +76,7 @@ public class SignInFragment extends Fragment{
         String password = ((EditText)getView().findViewById(R.id.editPasswordSignIn)).getText().toString();
 
         User u = databaseManager.getUserByEmail(email);
-        if(u.equals(null)||!u.getPassword().equals(password)){
+        if(u == (null)||!u.getPassword().equals(password)){
             Toast.makeText(getContext(), "Invalid email or password.", Toast.LENGTH_SHORT).show();
             return;
         }
