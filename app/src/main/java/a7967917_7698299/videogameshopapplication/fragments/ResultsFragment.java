@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +57,8 @@ public class ResultsFragment extends Fragment {
     private TextView nbResultsTextView;
     private TextView noResultsTextView;
     private Spinner filterSpinner;
+
+    private Button filterButton;
 
     // Database
     private DatabaseManager databaseManager;
@@ -116,7 +117,6 @@ public class ResultsFragment extends Fragment {
         searchView = (SearchView) view.findViewById(R.id.search_view_results);
 
 
-
         initSearchView();
         initListView();
         setupPopupWindows();
@@ -136,7 +136,7 @@ public class ResultsFragment extends Fragment {
         final ListPopupWindow categoryListPopupWindow = new ListPopupWindow(
                 getContext());
 
-        Button filterButton = (Button) view.findViewById(R.id.fragment_results_filter_button);
+        filterButton = (Button) view.findViewById(R.id.fragment_results_filter_button);
 
 
         // CATEGORIES WINDOW
@@ -331,7 +331,7 @@ public class ResultsFragment extends Fragment {
                     categoryListPopupWindow.show();
                 } else {
                     setSearchViewQuery("");
-                    searchView.setQuery("", false   );
+                    searchView.setQuery("", false);
                     refreshData = true;
                     ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
                 }
@@ -450,11 +450,10 @@ public class ResultsFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
 
-                if(searchViewQuery != null && s.isEmpty() && !searchViewQuery.isEmpty()){
+                if (searchViewQuery != null && s.isEmpty() && !searchViewQuery.isEmpty()) {
 //                    setSearchViewQuery("");
 //                    ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
                 }
-
 
 
                 return true;
@@ -531,6 +530,22 @@ public class ResultsFragment extends Fragment {
         }
 
         nbResultsTextView.setText(text);
+
+        int filterNumber = 0;
+        if (consoleSelected != -1)
+            filterNumber += 1;
+        if (categorySelected != -1)
+            filterNumber += 1;
+
+
+        if (filterNumber == 0) {
+            filterButton.setText("FILTER");
+        } else if (filterNumber == 1) {
+            filterButton.setText("(1) FILTER");
+        } else {
+            filterButton.setText("(2) FILTER");
+        }
+
     }
 
     public void setFilterByConsole(ItemVariables.CONSOLES consoleToFilterBy) {
@@ -916,7 +931,7 @@ public class ResultsFragment extends Fragment {
 
             if (!filterBySearchViewQuery && !refreshData)
                 searchView.setQuery("", false);
-            if(!refreshData)
+            if (!refreshData)
                 searchView.setQuery(searchViewQuery, false);
 
             if (itemList.isEmpty()) {

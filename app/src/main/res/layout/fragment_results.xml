@@ -55,12 +55,12 @@
             android:id="@+id/fragment_results_filter_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.25"
             android:background="@android:color/transparent"
             android:drawableRight="@drawable/ic_expand_more_black_24dp"
             android:gravity="center"
             android:maxLines="2"
-            android:text="Filter"
+            android:text="(0) Filter"
             android:textColor="@color/primaryText"
             android:textSize="@dimen/text_small" />
 
