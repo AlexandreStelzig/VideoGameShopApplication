@@ -86,6 +86,11 @@ public class SignUpFragment extends Fragment{
             return;
         }
 
+        if(databaseManager.getUserByEmail(editEmail.getText().toString()) != null){
+            editEmail.setError("Email already exists.");
+            return;
+        }
+
         Toast.makeText(getContext(), "Account created!", Toast.LENGTH_SHORT).show();
         long userId = databaseManager.createUser(editEmail.getText().toString(), editPassword.getText().toString(),editFirstName.getText().toString(), editLastName.getText().toString());
         databaseManager.setCurrentActiveUser(userId);

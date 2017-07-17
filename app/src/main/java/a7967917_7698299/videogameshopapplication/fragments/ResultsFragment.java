@@ -331,6 +331,7 @@ public class ResultsFragment extends Fragment {
                     categoryListPopupWindow.show();
                 } else {
                     setSearchViewQuery("");
+                    searchView.setQuery("", false   );
                     refreshData = true;
                     ((MainActivity) getActivity()).displayFragment(R.id.search_view_results);
                 }
