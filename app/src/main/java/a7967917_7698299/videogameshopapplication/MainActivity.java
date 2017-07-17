@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
 
 
     // TODO IMPORTANT!!! TURN OFF FOR RELEASE - RESETS THE DATABASE EVERY TIME YOU OPEN THE APP
-    private final boolean DELETE_DATABASE_EVERY_REBUILD = true;
+    private final boolean DELETE_DATABASE_EVERY_REBUILD = false;
 
     // components
     private DrawerLayout drawer;
