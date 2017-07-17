@@ -19,7 +19,7 @@ public class Order {
     private String deliverTo;
 
     // payment
-    private int cardNumber;
+    private long cardNumber;
     private String nameOnCard;
     private int expirationMonth;
     private int expirationYear;
@@ -33,7 +33,7 @@ public class Order {
 
     private boolean isExtraShipping;
 
-    public Order(long orderId, long userId, String dateOrdered, String dateArriving, OrderVariables.STATUS status, String deliverTo, int cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean isExtraShipping) {
+    public Order(long orderId, long userId, String dateOrdered, String dateArriving, OrderVariables.STATUS status, String deliverTo, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean isExtraShipping) {
         this.orderId = orderId;
         this.userId = userId;
         this.dateOrdered = dateOrdered;
@@ -108,11 +108,11 @@ public class Order {
         this.status = status;
     }
 
-    public int getCardNumber() {
+    public long getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(int cardNumber) {
+    public void setCardNumber(long cardNumber) {
         this.cardNumber = cardNumber;
     }
 

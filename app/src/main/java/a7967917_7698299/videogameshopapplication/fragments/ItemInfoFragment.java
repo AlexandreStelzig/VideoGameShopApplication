@@ -138,7 +138,7 @@ public class ItemInfoFragment extends Fragment {
                 int width = getContext().getResources().getDisplayMetrics().widthPixels;
                 int height = (int) (width * 9 / 16);
 
-                String frameVideo = "<html><body>Video From YouTube<br><iframe width=\"" + width + "\" height=\"" + height + "\" src=\""+trailer.getTrailerURL()+"\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
+                String frameVideo = "<html><iframe width=\"" + width + "\" height=\"" + height + "\" src=\""+trailer.getTrailerURL()+"\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
 
 
                 WebSettings webSettings = trailerWebView.getSettings();

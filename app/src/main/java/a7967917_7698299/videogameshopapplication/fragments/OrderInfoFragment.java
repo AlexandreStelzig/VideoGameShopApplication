@@ -130,11 +130,11 @@ public class OrderInfoFragment extends Fragment {
         orderStatusTextView.setText("Status: " + order.getStatus());
         dateOrderedTextView.setText("Date Ordered: " + order.getDateOrdered());
 
-        shipNameTextView.setText(order.getDeliverTo());
-        shipAddressTextView.setText( order.getStreet());
+        shipNameTextView.setText("To: " + order.getDeliverTo());
+        shipAddressTextView.setText(order.getStreet());
         shipCityStateTextView.setText(order.getCity() +", "+ order.getState());
         shipCountryPostalTextView.setText(order.getCountry() + ", " + order.getPostalCode());
-        paymentNameTextView.setText(order.getNameOnCard());
+        paymentNameTextView.setText("Name on Card:\n" +order.getNameOnCard());
         paymentCardNumberTextView.setText("Card Number: " + order.getCardNumber());
 
     }

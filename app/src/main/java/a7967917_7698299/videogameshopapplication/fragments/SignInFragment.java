@@ -43,6 +43,11 @@ public class SignInFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 ((MainActivity)getActivity()).displayFragment(R.id.nav_sign_up);
+                View current = getActivity().getCurrentFocus();
+                if (current != null){
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
             }
         });
         TextView forgotPasswordText = (TextView)view.findViewById(R.id.forgotPasswordLink);

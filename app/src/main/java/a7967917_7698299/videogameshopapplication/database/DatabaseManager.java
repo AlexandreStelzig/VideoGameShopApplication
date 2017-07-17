@@ -1577,7 +1577,7 @@ public class DatabaseManager {
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_DATE_ARRIVING));
         String status = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_STATUS));
-        int cardNumber = cursor.getInt(cursor
+        long cardNumber = cursor.getLong(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_CARD_NUMBER));
         String nameOnCard = cursor.getString(cursor
                 .getColumnIndex(DatabaseVariables.TABLE_ORDER.COLUMN_NAME_ON_CARD));

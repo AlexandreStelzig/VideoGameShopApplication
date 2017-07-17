@@ -30,9 +30,6 @@ public class DatabaseHardCodedValues {
         // create app table
         databaseManager = DatabaseManager.getInstance();
         databaseManager.createApplicationTable();
-        // TODO REMOVE HARDCODED USER
-        long userId = databaseManager.createUser("test@test.com", "12345", "SEG", "3525");
-        databaseManager.setCurrentActiveUser(userId);
 
 
 
@@ -128,12 +125,30 @@ public class DatabaseHardCodedValues {
         databaseManager.createTrailerGame("https://www.youtube.com/embed/zw47_q9wbBE", itemId);
 
         // FIFA
-        itemId = databaseManager.createVideoGame("FIFA 17", 39.99, "FIFA 17 is a sports video game in the FIFA series developed and published by Electronic Arts, which released in September 2016. This is the first FIFA game in the series to use the Frostbite game engine. Marco Reus serves as the cover athlete on the game",
+        itemId = databaseManager.createVideoGame("FIFA 17", 39.99, "FIFA 17 is a sports video game in the FIFA series developed and published by Electronic Arts, which released in September 2016. This is the first FIFA game in the series to use the Frostbite game engine. Marco Reus serves as the cover athlete on the game.",
                 5, "EA Sports", "September 27, 2016", VideoGameVariables.ESRB.EVERYONE.toString(), 23, VideoGameVariables.CATEGORY.SPORTS.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://upload.wikimedia.org/wikipedia/en/0/08/FIFA_17_cover.jpeg", itemId);
         databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://media.contentapi.ea.com/content/www-easports/en_US/fifa/news/2016/fifa-17-pre-order-offers/_jcr_content/headerImages/image.img.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "http://www.storehack.com/wp-content/uploads/2016/10/fifa-17-5.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://apollo2.dl.playstation.net/cdn/EP0006/CUSA03214_00/FREE_CONTENTT2TeWoztnrgWCRqm816O/PREVIEW_SCREENSHOT1_497047.jpg", itemId);
         databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.PS4, itemId);
         databaseManager.createTrailerGame("https://www.youtube.com/embed/P9LHzVEPodg", itemId);
+
+        itemId = databaseManager.createVideoGame("FIFA 16", 25.99, "Create more moments of magic than ever before with FIFA 16. Make every match memorable with increased control in Midfield, improved defensive moves, more stars, and a new way to play. Build your dream team in FIFA Ultimate Team, or compete as one of 12 Women’s National Teams for the first time ever in the FIFA franchise, including Germany, USA, France, Sweden, England, Brazil, and more. FIFA 16 innovates across the entire pitch, delivering a lifelike and authentic football experience.",
+                5, "EA Sports", "September 22, 2015", VideoGameVariables.ESRB.EVERYONE.toString(), 23, VideoGameVariables.CATEGORY.SPORTS.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://upload.wikimedia.org/wikipedia/en/thumb/2/27/FIFA_16_cover.jpg/250px-FIFA_16_cover.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://data2.origin.com/content/dam/originx/web/app/games/fifa/fifa-16/screenshots/fifa-16/1032134_screenhi_930x524_en_US_03.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://data1.origin.com/content/dam/originx/web/app/games/fifa/fifa-16/screenshots/fifa-16/1032134_screenhi_930x524_en_US_01.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://data3.origin.com/content/dam/originx/web/app/games/fifa/fifa-16/screenshots/fifa-16/1032134_screenhi_930x524_RM_vs_AM.jpg", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.XBOXONE, itemId);
+
+        itemId = databaseManager.createVideoGame("FIFA 15", 19.99, "Whether you’re a new player or a seasoned veteran, FIFA 15's a fantastic game of football. Everything looks and feels more lifelike thanks to the power of the new Ignite Engine, enhancing the experience with astounding players and living stadiums. Challenge great AI opponents, take your skills online against other players, or become an armchair manager and create your Ultimate Team. FIFA 15 has everything football fans want.",
+                5, "EA Sports", "September 23, 2014", VideoGameVariables.ESRB.EVERYONE.toString(), 23, VideoGameVariables.CATEGORY.SPORTS.toString(), VideoGameVariables.REGION.ALL.toString(), 4);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://upload.wikimedia.org/wikipedia/en/thumb/2/23/FIFA_15_Cover_Art.jpg/260px-FIFA_15_Cover_Art.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://data3.origin.com/content/dam/originx/web/app/games/fifa/fifa-15/screenshots/fifa-15/1024871_screenhi_930x524_AuthenticPlayerVisual_Messi_%5E_2014-06-18-14-08-09_2799f1b7db533b83f483c1d2c3401cac1cb6b3ec.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://i.ytimg.com/vi/v86GDADq3bg/maxresdefault.jpg", itemId);
+        databaseManager.createItemImage(ItemVariables.TYPE.GAME, "https://data3.origin.com/content/dam/originx/web/app/games/fifa/fifa-15/screenshots/fifa-15/1024871_screenhi_930x524_MantoManBattles_Napoli_vs_ACMilan.jpg", itemId);
+        databaseManager.createConsoleVideoGame(ItemVariables.CONSOLES.PS4, itemId);
 
 
         // FIRE EMBLEM

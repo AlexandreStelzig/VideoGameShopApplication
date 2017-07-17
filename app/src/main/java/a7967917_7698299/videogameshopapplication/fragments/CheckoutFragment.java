@@ -59,6 +59,7 @@ public class CheckoutFragment extends Fragment{
     private Button cancelButton;
     private RadioGroup radioPayment;
     private RadioGroup radioAddress;
+    private RadioGroup radioShipping;
 
     // database
     DatabaseManager databaseManager;
@@ -96,8 +97,8 @@ public class CheckoutFragment extends Fragment{
         radioPayment = (RadioGroup) view.findViewById(R.id.radioPayment);
         setPayment();
         setShipping();
-        RadioGroup shipping = (RadioGroup) view.findViewById(R.id.radioShipping);
-        shipping.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        radioShipping = (RadioGroup) view.findViewById(R.id.radioShipping);
+        radioShipping.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 changeTotalText();
@@ -107,32 +108,40 @@ public class CheckoutFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 if(paymentMethods.isEmpty()){
-                    Toast.makeText(getActivity().getApplicationContext(),"No payment methods exist, please add a new one", Toast.LENGTH_SHORT);
+                    Toast.makeText(getActivity().getApplicationContext(),"No payment methods exist, please add a new one", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(shippingAddresses.isEmpty()){
-                    Toast.makeText(getActivity().getApplicationContext(), "No shipping addresses exist, please add a new one", Toast.LENGTH_SHORT);
+                    Toast.makeText(getActivity().getApplicationContext(), "No shipping addresses exist, please add a new one", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int radioId = radioPayment.getCheckedRadioButtonId();
+
+
+                // check address radio buttons
+                int radioId = radioAddress.getCheckedRadioButtonId();
                 if(radioId == -1){
-                    Toast.makeText(getActivity().getApplicationContext(), "No payment method was selected. Please select one or make a new one.", Toast.LENGTH_SHORT);
+                    Toast.makeText(getActivity().getApplicationContext(), "No payment method was selected. Please select one or make a new one.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                RadioButton selected = (RadioButton) view.findViewById(radioId);
+                RadioButton selected = (RadioButton) radioAddress.findViewById(radioId);
+
                 UserAddress selectedAddress = (UserAddress) selected.getTag();
-                radioId = radioAddress.getCheckedRadioButtonId();
+
+                // check payment radio buttons
+                radioId = radioPayment.getCheckedRadioButtonId();
                 if(radioId == -1){
-                    Toast.makeText(getActivity().getApplicationContext(), "No shipping address was selected. Please select one or make a new one.", Toast.LENGTH_SHORT);
+                    Toast.makeText(getActivity().getApplicationContext(), "No shipping address was selected. Please select one or make a new one.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                selected = (RadioButton) view.findViewById(radioId);
+                selected = (RadioButton) radioPayment.findViewById(radioId);
                 PaymentInformation selectedPayment = (PaymentInformation) selected.getTag();
+
+                // get date
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
                 String date = format.format(c.getTime());
 
-                if(((RadioButton) view.findViewById(R.id.radioExpeditedShipping)).isChecked()){
+                if(((RadioButton) radioShipping.findViewById(R.id.radioExpeditedShipping)).isChecked()){
                     c.add(Calendar.DATE, 2);
                     extraShipping = true;
                 }
@@ -140,10 +149,13 @@ public class CheckoutFragment extends Fragment{
                     c.add(Calendar.DATE, 5);
                 }
                 String shipDate = format.format(c.getTime());
-                ((MainActivity)getActivity()).createOrderFromCartItems(databaseManager.getCurrentActiveUser().getFirstName()+databaseManager.getCurrentActiveUser().getLastName(),
+                long orderId = ((MainActivity)getActivity()).createOrderFromCartItems(databaseManager.getCurrentActiveUser().getFirstName()+databaseManager.getCurrentActiveUser().getLastName(),
                         date, shipDate, OrderVariables.STATUS.ORDER_RECEIVED, selectedPayment.getCardNumber(),
                         selectedPayment.getNameOnCard(), selectedPayment.getExpirationMonth(), selectedPayment.getExpirationYear(), selectedAddress.getStreet(),
                         selectedAddress.getCountry(), selectedAddress.getState(), selectedAddress.getCity(), selectedAddress.getPostalCode(), extraShipping);
+                ((MainActivity) getActivity()).setOrderIdToOpenAtOrderInfoLaunch(orderId);
+                ((MainActivity)getActivity()).displayFragment(R.layout.fragment_order_info);
+                ((MainActivity)getActivity()).setBackButtonToHome();
             }
         });
 
@@ -186,6 +198,10 @@ public class CheckoutFragment extends Fragment{
             rButton.setTag(shippingAddresses.get(i));
             radioAddress.addView(rButton);
         }
+
+        if(!shippingAddresses.isEmpty()){
+            radioAddress.check(0);
+        }
     }
 
     private void setPayment() {
@@ -196,12 +212,18 @@ public class CheckoutFragment extends Fragment{
             rButton.setTag(paymentMethods.get(i));
             radioPayment.addView(rButton);
         }
+
+
+        if(!paymentMethods.isEmpty()){
+            radioPayment.check(0);
+        }
     }
 
     private void initListView(){
 
         customListAdapter = new CustomListAdapter(getContext());
         listView.setAdapter(customListAdapter);
+        Helper.setListViewHeightBasedOnChildren(listView);
     }
 
 
@@ -254,9 +276,74 @@ public class CheckoutFragment extends Fragment{
             rowView = inflater.inflate(R.layout.custom_layout_checkout_item_listview, null);
 
             holder.title = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_title);
+            holder.consolePublisher = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_console_publisher);
+            holder.esrb = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_esrb);
+            holder.release = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_release);
             holder.price = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_listview_price);
+            holder.amount = (TextView) rowView.findViewById(R.id.custom_layout_checkout_item_amount);
+
 
             final Item rowItem = itemList.get(position);
+
+            holder.amount.setText("x" + cartItemList.get(position).getAmount() + "");
+            holder.amount.setPaintFlags(holder.amount.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+            holder.amount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    positionSelected = position;
+                    amountDialog();
+                }
+            });
+
+            holder.title.setText(rowItem.getName());
+            holder.release.setText("Published " + rowItem.getDatePublished());
+            holder.price.setText(Double.toString(rowItem.getPrice()) + "$");
+
+            if (rowItem.getItemType() == ItemVariables.TYPE.CONSOLE) {
+                holder.esrb.setVisibility(View.GONE);
+                holder.consolePublisher.setText("Console by " + rowItem.getPublisher());
+
+            } else {
+                List<ItemVariables.CONSOLES> consolesList = databaseManager.getConsolesFromGameId(rowItem.getItemId());
+
+                String console = "";
+                if (consolesList.size() == 1) {
+                    console = Helper.convertConsoleToString(consolesList.get(0));
+                } else if (consolesList.size() == 0) {
+                    console = "No consoles";
+                } else {
+                    console = "2+ Consoles";
+                }
+
+                holder.consolePublisher.setText(console + " by " + rowItem.getPublisher());
+                holder.esrb.setText("ESRB: " + Helper.convertESRBToString(((VideoGame) rowItem).getesrbRating()));
+
+            }
+
+            ((Button) rowView.findViewById(R.id.custom_layout_checkout_item_close_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    databaseManager.deleteCartItem(rowItem.getItemId(), rowItem.getItemType());
+
+                    Toast.makeText(getContext(), "Item removed from checkout", Toast.LENGTH_SHORT).show();
+
+                    itemList.remove(position);
+                    cartItemList.remove(position);
+
+                    customListAdapter.notifyDataSetChanged();
+
+                    if (itemList.isEmpty()) {
+                        Toast.makeText(getContext(), "No more items in checkout", Toast.LENGTH_SHORT).show();
+                        ((MainActivity)getActivity()).displayFragment(R.layout.fragment_order_info);
+                        ((MainActivity)getActivity()).setBackButtonToHome();
+                    }
+
+                    getActivity().invalidateOptionsMenu();
+                    changeTotalText();
+                }
+            });
+
 
 
             return rowView;
@@ -270,12 +357,86 @@ public class CheckoutFragment extends Fragment{
         for (int i = 0; i < itemList.size(); i++) {
 
             subtotal += itemList.get(i).getPrice() * cartItemList.get(i).getAmount();
-
         }
+
+        double shipping = ItemVariables.FLAT_SHIPPING_RATE;
+
+        if(((RadioButton) radioShipping.findViewById(R.id.radioExpeditedShipping)).isChecked()){
+            shipping += ItemVariables.EXTRA_SHIPPING_RATE;
+        }
+
         double tax = subtotal*0.13;
-        double total = extraShipping ? subtotal+tax+25 : subtotal+tax;
+        double total = subtotal+tax+25+shipping;
         totalTextView.setText("Subtotal: " + String.format("%.2f$", subtotal)
-                + "\nTax: " + String.format("%.2f$", tax) + "\nTotal: " + String.format("%.2f$", total));
+                + "\nTax: " + String.format("%.2f$", tax) + "\nShipping: " + String.format("%.2f$", shipping) + "\nTotal: " + String.format("%.2f$", total));
+    }
+
+    private void amountDialog() {
+
+        amountHolder = cartItemList.get(positionSelected).getAmount();
+
+        final View dialogView = View.inflate(getContext(), R.layout.custom_layout_amount_dialog, null);
+
+        final TextView textView = (TextView) dialogView.findViewById(R.id.custom_layout_amount_textview);
+        textView.setText(amountHolder + "");
+
+        final Button minusButton = (Button) dialogView.findViewById(R.id.custom_layout_amount_minus);
+
+        final Button addButton = (Button) dialogView.findViewById(R.id.custom_layout_amount_add);
+
+        final android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(getContext());
+        alertDialog.setMessage(itemList.get(positionSelected).getPrice() + "$ each");
+        alertDialog.setTitle(itemList.get(positionSelected).getName() + " Amount");
+
+        alertDialog.setView(dialogView);
+
+
+        if (amountHolder == 1)
+            minusButton.setEnabled(false);
+
+        minusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (amountHolder > 1)
+                    amountHolder--;
+                if (amountHolder == 1)
+                    minusButton.setEnabled(false);
+                textView.setText(amountHolder + "");
+                alertDialog.setMessage(itemList.get(positionSelected).getPrice() + "$ each");
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                amountHolder++;
+                minusButton.setEnabled(true);
+                textView.setText(amountHolder + "");
+                alertDialog.setMessage("Total: " + amountHolder * itemList.get(positionSelected).getPrice() + "$");
+            }
+        });
+
+
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+                databaseManager.updateCartAmount(itemList.get(positionSelected).getItemType(), cartItemList.get(positionSelected).getItemId(), amountHolder);
+
+                cartItemList.get(positionSelected).setAmount(amountHolder);
+                customListAdapter.notifyDataSetChanged();
+                changeTotalText();
+                ((MainActivity) getActivity()).invalidateOptionsMenu();
+            }
+        });
+
+        // Setting cancel Button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+            }
+        });
+        // Showing Alert Message
+        alertDialog.show();
     }
 
 }

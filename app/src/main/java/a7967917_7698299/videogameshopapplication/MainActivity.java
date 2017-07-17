@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // TODO IMPORTANT!!! TURN OFF FOR RELEASE
-    private boolean DELETE_DATABASE_EVERY_REBUILD = true;
+    // TODO IMPORTANT!!! TURN OFF FOR RELEASE - RESETS THE DATABASE EVERY TIME YOU OPEN THE APP
+    private final boolean DELETE_DATABASE_EVERY_REBUILD = true;
 
     // components
     private DrawerLayout drawer;
@@ -179,7 +179,8 @@ public class MainActivity extends AppCompatActivity
                 resultsFragment.setRefreshData(false);
                 displayFragment(previousFragmentTag);
 
-                if(!currentFragment.equals(paymentListFragment) && !currentFragment.equals(addressListFragment) && !currentFragment.equals(accountInfoFragment))
+                // navigation stuff
+                if (!currentFragment.equals(paymentListFragment) && !currentFragment.equals(addressListFragment) && !currentFragment.equals(accountInfoFragment) && !currentFragment.equals(checkoutFragment))
                     previousFragmentTag = -1;
 //                resultsFragment.setRefreshData(true);
             }
@@ -492,6 +493,11 @@ public class MainActivity extends AppCompatActivity
                 currentFragmentTag = itemId;
 
                 replaceFragmentWithAnimation(currentFragment, "" + currentFragmentTag);
+
+                if (currentFragment.equals(checkoutFragment)) {
+                    previousFragmentTag = R.id.action_cart;
+                }
+
             } else {
                 if (currentFragment.equals(resultsFragment)) {
                     previousFragmentTag = currentFragmentTag = itemId;
@@ -518,9 +524,12 @@ public class MainActivity extends AppCompatActivity
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (fragment.equals(cartFragment) && previousFragmentTag != R.layout.fragment_checkout || fragment.equals(checkoutFragment)) {
+        if (fragment.equals(cartFragment) && previousFragmentTag != R.layout.fragment_checkout || (fragment.equals(checkoutFragment) &&
+                !(previousFragmentTag == R.layout.fragment_payment_info || previousFragmentTag == R.layout.fragment_address_info))
+                || fragment.equals(addressInfoFragment) || fragment.equals(paymentInfoFragment)) {
             transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        } else if (previousFragmentTag == R.id.action_cart || (previousFragmentTag == R.layout.fragment_checkout)) {
+        } else if (previousFragmentTag == R.id.action_cart || (previousFragmentTag == R.layout.fragment_checkout) ||
+                previousFragmentTag == R.layout.fragment_payment_info || previousFragmentTag == R.layout.fragment_address_info) {
             transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         } else {
             transaction.setCustomAnimations(android.R.anim.fade_in,
@@ -617,14 +626,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShpping) {
+    public long createOrderFromCartItems(String deliverTo, String dateOrdered, String dateArriving, OrderVariables.STATUS status, long cardNumber, String nameOnCard, int expirationMonth, int expirationYear, String street, String country, String state, String city, String postalCode, boolean extraShpping) {
         if (isUserConnectedWithMessage()) {
-            databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode, extraShpping);
-            Toast.makeText(this, "Order Created", Toast.LENGTH_SHORT).show();
+            long id = databaseManager.createOrderFromItemsInCart(deliverTo, dateOrdered, dateArriving, status, cardNumber, nameOnCard, expirationMonth, expirationYear, street, country, state, city, postalCode, extraShpping);
+            Toast.makeText(this, "Order Created\nThank you for shopping with us!", Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
+            return id;
         } else {
             // should never come here
             displayFragment(R.id.nav_sign_in_out);
+            return -1;
         }
     }
 
@@ -722,4 +733,9 @@ public class MainActivity extends AppCompatActivity
     public void setReturnCheckout(boolean returnCheckout) {
         this.returnCheckout = returnCheckout;
     }
+
+    public void setBackButtonToHome() {
+        previousFragmentTag = -1;
+    }
+
 }

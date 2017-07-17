@@ -108,7 +108,7 @@ public final class DatabaseVariables {
             + TABLE_ORDER.TABLE_NAME + " ("
             + TABLE_ORDER.COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TABLE_ORDER.COLUMN_USER_ID + " INTEGER,"
-            + TABLE_ORDER.COLUMN_CARD_NUMBER + " INTEGER,"
+            + TABLE_ORDER.COLUMN_CARD_NUMBER + " LONG,"
             + TABLE_ORDER.COLUMN_CITY + " TEXT,"
             + TABLE_ORDER.COLUMN_COUNTRY + " TEXT,"
             + TABLE_ORDER.COLUMN_DATE_ARRIVING + " DATE,"
