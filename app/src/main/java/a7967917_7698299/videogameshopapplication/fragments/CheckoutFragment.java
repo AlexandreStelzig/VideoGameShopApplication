@@ -335,7 +335,7 @@ public class CheckoutFragment extends Fragment{
 
                     if (itemList.isEmpty()) {
                         Toast.makeText(getContext(), "No more items in checkout", Toast.LENGTH_SHORT).show();
-                        ((MainActivity)getActivity()).displayFragment(R.layout.fragment_order_info);
+                        ((MainActivity)getActivity()).displayFragment(R.id.action_cart);
                         ((MainActivity)getActivity()).setBackButtonToHome();
                     }
 
