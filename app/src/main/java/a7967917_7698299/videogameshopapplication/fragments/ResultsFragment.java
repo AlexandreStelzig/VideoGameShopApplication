@@ -410,6 +410,7 @@ public class ResultsFragment extends Fragment {
                         sortingManager.setCurrentState(SortingManager.SortingStates.PRICE_LOW_HIGH);
                         break;
                 }
+                refreshData = false;
                 populateListView();
 
                 listView.smoothScrollToPosition(0);
